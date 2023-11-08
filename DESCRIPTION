@@ -1,0 +1,29 @@
+Package: Natura3
+Type: Package
+Title: Forest growth simulator Natura 3.0
+Version: 1.0.0
+Author: Isabelle Auger, isabelle.auger@mrnf.gouv.qc.ca
+Maintainer: Isabelle Auger <isabelle.auger@mrnf.gouv.qc.ca>
+Description: Natura 3.0 is a stand level forest growth model based on stand origine and time since origine.
+    It uses merchantable stand characteristics at time t to predict them at time t+10 years.
+	  The model predict number of trees, basal area and volume per species group.
+	  The model can run in a stochastic mode or in a deterministic mode.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Depends:
+ data.table,
+    tidyverse,
+    readxl,
+	MASS,
+    doFuture,
+    raster,
+    rgdal,
+	sf,
+	TarifQC,
+	ExtractMap,
+    R (>= 4.2)  
+Remotes: 
+   local::U:/Projets/IsabelleAuger/Natura-2020/PackageR/TarifQC_1.0.0.tar.gz,
+   local::U:/Projets/IsabelleAuger/Natura-2020/PackageR/ExtractMap_1.0.0.tar.gz

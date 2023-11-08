@@ -1,0 +1,54 @@
+SpeciesID;Essence;Nom_ess;Groupe_ess_natura2.0;Groupe_ess;ess_eq_hd
+1;BOG;Bouleau gris (à feuilles de peuplier);Fi;bop;BOG
+2;BOJ;Bouleau jaune;Ft;ft;BOJ
+3;BOP;Bouleau blanc (à papier);Fi;bop;BOP
+4;CAC;Caryer cordiforme;Fi;bop;ORA
+5;CAF;Caryer à fruits doux (ovale);Ft;ft;ORA
+45;CAR;Charme de Caroline;NC;NC;NC
+46;CEO;Micocoulier occidental;NC;NC;NC
+6;CET;Cerisier tardif;Fi;bop;ORA
+7;CHB;Chêne blanc;Ft;ft;CHR
+8;CHE;Chêne bicolore;Ft;ft;CHR
+9;CHG;Chêne à gros fruits;Ft;ft;CHR
+10;CHR;Chêne rouge;Fi;bop;CHR
+11;EPB;Épinette blanche;Rt;epx;EPB
+12;EPN;Épinette noire;Rt;epn;EPN
+13;EPO;Épinette de Norvège;Rt;epx;EPO
+14;EPR;Épinette rouge;Rt;epx;EPR
+15;ERA;Érable argenté;Fi;bop;ERS
+47;ERG;Érable à Giguère;NC;NC;NC
+16;ERN;Érable noir;Ft;ft;ERS
+48;ERP;Érable de Pennsylvanie;NC;NC;NC
+17;ERR;Érable rouge;Ft;ft;ERR
+18;ERS;Érable à sucre;Ft;ft;ERS
+19;FRA;Frêne d'Amérique;Ft;ft;FRA
+20;FRN;Frêne noir;Ft;ft;FRN
+21;FRP;Frêne de Pennsylvanie;Ft;ft;FRA
+22;HEG;Hêtre à grandes feuilles;Ft;ft;HEG
+49;MAS;Pommier;NC;NC;NC
+23;MEJ;Mélèze japonais;Ri;ri;MEL
+24;MEL;Mélèze laricin;Ri;ri;MEL
+25;MEU;Mélèze européen;Ri;ri;MEL
+26;NOC;Noyer cendré;Fi;bop;ORA
+27;ORA;Orme d'Amérique;Ft;ft;ORA
+28;ORR;Orme rouge;Ft;ft;ORA
+29;ORT;Orme de Thomas (liège);Ft;ft;ORA
+30;OSV;Ostryer de Virginie;Ft;ft;ORA
+31;PEB;Peuplier baumier;Fi;peu;PEB
+32;PED;Peuplier à feuilles deltoïdes;Fi;peu;PEG
+33;PEG;Peuplier à grandes dents;Fi;peu;PEG
+34;PEH;Peuplier hybride;Fi;peu;PEG
+35;PET;Peuplier faux tremble;Fi;peu;PET
+36;PIB;Pin blanc;Rt;rt;PIB
+37;PID;Pin rigide;Ri;ri;PIR
+38;PIG;Pin gris;Ri;ri;PIG
+39;PIR;Pin rouge;Ri;ri;PIR
+40;PIS;Pin sylvestre;Ri;ri;PIR
+50;PRP;Cerisier de Pennsylvanie;NC;NC;NC
+41;PRU;Pruche de l'Est;Rt;rt;PRU
+42;SAB;Sapin baumier;Sab;sab;SAB
+51;SAL;Saule;NC;NC;NC
+52;SOA;Sorbier d'Amérique;NC;NC;NC
+53;SOD;Sorbier des montagnes;NC;NC;NC
+43;THO;Thuya occidental;Rt;rt;THO
+44;TIL;Tilleul d'Amérique;Ft;ft;FRA
