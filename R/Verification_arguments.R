@@ -10,13 +10,13 @@
 #                                                              #
 ################################################################
 
-#' checking the value of the main function arguments of Natura 3.0 growth simulator
+#' Vérification des arguments de la fonction principale du simulateur Natura
 #'
-#' @description checking the value of the main function \code{SimulNatura()} arguments of Natura 3.0 growth simulator.
+#' @description Vérification des arguments de la fonction principale \code{SimulNatura()} du simulateur Natura
 #'
 #' @inheritParams SimulNatura
 #'
-#' @return A string with "ok" if there is no error, otherwise, a string with an error message
+#' @return Une chaine de caractères contant "ok" s'il n'y a pas d'erreur, sinon, contient un message d'erreur.
 #' @export
 #'
 # @examples
@@ -27,12 +27,12 @@ CheckArguments <- function(file_arbre, file_etude, file_compile, horizon, mode_s
     erreur <- "Au moins un des deux: file_arbre+file_etude OU file_compile doit être specifié"
   }
   # il faut ne faut pas spécifier les types de fichier en même temps
-  else if (!missing(file_arbre) & !missing(file_etude) & !missing(file_compile)) {
-    erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit être specifé"
-  }
+  #else if (!missing(file_arbre) & !missing(file_etude) & !missing(file_compile)) {
+  #  erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit être specifé"
+  #}
   # Si on spécifie le fichier compilé, les 2 autres fichiers doivent être vides
   else if ((!missing(file_arbre)  | !missing(file_etude)) & !missing(file_compile)){
-    erreur <- "Si file_compile est specifié, file_arbre ET file_etude doivent être vides"
+    erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit être specifé"
   }
   # Si on ne spécifie pas de fichier compilé, il faut spécifier les 2 autres
   else if ((missing(file_arbre)  | missing(file_etude)) & missing(file_compile)){

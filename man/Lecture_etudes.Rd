@@ -2,16 +2,16 @@
 % Please edit documentation in R/Lecture_fichier_etudes.R
 \name{Lecture_etudes}
 \alias{Lecture_etudes}
-\title{Function reading the study-tree file for a simulation with Natura 3.0}
+\title{Lire le fichier des arbres-études et valider le nom des colonnes}
 \usage{
 Lecture_etudes(file)
 }
 \arguments{
-\item{file}{Name of the file to read (dataframe, Excel or csv file)}
+\item{file}{Nom du fichier à lire (table, Excel ou csv)}
 }
 \value{
-Dataframe of filtered study-tree or an error message
+Table dont les arbres-études ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 }
 \description{
-Read a study-tree file for a simulation with Natura 3.0. Check the names of the variables and filter trees from variable dhp, hauteur and etage
+Lire le fichier des arbres-études et valider le nom des colonnes. Filtrer les arbres selon leur dhp, hauteur et etage
 }

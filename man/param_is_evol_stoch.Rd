@@ -2,32 +2,40 @@
 % Please edit documentation in R/Parametres_stochastiques.R
 \name{param_is_evol_stoch}
 \alias{param_is_evol_stoch}
-\title{Generating shannon index growth model parameter values of Natura 3.0}
+\title{Génère les paramètres du modèle d'évolution de l'indice de Shannon}
 \usage{
-param_is_evol_stoch(liste_place, nb_iter, mode_simul, horizon)
+param_is_evol_stoch(
+  liste_place,
+  mode_simul = "DET",
+  nb_iter = 1,
+  horizon,
+  seed_value = NULL
+)
 }
 \arguments{
-\item{liste_place}{Dataframe with plot id (id_pe)}
+\item{liste_place}{Vecteur contenant les identifiants des placettes.}
 
-\item{nb_iter}{Number of iteration if stochastic mode, ignored if \code{mode_simul="DET"}}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
+\item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}
 
-\item{horizon}{Number of 10-year time steps to simulate, 1 à 15}
+\item{horizon}{Nombre de décennies à simuler, un chiffre de 1 à 15.}
+
+\item{seed_value}{Optionnel. Valeur de départ pour la génération de nombres aléatoires. Utilisé lors des tests pour la reproductibilité des résultats.}
 }
 \value{
-A list of lists, one list per species group for which there is a shannon index growth model, and for each species group, a list with 4 elements:
+Une liste de listes. Une liste par groupe d'essences, et pour chaque groupe d'essences, une liste de 4 éléments:
 \enumerate{
-  \item essence: string with species group code name
-  \item effet_fixe: dataframe of fixed effect parameter values (one line per time step per iteration per species)
-  \item random_placette: dataframe of random plot effect values (one line per plot per time step per iteration per species)
-  \item erreur_residuelle: dataframe of residual error values (one line per plot per time step per iteration per species)
+  \item essence: chaine de caractère contenant le code du groupe d'essences
+  \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par pas de simulation et itération
+  \item random_placette: table contenant les valeurs des effets aléatoires, une ligne par placette, pas de simulation et itération
+  \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 }
 }
 \description{
-Generate parameters for shannon index growth model of Natura 3.0, deterministic or stochastic, for each plot for each time step and for all iterations
+Génère les paramètres du modèle d'évolution de l'indice de Shannon, déterministe ou stochastique, pour chacune des placettes et tous leurs pas de simulation, pour toutes les itérations.
 }
 \details{
-The shannon index growth model is a linear mixed model calibrated for each dominant species. There is a plot random effect
-and the plot residual errors are not corralated. There is a covariance matrix of fixed effects.
+Le modèle est un modèle linéaire mixte calibré séparément par groupe d'essences dominantes, avec un effet aléatoire de placette.
+Il n'y a pas de matrice de corrélation sur les résidus. Il y a une matrice de covariance des effets fixes.
 }

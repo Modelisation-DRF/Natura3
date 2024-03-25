@@ -11,22 +11,27 @@
 #                                                              #
 ################################################################
 
-#' Simulation of one time-step with Natura 3.0 growth model
+#' Simulation d'un pas de simulation (période) avec le modèle Natura
 #'
-#' @description Simulation of one time-step with Natura 3.0 growth model, usually of 10 years, of the growth of characteristics of a stand (number of trees, basal area and volume per group species, dominant height and shannon index), based on plot origine and time since origine.
+#' @description Simulation d'un pas de simulation (période) avec le modèle Natura, habituellement de 10 ans.
 #'
-#' @param data Dataframe to be simulated. One line per plot. Must contain only the variables associated to stands characteristics to be simulated and plot id (no covariates an no paramteers)
-#' @param param Dataframe (one line per plot) of parameter values of all the models of Natura 3.0 for each plot
-#' @param data_info Dataframe (one line per plot) with only variables associated to fixed stand characteristics over time
-#' @param long_int Lenght of simulation time step in years
-#' @param pas The simulation step number
+#' @param data Table contenant les placettes et leurs caractéristiques dendrométriques (Nxxx, STxxx, Vxxx, HD, IS). Une ligne par placette. Ne doit pas contenir les covariables ni les paramètres.
+#' @param param Table contenant les paramètres du modèle associés à chacune des placettes. Une ligne par placette.
+#' @param data_info Table contenant les covariables fixes dans le temps pour chacune des placettes. Une ligne par placette.
+#' @param long_int Nombre d'années d'un pas de simulation.
+#' @param pas Le numéro du pas de simulation à simuler
 #' @inheritParams SimulNatura
 #'
-#' @return Dataframe of predicted stand characteristics
+#' @return Table contenant les caractéristiques dendrométriques prédites par le modèle pour le pas de simulation demandé. Une ligne par placette.
 #' @export
 #'
 # @examples
 Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0, dec_tbe1=0, tbe1=0, dec_tbe2=0, tbe2=0){
+
+
+  # data=DataCompile_final; param=Data_param; data_info=data_info; long_int=long_int; pas=k;
+  # dec_perturb=dec_perturb; dec_tbe1=dec_tbe1; tbe1=tbe1; dec_tbe2=dec_tbe2; tbe2=tbe2
+
 
   # Après coupe forcé à 0
   apresc <- 0
@@ -86,7 +91,7 @@ Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0,
       mutate(nom2 = eval(parse(text = eq)),
              nom = ifelse(nom2<0, 1,
                           ifelse(nom2>max,max,nom2))) %>% #### pour les cas où avec erreur résiduelle ça tombe dans le negatif, je vais mettre 1 au lieu de 0, sinon, ça se peut que tous les gr ess soit à 0 et le calcul de pct_ess ne marchera pas
-                                                          # je vais aussi mettre des max car ça monte souvewnt à l'infini en stochastique
+                                                          # je vais aussi mettre des max car ça monte souvent à l'infini en stochastique
       dplyr::select(nom)
     }
     )))
@@ -94,6 +99,7 @@ Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0,
   #print("fin ecrire eq n-st")
   Plac2 <- bind_cols(Plac,vari)
 
+  # pour Hd et Is
   Plac2 <- Plac2 %>%
     mutate(a = eval(parse(text = tolower(ecrire_eq('hd','a')))),
            a = ifelse(a<0,2,a),
@@ -105,7 +111,7 @@ Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0,
            ) %>%
     dplyr::select(-a,-c)
 
-  # ensuite faire les v
+  # ensuite faire les V
   liste_var <-  c('vsab','vrt','vepn','vepx','vri','vbop','vpeu','vft')
   suppressMessages(
   vari <- bind_cols(lapply(liste_var, function(x) {
@@ -126,6 +132,8 @@ Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0,
   )))
   #print("fin ecrire eq V")
   names(vari) <- liste_var
+
+  # calculer les totaux et les proportions
   Plac3 <- bind_cols(Plac2,vari) %>%
     mutate(ntot = nsab+nepn+nepx+nrt+nri+nbop+npeu+nft,
            sttot = stsab+stepn+stepx+strt+stri+stbop+stpeu+stft,

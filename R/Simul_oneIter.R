@@ -12,76 +12,39 @@
 ################################################################
 
 
-#' Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale
+
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+
+
+#' Effectue une simulation complète (tous les pas de simulation) pour une itération, lorsque le fichier en entrée est à l'échelle de la placette, version à utiliser lorsque les paramètres IS et HS sont dans le même objet
 #'
-#' @description Do a Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale.
+#' @description Effectue une simulation complète (tous les pas de simulation) pour une itération, lorsque le fichier en entrée est à l'échelle de la placette, version à utiliser lorsque les paramètres IS et HS sont dans le même objet.
 #'
-#' @param fichier Dataframe with stand characteristics at step 0 and all covariates, ready to be simulated, one line per plot
-#' @param iteration Iteration number
-#' @param PlacT0 Dataframe with only stand characteristics at step 0 (no covariates)
-#' @param data_info Dataframe with only fixed stand characteristics over time
-#' @param param_is_evol Object with shannon index growth model parameter values for all time steps and all iterations
-#' @param param_hd_evol Object with dominant height growth model parameter values for all time steps and all iterations
-#' @param param_n_st_v Object with n-st-v growth models parameter values for all time steps and all iterations
-#' @param liste_ess Vector with Natura group species code names
-#' @param long_int Length of time steps (years)
+#' @param fichier Table contenant toutes les variables nécessaires pour effectuer une simulation, incluant les paramètres, une ligne par placette
+#' @param iteration Numéro de l'itération
+#' @param PlacT0 Table contenant seulement les colonnes associées aux caractéristiques dendrométriques des placettes
+#' @param data_info Table contenant seulement les colonnes associées aux caractéristiques des placettes qui ne changent pas dans le temps
+#' @param param_ishd_evol Objet contenant les paramètres du modèle de l'indice de Shannon et du modèle de hauteur dominante, pour toutes les itérations et pas de simulation
+#' @param param_n_st_v Objet contenant les paramètres des modèles de Nxxx, STxxx et Vxxx, pour toutes les itération et pas de smulation
+#' @param liste_ess Vecteur contenant les codes des groupes d'essences de Natura
+#' @param long_int Nombre d'années correspondant à un pas de simulation
 #' @inheritParams SimulNatura
 #'
-#' @return Dataframe with one line per plot per time step with predicted values of HD and IS, and N, ST and V per group species
-#' @export
-#'
-# @examples
-simul_oneIter_compile <- function(fichier, horizon, iteration, PlacT0, data_info, mode_simul, param_is_evol, param_hd_evol, param_n_st_v, liste_ess,
-                                  long_int, dec_perturb, dec_tbe1, tbe1, dec_tbe2, tbe2)
-{
-  DataCompile_final <- fichier
-
-   # pour chaque pas de simulation
-  data_simule_tous <- NULL
-  for (k in 1:horizon) {
-
-    # ne garder que la liste de placettes avec les variables de pct_ess
-    data_temp <-DataCompile_final %>% dplyr::select(id_pe, contains('pct_')) %>% ungroup()
-    # ajouter les paramètres des équations de Natura à la liste de placette
-    Data_param <- Prep_parametre(data=data_temp , data_info=data_info, iteration=iteration, mode_simul=mode_simul, pas=k, param_is_evol=param_is_evol,
-                                 param_hd_evol=param_hd_evol, param_n_st_v=param_n_st_v, liste_ess=liste_ess)
-    # Simulation pour une irétation et un pas de simulation
-    DataCompile_final <- Natura_oneStep(data=DataCompile_final, param=Data_param, data_info=data_info, long_int=long_int, pas=k,
-                                        dec_perturb=dec_perturb, dec_tbe1=dec_tbe1, tbe1=tbe1, dec_tbe2=dec_tbe2, tbe2=tbe2)
-    # append des pas de simulations
-    data_simule_tous <- bind_rows(data_simule_tous, DataCompile_final)
-  }
-  # Ajout du point de départ de la simulation aux simulations
-  outputFinaliter <- bind_rows(PlacT0, data_simule_tous) %>% mutate(iter=iteration)
-  return(outputFinaliter)
-}
-
-#########################################################################################################
-#########################################################################################################
-#########################################################################################################
-
-
-#' Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale, version where parameters of HD and IS are in the same objects
-#'
-#' @description Do a Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale. Function version where parameters of HD and IS are in the same objects.
-#'
-#' @param fichier Dataframe with stand characteristics at step 0 and all covariates, ready to be simulated, one line per plot
-#' @param iteration Iteration number
-#' @param PlacT0 Dataframe with only stand characteristics at step 0 (no covariates)
-#' @param data_info Dataframe with only fixed stand characteristics over time
-#' @param param_ishd_evol Object with shannon index and dominant height growth model parameter values for all time steps and all iterations
-#' @param param_n_st_v Object with n-st-v growth models parameter values for all time steps and all iterations
-#' @param liste_ess Vector with Natura group species code names
-#' @param long_int Length of time steps (years)
-#' @inheritParams SimulNatura
-#'
-#' @return Dataframe with one line per plot per time step with predicted values of HD and IS, and N, ST and V per group species
+#' @return Table avec une ligne par placette et pas de simulation contenant les prévision de HD et IS et N, ST et V de chacun des groupes d'essences
 #' @export
 #'
 # @examples
 simul_oneIter_compileV2 <- function(fichier, horizon, iteration, PlacT0, data_info, mode_simul, param_ishd_evol, param_n_st_v, liste_ess,
                                   long_int, dec_perturb, dec_tbe1, tbe1, dec_tbe2, tbe2)
 {
+
+  # fichier=DataCompile_final0[DataCompile_final0$iter==1,]; horizon=horizon; PlacT0=PlacT0[PlacT0$iter==1,]; data_info=data_info;  iteration=1; mode_simul=mode_simul;
+  # param_ishd_evol=param_ishd_evol; param_n_st_v=param_n_st_v; liste_ess=liste_gress;
+  # long_int=dt; dec_perturb=dec_perturb; dec_tbe1=dec_tbe1; tbe1=tbe1; dec_tbe2=dec_tbe2; tbe2=tbe2;
+
+
   DataCompile_final <- fichier
 
   # faire la préparation des paramètres qui changent seulement avec l'itération
@@ -90,6 +53,8 @@ simul_oneIter_compileV2 <- function(fichier, horizon, iteration, PlacT0, data_in
   # pour chaque pas de simulation
   data_simule_tous <- NULL
   for (k in 1:horizon) {
+
+    # k=1
 
     # ne garder que la liste de placettes avec les variables de pct_ess
     data_temp <-DataCompile_final %>% dplyr::select(id_pe, contains('pct_')) %>% ungroup()
@@ -104,6 +69,7 @@ simul_oneIter_compileV2 <- function(fichier, horizon, iteration, PlacT0, data_in
     # Simulation pour une irétation et un pas de simulation
     DataCompile_final <- Natura_oneStep(data=DataCompile_final, param=Data_param, data_info=data_info, long_int=long_int, pas=k,
                                         dec_perturb=dec_perturb, dec_tbe1=dec_tbe1, tbe1=tbe1, dec_tbe2=dec_tbe2, tbe2=tbe2)
+    # DataCompile_final <- Plac3
     # append des pas de simulations
     data_simule_tous <- bind_rows(data_simule_tous, DataCompile_final)
   }
@@ -115,98 +81,4 @@ simul_oneIter_compileV2 <- function(fichier, horizon, iteration, PlacT0, data_in
 #########################################################################################################
 #########################################################################################################
 #########################################################################################################
-
-
-#' Complete simulation (all time steps) of one iteration with Natura 3.0 simulator when the start file is at the tree scale
-#'
-#' @description Do a complete simulation (all time steps) of one iteration with Natura 3.0 simulator when the start file is at the tree scale
-#'
-#' @param fic_arbre Dataframe of trees per plots, filtered and with the covariates
-#' @param fic_etude Dataframe of study trees per plots
-#' @param iteration Iteration number
-#' @param param_hdom0_ess Object with step 0 species tree height estimation model parameter values for all iterations (for HD estimation at step 0)
-#' @param param_hdom0_global Object with step 0 global tree height estimation model parameter values for all iterations (for HD estimation at step 0)
-#' @param parametre_ht Object with tree height estimation model parameter values for all time steps and all iterations
-#' @param parametre_vol Object with tree volume estimation model parameter values for all time steps and all iterations
-#' @param liste_ess_ht Vector with species code name for which there is a tree height model
-#' @param long_int Length of time steps (years)
-#' @inheritParams SimulNatura
-#' @inheritParams simul_oneIter_compile
-#'
-#' @return Dataframe with one line per plot per time step with predicted values of HD and IS, and N, ST and V per group species
-#' @export
-#'
-# @examples
-simul_oneIter_arbre <- function(fic_arbre, fic_etude, ht, vol, horizon, iteration, mode_simul, param_is_evol, param_hdom0_ess, param_hdom0_global, parametre_ht, parametre_vol,
-                              liste_ess_ht, param_hd_evol, param_n_st_v, liste_ess, long_int, dec_perturb, dec_tbe1, tbe1, dec_tbe2, tbe2)
-{
-
-  # data <- fic_arbre
-  # # générer les paramètres des modèles utilisés à la step 0
-  # liste_arbre <-  data[,c('id_pe', 'no_arbre')]
-  # parametre_ht <- param_ht_stoch(liste_arbre=liste_arbre, nb_iter=1, mode_simul=mode_simul, liste_ess=liste_ess_ht)
-  # #print("fin parametre_ht()")
-  # parametre_vol <- param_vol_stoch(liste_arbre=liste_arbre, nb_iter=1, mode_simul=mode_simul)
-  # #print("fin parametre_vol()")
-  # param_hdom0_ess <- param_hdom0_ess_stoch(liste_arbre=liste_arbre, nb_iter=1, mode_simul=mode_simul)
-  # #print("fin param_hdom0_ess()")
-  # param_hdom0_global <- param_hdom0_stoch(liste_arbre=liste_arbre, nb_iter=1, mode_simul=mode_simul)
-  # #print("fin param_hdom0_global()")
-  # # générer les paramètres pour l'évolution de IS et HD, N-ST-V
-  # liste_place <- unique(data$id_pe)
-  # param_is_evol <- param_is_evol_stoch(liste_place=liste_place, nb_iter=1, mode_simul=mode_simul, horizon=horizon)
-  # #print("fin param_is_evol()")
-  # param_hd_evol <- param_hd_evol_stoch(liste_place=liste_place, nb_iter=1, mode_simul=mode_simul, horizon=horizon)
-  # #print("fin param_hd_evol()")
-  # param_n_st_v <- param_evol_n_st_v_stoch(liste_place=liste_place, nb_iter=1, mode_simul=mode_simul, horizon=horizon, liste_ess=liste_gress)
-  # #print("fin param_n_st_v()")
-
-  # fic_arbre=Arbres[Arbres$groupe==1,]; fic_etude=EtudeA[EtudeA$groupe==1,];
-  # iteration=1; param_hdom0_global=param_hdom0_global[[1]]; parametre_vol=parametre_vol; long_int=dt;
-
-  prep_arb <- Prep_arbres(fic_arbre=fic_arbre, ht=ht, vol=vol, iteration=iteration, mode_simul=mode_simul, parametre_ht=parametre_ht, parametre_vol=parametre_vol, liste_ess_ht=liste_ess_ht) # la fct retourne maintenant 2 fichiers: la liste des arbres et la compilation placette
-  #print("fin prep_arb()")
-  DataCompile <- prep_arb[[2]]      # extraire le fichier compile a la placette
-  Arbres_prep <- prep_arb[[1]]      # extraire le fichier des arbres pour le calcul de la hauteur dominante
-  # appliquer la fonction qui calcule la hdom de la placette à partir des études d'arbres
-  HD <- Prep_etude(fic_etude=fic_etude, fic_arbre=Arbres_prep, iteration=iteration, mode_simul=mode_simul, param_hdom0_ess=param_hdom0_ess, param_hdom0_global=param_hdom0_global)
-  #print("fin Prep_etude()")
-  # ajouter la hdom au fichier compile
-  DataCompile_final <- left_join(DataCompile, HD, by = "id_pe")
-  # Placette au temps 0 de l'iteration i
-  PlacT0 <- DataCompile_final %>%
-    dplyr::select(id_pe, annee, temps, tbe, pert, hd1, is1,
-                  stbop1, stpeu1, stft1, stri1, strt1, stsab1, stepn1, stepx1, sttot1,
-                  nbop1, npeu1, nft1, nri1, nrt1, nsab1, nepn1, nepx1, ntot1,
-                  vbop1, vpeu1, vft1, vri1, vrt1, vsab1, vepn1, vepx1, vtot1,
-                  pct_bop1, pct_peu1, pct_ft1, pct_ri1, pct_rt1, pct_sab1, pct_epn1, pct_epx1)
-  # faire un fichier des variables fixes dans le temps
-  data_info <- DataCompile_final %>% dplyr::select(id_pe, sdom_bio, altitude, p_tot, t_ma, prec_gs, temp_gs, contains("iqs_"), contains('orig'),
-                                                   type_eco, veg_pot, contains('vpm'), contains('vpr'), milieu, mp0, mp1, mp2, mp3, mp4, mp5, mp6, mp789,
-                                                   cec, oc, ph, sand, silt, clay)
-  # enlever les data_info du fichier DataCompile_final
-  DataCompile_final[colnames(data_info)[-1]]<- list(NULL)
-  liste_nom <- names(DataCompile_final)
-  # pour chaque pas de simulation
-  data_simule_tous <- NULL
-  for (k in 1:horizon) {
-    # ne garder que la liste de placettes avec les pct_ess
-    data_temp <-DataCompile_final %>% dplyr::select(id_pe, contains('pct_')) %>% ungroup()
-    # ajouter les paramètres des équations de Natura à la liste de placette
-    Data_param <- Prep_parametre(data=data_temp, data_info=data_info, iter=iteration, mode_simul=mode_simul, pas=k, param_is_evol=param_is_evol,
-                                 param_hd_evol=param_hd_evol, param_n_st_v=param_n_st_v, liste_ess=liste_ess)
-    #print("fin prep_parametre()")
-    # Simulation pour une irétation et un pas de simulation
-    DataCompile_final <- Natura_oneStep(data=DataCompile_final, param=Data_param, data_info=data_info, long_int=long_int, pas=k,
-                                dec_perturb=dec_perturb, dec_tbe1=dec_tbe1, tbe1=tbe1, dec_tbe2=dec_tbe2, tbe2=tbe2)
-    #print("fin natura_onestep()")
-    # append des pas de simulations: POUURA SE FAIRE AVEC UN LAPPLY
-    data_simule_tous <- bind_rows(data_simule_tous, DataCompile_final)
-  }
-  # Ajout du point de départ de la simulation aux simulations
-  outputFinaliter <- bind_rows(PlacT0, data_simule_tous)  %>% mutate(iter=iteration)
-
-  return(outputFinaliter)
-}
-
 

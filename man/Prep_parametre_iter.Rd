@@ -2,20 +2,23 @@
 % Please edit documentation in R/Prep_parametre.R
 \name{Prep_parametre_iter}
 \alias{Prep_parametre_iter}
-\title{Select the growth model parameters associated with an iteration for a list of plots for a simulation with Natura 3.0}
+\title{Sélectionne les paramètres des modèles associés à une itération, pour le cas où un fichier à l'échelle de la placette est fourni}
 \usage{
 Prep_parametre_iter(iteration, param_ishd_evol, param_n_st_v, liste_ess)
 }
 \arguments{
-\item{iteration}{Iteration number}
+\item{iteration}{Numéro de l'itération}
 
-\item{param_n_st_v}{Object with n-st-v growth models parameter values for all time steps and all iterations}
+\item{param_ishd_evol}{Objet contenant les paramètres du modèle de l'indice de Shannon et du modèle de hauteur dominante, pour toutes les itérations et pas de simulation}
 
-\item{liste_ess}{Vector with Natura group species code names}
+\item{param_n_st_v}{Objet contenant les paramètres des modèles de Nxxx, STxxx et Vxxx, pour toutes les itération et pas de smulation}
+
+\item{liste_ess}{Vecteur contenant les codes des groupes d'essences de Natura}
 }
 \value{
-Dataframe of one observation with all the growth models parameter values for an iteration
+Table avec une seule ligne contenant tous les paramètres des effets fixes des modèles
 }
 \description{
-Select the growth models parameters associated with an iteration.
+Sélectionne les paramètres des modèles associés à une itération, pour le cas où un fichier à l'échelle de la placette est fourni en entrée.
+Ces paramètres sont ceux qui sont fixes pour toute une itération, donc pour tous les pas de simulation, soit les paramètres des effets fixes.
 }

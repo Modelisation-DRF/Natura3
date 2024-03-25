@@ -12,115 +12,52 @@
 ################################################################
 
 
-#' Select the growth model parameters associated with a time step and an iteration for a list of plots for a simulation with Natura 3.0
+
+
+
+
+#' Sélectionne les paramètres des modèles associés à un pas de simulation, pour le cas où un fichier à l'échelle de la placette est fourni
 #'
-#' @description Select and add to plot dataframe all the growth models parameters associated with a time step and an iteration.
-#' It also determine the dominant species of the plot and select iqs associated with this species.
+#' @description Sélectionne les paramètres des modèles associés à un pas de simulation, pour le cas où un fichier à l'échelle de la placette est fourni en entrée.
+#' Ces paramètres sont ceux qui changent à chauqe pas de simulation pour une itération donnée, soit les erreurs résiduelles.
+#' Ajoute les paramètres au fichier compilé à la placette. Détermine le groupe d'essences dominant et sélectionne l'IQS associé.
 #'
-#' @param data Dataframe with only plot id (id_pe) and variables of percentage of group species basal area (pct_epn, pct_epx, etc)
-#' @param pas Time step number
-#' @inheritParams simul_oneIter_compile
+#' @param data Table contenant seulement l'identifiant des placettes (id_pe) et les variables contenant le pourcentage de surface terrière de chaque groupe d'essences (pct_epn1, pct_epx1, etc),  une ligne par placette
+#' @param pas Numéro du pas de simulation
+#' @inheritParams simul_oneIter_compileV2
 #'
-#' @return Dataframe of plot characteristics and all their growth models parameter values for a time step and an iteration, ready to be simulated
-#' @export
-#'
-# @examples
-Prep_parametre <- function(data, data_info, iteration, pas, mode_simul, param_is_evol, param_hd_evol, param_n_st_v, liste_ess){
-
-  ii <- iteration
-  k <- pas
-
-  # déterminer l'essence principale de la placette à chaque pas de simulation pour les modèles hd et is selon le max de pct_xxx
-  # déterminer aussi l'iqs de l'essence dominante pour le modèle de hd
-  ess_max <- data %>% dplyr::select(-id_pe)
-  ess_max$ess_dom <- gsub('1','', substr(names(ess_max)[max.col(ess_max[,1:8])],5,7)) # il faut enlever le 1 au bout du nom de l'ess
-  ess_max$iqs <- eval(parse(text = paste0('data_info$iqs_',ess_max$ess_dom)))
-  data <- bind_cols(data['id_pe'],ess_max[,c('ess_dom','iqs')])
-  data$ess_dom[data$ess_dom %in% c('rt','epx')] <- 'epn'
-  data$ess_dom[data$ess_dom =='ft'] <- 'bop'
-
-  liste_ess <- toupper(liste_ess)
-  # N-St-V: effets fixes de chaque essence, tous sur une même ligne, change seulement avec l'itération
-  param_nstv <- bind_cols(lapply(liste_ess, function(x) param_n_st_v[[x]]$effet_fixe %>% filter(iter==ii) %>% dplyr::select(-iter)))
-  # N-St-V: erreur résiduelle de placette : une ligne par placette/pas
-    if (mode_simul=='STO') {
-      resid_tous <- data['id_pe']
-      for (x in liste_ess) {
-        # erreur résiduelle de n-st-v de chaque groupe d''essence à l'échelle de la placette, qui change à chaque pas de simulation pour une même placette
-        resid <-param_n_st_v[[x]]$erreur_residuelle %>% filter(iter==ii, pas==k) %>% dplyr::select(-iter, -pas)
-        # ajouter le nom de l'essence au bout de res_n, res_st, res_v
-        names(resid) <- c('id_pe', paste0('res_n',tolower(x)), paste0('res_st',tolower(x)), paste0('res_v',tolower(x)))
-        resid_tous <- inner_join(resid_tous, resid, by='id_pe')
-    }
-    Data2 <- inner_join(data, resid_tous, by='id_pe') %>% bind_cols(param_nstv)
-  }
-  if (mode_simul!='STO'){
-    Data2 <- data %>%
-      mutate(res_nepn=0, res_stepn=0, res_vepn=0, res_nepx=0, res_stepx=0, res_vepx=0, res_nsab=0, res_stsab=0, res_vsab=0,
-             res_nrt=0, res_strt=0, res_vrt=0, res_nri=0, res_stri=0, res_vri=0, res_nbop=0, res_stbop=0, res_vbop=0,
-             res_npeu=0, res_stpeu=0, res_vpeu=0, res_nft=0, res_stft=0, res_vft=0) %>%
-    bind_cols(param_nstv)
-  }
-
-  # IS et HD: effet fixe de l'essence dominante
-  liste <- names(param_is_evol)
-  param_is <- bind_rows(lapply(liste, function(x)  param_is_evol[[x]]$effet_fixe %>% filter(iter==ii) %>% dplyr::select(-iter) %>% mutate(ess_dom=tolower(x))))
-  param_hd <- bind_rows(lapply(liste, function(x)  param_hd_evol[[x]]$effet_fixe %>% filter(iter==ii) %>% dplyr::select(-iter) %>% mutate(ess_dom=tolower(x))))
-  param_is_hd <- inner_join(param_is, param_hd, by='ess_dom')# %>% mutate(ess_dom_ass=ess_dom) %>% dplyr::select(-ess_dom)
-
-  # ajouter les paramètres de is et hs selon l'essence dominante
-  # il n'y a pas de modèle pour rt-ft-epx, les associer avec une des 5 essences modélisées
-  Data3 <- left_join(Data2, param_is_hd, by='ess_dom')
-
-  if (mode_simul=='STO') {
-    rand_is <- bind_rows(lapply(liste, function(x) param_is_evol[[x]]$random_placette %>% filter(iter==ii) %>% dplyr::select(-iter) %>% mutate(ess_dom=tolower(x)) %>% rename(rand_plot_is=random_plot)))
-    resid_is <- bind_rows(lapply(liste, function(x) param_is_evol[[x]]$erreur_residuelle %>% filter(iter==ii, pas==k) %>% dplyr::select(-iter, -pas) %>% mutate(ess_dom=tolower(x)) %>% rename(res_plot_is=res_plot))) %>% dplyr::select(res_plot_is)
-
-    rand_hd <- bind_rows(lapply(liste, function(x) param_hd_evol[[x]]$random_placette %>% filter(iter==ii) %>% dplyr::select(-iter) %>% mutate(ess_dom=tolower(x))%>% rename(rand_plot_hd=random_plot))) %>% dplyr::select(rand_plot_hd)
-    resid_hd <- bind_rows(lapply(liste, function(x) param_hd_evol[[x]]$erreur_residuelle %>% filter(iter==ii, pas==k) %>% dplyr::select(-iter, -pas) %>% mutate(ess_dom=tolower(x)) %>% rename(res_plot_hd=res_plot)))   %>% dplyr::select(res_plot_hd)
-
-    erreur_tous <- bind_cols(rand_is, resid_is, rand_hd, resid_hd)
-
-    # ajouter les erreurs de is et hs selon l'essence dominante de la placette
-    Data4 <- left_join(Data3, erreur_tous, by=c('id_pe','ess_dom') )
-  }
-  if (mode_simul!='STO') {
-    Data4 <- Data3 %>% mutate(rand_plot_is=0, res_plot_is=0, rand_plot_hd=0, res_plot_hd=0)
-  }
-
-  #print("Fin Prep_parametre()")
-  return(Data4)
-}
-
-
-
-#' Select the growth model parameters associated with a time step for a list of plots for a simulation with Natura 3.0
-#'
-#' @description Select and add to plot dataframe all the growth models parameters associated with a time step.
-#' It also determine the dominant species of the plot and select iqs associated with this species.
-#'
-#' @param data Dataframe with only plot id (id_pe) and variables of percentage of group species basal area (pct_epn, pct_epx, etc)
-#' @param pas Time step number
-#' @inheritParams simul_oneIter_compile
-#'
-#' @return Dataframe of plot characteristics and all their growth models parameter values for a time step
+#' @return Table contenant toutes les colonnes nécessaires pour effectuer un pas de simulation pour un pas de simulation.
 #' @export
 #'
 # @examples
 Prep_parametre_pas <- function(data, data_info, iteration, pas, mode_simul, param_ishd_evol, param_n_st_v, liste_ess){
 
+
+  # data=data_temp; data_info=data_info; iteration=iteration; mode_simul=mode_simul; pas=k; param_ishd_evol=param_ishd_evol; param_n_st_v=param_n_st_v; liste_ess=liste_ess;
+
   ii <- iteration
   k <- pas
 
 
   # déterminer l'essence principale de la placette à chaque pas de simulation pour les modèles hd et is selon le max de pct_xxx
   # déterminer aussi l'iqs de l'essence dominante pour le modèle de hd
+  iqs_info <- data_info %>% ungroup() %>% dplyr::select(contains("iqs"))
   ess_max <- data %>% dplyr::select(-id_pe)
-  ess_max$ess_dom <- gsub('1','', substr(names(ess_max)[max.col(ess_max[,1:8])],5,7)) # il faut enlever le 1 au bout du nom de l'ess
-  ess_max$iqs <- eval(parse(text = paste0('data_info$iqs_',ess_max$ess_dom)))
+  ess_max$ess_dom <- gsub('1','', substr(names(ess_max)[max.col(ess_max[,1:8], ties.method = "first")],5,7)) # il faut enlever le 1 au bout du nom de l'ess, par defaut la méthode est random pour choisir en cas d'égalité, je vais mettre first
+  # il n'y a pas de modèles de hd pour epx-rt-ft, on emprunte une essence;
+  ess_max$ess_dom[ess_max$ess_dom %in% c('rt','epx')] <- 'epn'
+  ess_max$ess_dom[ess_max$ess_dom =='ft'] <- 'bop'
+  # ajouter les 8 iqs
+  ess_max <- bind_cols(ess_max,iqs_info)
+  #ess_max$iqs <- eval(parse(text = paste0('data_info$iqs_',ess_max$ess_dom))) # ça ne marche pas ici: c'est le bon data_info$iqs_xxx qui s'écrit à chaque ligne, mais quand on fait eval(data_info$iqs_xxx) sur une ligne, ça retourne toues les iqs_xxx du fichier, et non pas un seul,
+  ess_max <- ess_max %>% mutate(
+    iqs = ifelse(ess_dom=='epn', iqs_epn,
+                    ifelse(ess_dom=='sab', iqs_sab,
+                           ifelse(ess_dom=='ri', iqs_ri,
+                                  ifelse(ess_dom=='bop', iqs_bop,
+                                        ifelse(ess_dom=='peu',iqs_peu, NA)))))
+  )
   data <- bind_cols(data['id_pe'],ess_max[,c('ess_dom','iqs')])
-  data$ess_dom[data$ess_dom %in% c('rt','epx')] <- 'epn'
-  data$ess_dom[data$ess_dom =='ft'] <- 'bop'
 
 
   # N-St-V: erreur résiduelle de placette : une ligne par placette/pas
@@ -169,13 +106,15 @@ Prep_parametre_pas <- function(data, data_info, iteration, pas, mode_simul, para
 }
 
 
-#' Select the growth model parameters associated with an iteration for a list of plots for a simulation with Natura 3.0
+
+#' Sélectionne les paramètres des modèles associés à une itération, pour le cas où un fichier à l'échelle de la placette est fourni
 #'
-#' @description Select the growth models parameters associated with an iteration.
+#' @description Sélectionne les paramètres des modèles associés à une itération, pour le cas où un fichier à l'échelle de la placette est fourni en entrée.
+#' Ces paramètres sont ceux qui sont fixes pour toute une itération, donc pour tous les pas de simulation, soit les paramètres des effets fixes.
 #'
-#' @inheritParams simul_oneIter_compile
+#' @inheritParams simul_oneIter_compileV2
 #'
-#' @return Dataframe of one observation with all the growth models parameter values for an iteration
+#' @return Table avec une seule ligne contenant tous les paramètres des effets fixes des modèles
 #' @export
 #'
 # @examples

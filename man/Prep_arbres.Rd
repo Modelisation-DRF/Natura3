@@ -2,47 +2,43 @@
 % Please edit documentation in R/Prep_fichier_arbres.R
 \name{Prep_arbres}
 \alias{Prep_arbres}
-\title{Plot compilation from tree list}
+\title{Compilation des placettes à la step 0}
 \usage{
 Prep_arbres(
   fic_arbre,
   ht,
   vol,
-  iteration,
-  parametre_ht_dhp,
-  parametre_vol,
-  mode_simul,
-  liste_ess_ht
+  nb_iter = 1,
+  nb_step = 1,
+  mode_simul = "DET",
+  seed_value = NULL,
+  dt = dt
 )
 }
 \arguments{
-\item{fic_arbre}{Dataframe with one line per tree per plot, with variables : id_pe, sdom_bio, altitude, veg_pot, dummy vp, milieu, dummy mp, type_eco, p_tot, t_ma, prec_gs, temp_gs, dummy orig, temps, all iqs, ph, cec, oc, sand, clay, silt, no_arbre, essence, dhpcm, nb_tige, tige_ha, etat, hauteur_pred, vol_dm3}
+\item{fic_arbre}{Table avec une ligne par arbre (ou par classe de dhp) pour chaque placette, avec les colonnes : id_pe, sdom_bio, altitude, veg_pot, dummy vp, milieu, dummy mp, type_eco, p_tot, t_ma, prec_gs, temp_gs, dummy origine, temps, iqs_xxx, ph, cec, oc, sand, clay, no_arbre, essence, dhpcm, nb_tige, tige_ha, etat, (hauteur_pred, vol_dm3 optionnels)}
 
-\item{ht}{A boolean
+\item{ht}{Booléen
 \itemize{
-  \item \code{TRUE} (default): if tree height must be estimated, when \code{file_arbre} is specified
-  \item \code{FALSE}: if tree height is in \code{file_arbre}, ignored if \code{file_compile} is specified. Column name must be hauteur_pred (in meters)
+  \item \code{TRUE} (par défaut): si la hauteur des arbres doit être estimée, si \code{file_arbre} est fourni
+  \item \code{FALSE}: si la hauteur des arbres est fournie dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être hauteur_pred (en mètres)
   }}
 
-\item{vol}{A boolean
+\item{vol}{Booléen
 \itemize{
-  \item \code{TRUE} (default): if tree volume must be estimated, when \code{file_arbre} is specified
-  \item \code{FALSE}: if tree volume is in \code{file_arbre}, ignored if \code{file_compile} is specified. If provided, column name must be vol_dm3 (in dm3)
+  \item \code{TRUE} (par défaut): si le volume des arbres doit être estimé, si \code{file_arbre} est fourni
+  \item \code{FALSE}: si le volume des arbres est fourni dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être vol_dm3 (en dm3)
   }}
 
-\item{iteration}{Iteration number}
+\item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}
 
-\item{parametre_ht_dhp}{Object with the tree height model parameter values}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{parametre_vol}{Object with the tree volume model parameter values}
-
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
-
-\item{liste_ess_ht}{Vector of species code name with a tree height model}
+\item{seed_value}{Optionnel. Valeur de départ pour la génération de nombres aléatoires. Utilisé lors des tests pour la reproductibilité des résultats.}
 }
 \value{
-A list of 2 elements: dataframe of tree characteristics (with height and volume) and dataframe of plot characteristics ready to be simulated
+Une liste de 2 éléments: table contenant les arbres avec leur hauteur et volume (une ligne par arbre) et une table des caractérisatiques des placettes (une ligne par placette)
 }
 \description{
-Estimate tree height and/or tree volume if necessary, calculate shanon index from trees dhp, calculate stand characterics (n-st-v) per species group
+Compilation des placettes à la step 0: estime la hauteur et le volume des arbres si nécessaire, calcule l'indice de Shannon et calcule les caractéristiques dendrométriques (N, ST, V) par groupe d'essences.
 }

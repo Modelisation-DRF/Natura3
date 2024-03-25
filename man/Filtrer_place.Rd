@@ -2,22 +2,23 @@
 % Please edit documentation in R/Filtrer_place.R
 \name{Filtrer_place}
 \alias{Filtrer_place}
-\title{Filtering plots and preparing covariates for a simulation with Natura 3.0 growth simulator}
+\title{Sélectionne les placettes qui peuvent être simulées avec Natura 3.0}
 \usage{
 Filtrer_place(fichier)
 }
 \arguments{
-\item{fichier}{Dataframe of trees or of plots with columns: type_eco, sdom_bio, origine, iqs_pot_epn, iqs_pot_epb, iqs_pot_pig, iqs_pot_sab, iqs_pot_tho, iqs_pot_pib, iqs_pot_bop, iqs_pot_pex}
+\item{fichier}{Nom de la table à l'échelle de l'arbre ou de la placette avec les colonnes nécessaires}
 }
 \value{
-Dataframe filtered and with all necessary plots covariates.
+Table dont les placettes ont été filtrées et contenant des nouvelles covariables.
 }
 \description{
-Filter plots and prepare covariates for all the models of Natura 3.0 growth simulator.
+Sélectionne les placettes qui peuvent être simulées avec Natura 3.0
 }
 \details{
-The plots are filtered for type_eco, sdom_bio and origine values. Variables veg_pot and milieu are extracted from type_eco, binary variables are created for each category of sdom_bio, veg_pot, milieu and origine.
-Variables containing potential iqs are renamed. The variable annee=0 is created.
+Les placettes sont sélectionnées selon le type écologique (type_eco), le sous-domaine bioclimatique (sdom_bio) et la perturbation d'origine (origine).
+Les variables végétation potentielle (veg_pot) et milieu physique (milieu) sont créées à partir de type_eco, des variables dichotomiques sont créées pour chaque niveau de sdom_bio,
+veg_pot, milieu et origine. Les variables d'IQS potentiel sont renommées. La variable annee=0 est créée.
 }
 \examples{
 \dontrun{

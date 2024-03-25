@@ -21,6 +21,7 @@ A data frame with 29 lignes et 13 colonnes:
   \item{ALTITUDE}{Altitude (m)}
   \item{ORIGINE}{Code de la perturbation d'origine}
   \item{temps}{Temps depuis l'orgine}
+  \item{an_mes}{Année de la mesure}
 }
 }
 \usage{

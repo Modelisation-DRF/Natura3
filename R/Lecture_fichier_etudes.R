@@ -11,13 +11,13 @@
 #                                                              #
 ################################################################
 
-#' Function reading the study-tree file for a simulation with Natura 3.0
+#' Lire le fichier des arbres-études et valider le nom des colonnes
 #'
-#' @description Read a study-tree file for a simulation with Natura 3.0. Check the names of the variables and filter trees from variable dhp, hauteur and etage
+#' @description Lire le fichier des arbres-études et valider le nom des colonnes. Filtrer les arbres selon leur dhp, hauteur et etage
 #'
-#' @param file Name of the file to read (dataframe, Excel or csv file)
+#' @param file Nom du fichier à lire (table, Excel ou csv)
 #'
-#' @return Dataframe of filtered study-tree or an error message
+#' @return Table dont les arbres-études ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 #' @export
 #'
 # @examples
@@ -44,10 +44,21 @@ Lecture_etudes <- function(file){
 
   # filtrer les etudes d'arbres
   if (!is.character(etudes)) {
+
+    # Valider le contenu des colonnes
+    etudes <- valid_fic(type_fic='etudes', fichier=etudes)
+
+    # verifier les covariables de peuplements dans filter_place
+    # verfier les compil dans lecture_compil
+
+    if (!is.character(etudes)) {
+
     etudes <- etudes %>%
-      filter(dhpcm>9, etage %in% c('C','D','c','d')) %>%
-      filter(!is.na(hauteur), hauteur>=2) %>%
+      filter(dhpcm>9, toupper(etage) %in% c('C','D')) %>%
+      #filter(!is.na(hauteur), hauteur>=2) %>%
       dplyr::select(id_pe, essence, dhpcm, hauteur)
+
+    }
   }
   return(etudes)
 }

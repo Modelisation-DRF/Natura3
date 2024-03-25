@@ -1,6 +1,9 @@
 variable;categorie
 latitude;coor
 longitude;coor
+p_tot;modele_ht
+t_ma;modele_ht
+altitude;modele_ht
 iqs_pot_sab;iqs
 iqs_pot_epn;iqs
 iqs_pot_epb;iqs
@@ -9,15 +12,12 @@ iqs_pot_bop;iqs
 iqs_pot_pex;iqs
 iqs_pot_pig;iqs
 iqs_pot_tho;iqs
-p_tot;clim
-t_ma;clim
 prec_gs;clim
 temp_gs;clim
 cec;sol
 oc;sol
 ph;sol
 sand;sol
-silt;sol
 clay;sol
 essence;arbre
 dhpcm;arbre
@@ -29,12 +29,10 @@ essence;etude
 dhpcm;etude
 hauteur;etude
 id_pe;plot
-sdom_bio;plot
-altitude;plot
 type_eco;plot
 temps;plot
 origine;plot
-an_mes;plot
+sdom_bio;plot
 vol_dm3;vol
 hauteur_pred;ht
 nbop;dendro
@@ -63,3 +61,4 @@ vri;dendro
 vrt;dendro
 hd;dendro
 is;dendro
+an_mes;an_mes

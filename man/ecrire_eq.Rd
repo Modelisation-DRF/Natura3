@@ -2,23 +2,27 @@
 % Please edit documentation in R/Ecrire_equations.R
 \name{ecrire_eq}
 \alias{ecrire_eq}
-\title{Write R code associated to one of the equations of the Natura 3.0 growth simulator for prediction}
+\title{Génère en code R les équations du simulateur de croissance Natura 3.0}
 \usage{
 ecrire_eq(vari, ess)
 }
 \arguments{
-\item{vari}{Name of the variable to predict: n, st, v, hd or is}
+\item{vari}{Nom de la variable réponse pour laquelle on veut l'équation : n, st, v, hd ou is}
 
-\item{ess}{Group species code: sab, epn, epx, rt, ri, bop, peu, ft, or empty if the variable is hd or is}
+\item{ess}{Code du groupe d'essences pour lequel on veut l'équation, si \code{vari} est n, st ou v : sab, epn, epx, rt, ri, bop, peu, ft. Vide pour \code{vari=is}. Si \code{vari=hd},
+utiliser ce paramètre pour générer chacune des parties de l'équation: a pour générer la partie associé au paramètre a, c pour générer la partie associée au paramètre c,
+vide pour générer la forme générale de l'équation hd}
 }
 \value{
-A character string containing the equation for predicting the variable \code{vari} of group species \code{ess}
+Une chaine de caractères contenant l'équation pour prédire la variable \code{vari} du groupe d'essences \code{ess}
 }
 \description{
-Write R code associated to one of the equations of the Natura 3.0 growth simulator for predicting : N, St or V for a species group, or HD or IS
+Génère en code R les équations du simulateur de croissance Natura 3.0
 }
 \examples{
 \dontrun{
 ecrire_eq(vari="n", ess="bop")
+ecrire_eq(vari="is")
+ecrire_eq(vari="hd", ess="a")
 }
 }

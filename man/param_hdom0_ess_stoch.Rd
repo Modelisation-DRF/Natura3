@@ -2,29 +2,36 @@
 % Please edit documentation in R/Parametres_stochastiques.R
 \name{param_hdom0_ess_stoch}
 \alias{param_hdom0_ess_stoch}
-\title{Generating parameters of the tree species height model for step 0 domimant height estimation}
+\title{Génère les paramètres du modèle pour estimer la hauteur des arbres par essence à la step 0 pour le calcul de la hauteur dominante.}
 \usage{
-param_hdom0_ess_stoch(liste_arbre, nb_iter, mode_simul)
+param_hdom0_ess_stoch(
+  liste_arbre,
+  mode_simul = "DET",
+  nb_iter = 1,
+  seed_value = NULL
+)
 }
 \arguments{
-\item{liste_arbre}{Dataframe with tree ID (no_arbre) and plot Id (id_pe) for which tree height must be predicted for dominant height estimation}
+\item{liste_arbre}{Table contenant l'identifiant de l'arbre (no_arbre) et l'identifiant de la placette (id_pe) pour lesquels la hauteur doit être estimée.}
 
-\item{nb_iter}{Number of iteration if stochastic mode, ignored if \code{mode_simul="DET"}}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
+\item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}
+
+\item{seed_value}{Optionnel. Valeur de départ pour la génération de nombres aléatoires. Utilisé lors des tests pour la reproductibilité des résultats.}
 }
 \value{
-A list of lists, one list per species for which there is a tree height model, and for each species, a list with 3 elements:
+Une liste de listes. Une liste par essence pour lesquelles il y a un modèle de hauteur, et pour chaque essence, une liste avec ces 3 éléments:
 \enumerate{
-  \item essence: string with species code name
-  \item effet_fixe: dataframe of fixed effect parameter values (one line per iteration)
-  \item erreur_arbre: dataframe of residual error values (random tree effect values and residual error values, one line per tree per iteration)
+  \item essence: une chaine de caractère contenant le code de l'essence
+  \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par itération
+  \item erreur_arbre: table contenant les valeurs des erreurs résiduelles et les valeurs des effets aléatoires d'arbres, une ligne par arbre par itération
 }
 }
 \description{
-Generate parameters of the tree species height model for step 0 dominant height estimation, deterministic or stochastic, for each tree of each plot and for all iterations.
+Génère les paramètres du modèle pour estimer la hauteur des arbres par essence à la step 0 pour le calcul de la hauteur dominante, déterministe ou stochastique, pour chacun des arbres de chaque placette pour toutes les itérations.
 }
 \details{
-The species tree height estimation model for dominant height estimation is a non linear mixed model calibrated per species. There is a tree random effect
-and the residual errors are not corralated. There is no covariance matrix of fixed effects, since there is only one parameter.
+Le modèle est un modèle non-linéaire mixte calibré par essence, avec un effet aléatoire d'arbre. Il n'y a pas de matrice de corrélation sur les résidus.
+Il n'y a pas de matrice de covariances des effets fixes car il n'y a qu'un seul paramètre.
 }

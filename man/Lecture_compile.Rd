@@ -2,61 +2,60 @@
 % Please edit documentation in R/Lecture_fichier_compile.R
 \name{Lecture_compile}
 \alias{Lecture_compile}
-\title{Function reading the compiled plot file to be simulated with Natura 3.0}
+\title{Lire le fichier des placettes à simuler avec Natura et valider le nom des colonnes}
 \usage{
 Lecture_compile(file, iqs, climat, sol)
 }
 \arguments{
-\item{file}{Name of the file to read (dataframe, Excel or csv file)}
+\item{file}{Nom du fichier des arbres à lire (table, Excel ou csv)}
 
-\item{iqs}{A boolean
+\item{iqs}{Booléen
 \itemize{
-   \item \code{TRUE} (default): if potential site index are to be extrated from maps. Columns latitude and longitude must be provided in \code{file_arbre} or in \code{file_compile}.
+   \item \code{TRUE} (par défaut): si les indices de qualité de station potentielle doivent être extraits des cartes. Les colonnes latitude et longitude doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
    \itemize{
-      \item latitude, longitude: coordinates of plots, in decimal degrees
+      \item latitude, longitude: coordonnées des placettes, en degré décimal
    }
-   \item \code{FALSE}: if potential site index (m) are provided in \code{file_arbre} or \code{in file_compile}. Column names must be:
+   \item \code{FALSE}: si les indices de qualité de station potentielle (m) sont fournis dans \code{file_arbre} ou \code{in file_compile}. Le nom des 8 colonnes doit être:
    \itemize{
      \item iqs_pot_sab, iqs_pot_epn, iqs_pot_epb, iqs_pot_pig, iqs_pot_tho, iqs_pot_pib, iqs_pot_bop, iqs_pot_pex.
    }
  }}
 
-\item{climat}{A boolean
+\item{climat}{Booléen
 \itemize{
-   \item \code{TRUE} (default): if climate variables are to be extrated from maps. Columns latitude, longitude, an_mes must be provided in \code{file_arbre} or in \code{file_compile}.
+   \item \code{TRUE} (par défaut): si les variables climatiques doivent être extraites des cartes. Les colonnes latitude, longitude et l'année de mesure de la placette doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
    \itemize{
-     \item latitude, longitude: coordinates of plots, in decimal degrees
-     \item an_mes: measurement year of the plot
+     \item latitude, longitude: coordonnées des placettes, en degré décimal
+     \item an_mes: année de mesure de la placette
    }
-  \item \code{FALSE}: if climate variables are in \code{file_arbre} or in \code{file_compile}. Column names must be:
+  \item \code{FALSE}: si les variables climatiques sont fournies dans \code{file_arbre} ou \code{file_compile}. Le nom des 4 colonnes doit être:
   \itemize{
-    \item p_tot: 1980-2010 mean total precipitations (mm)
-    \item t_ma: 1980-2010 mean annual temprature (Celcius)
-    \item prec_gs: last 10-years mean growing season precipitations (mm)
-    \item temp_gs: last 10-years mean growing season temperature (Celcius)
+    \item p_tot: précipitations totales annuelles, moyenne sur la période 1980-2010 (mm)
+    \item t_ma: température moyenne annuelle sur la période 1980-2010 (Celcius)
+    \item prec_gs: précipitations durant la saison de croissance, moyenne sur les 10 dernières années avant le mesurage de la placette (mm)
+    \item temp_gs: température moyenne durant la saison de croissance, moyenne sur les 10 dernières années avant le mesurage de la placette (Celcius)
   }
 }}
 
-\item{sol}{A boolean
+\item{sol}{Booléen
 \itemize{
-  \item \code{TRUE} (default): if soil variables are to be extrated from maps. Columns latitude and longitude must be provided in \code{file_arbre} or in \code{file_compile}.
+  \item \code{TRUE} (par défaut): si les variables sur les propriétés des sols sont à extraires des cartes. Les colonnes latitude et longitude doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
   \itemize{
-    \item latitude, longitude: coordinates of plots, in decimal degrees
+    \item latitude, longitude: ccoordonnées des placettes, en degré décimal
     }
-  \item \code{FALSE}: if SIIGSOL soil variables are in \code{file_arbre} or in \code{file_compile}. Soils properties at depth 0-5 cm. Column names must be:
+  \item \code{FALSE}: si les variables sur les propriétés des sols (SIIGSOL) sont fournies dans \code{file_arbre} ou dans \code{file_compile}. Propriétés des sols dans la profondeurt 0-5 cm. Le nom des 6 colonnes doit être:
   \itemize{
     \item ph: pH
-    \item clay: fraction of clay
-    \item silt: fraction of silt
-    \item sand: fraction of sand
-    \item cec: capacité d'échange cationique
-    \item oc: matière organique
+    \item clay: proportion d'argile (valeur de 0 à 100)
+    \item sand: proportion de sable (valeur de 0 à 100)
+    \item cec: capacité d'échange cationique (méq/100g)
+    \item oc: proportion de matière organique (valeur de 0 à 100)
   }
 }}
 }
 \value{
-Dataframe at the plot scale ready to be simulate or an error message
+Table à l'échelle de la placette ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 }
 \description{
-Read a compiled plot file to be simulated with Natura 3.0. check the names of the variables, create total and  percentage variables, rename variables.
+Lire le fichier des placettes à simuler avec Natura et valider le nom des colonnes. Calculer le toalt des groupes d'essences pour N, ST et V et calculer les pourcentage de ST de chaque groupe d'essences.
 }

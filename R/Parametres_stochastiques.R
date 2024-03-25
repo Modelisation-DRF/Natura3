@@ -25,27 +25,33 @@
 #######################################################################################################################
 
 
-#' Generating parameters of the tree species height model for step 0 domimant height estimation
+#' Génère les paramètres du modèle pour estimer la hauteur des arbres par essence à la step 0 pour le calcul de la hauteur dominante.
 #'
-#' @description Generate parameters of the tree species height model for step 0 dominant height estimation, deterministic or stochastic, for each tree of each plot and for all iterations.
+#' @description Génère les paramètres du modèle pour estimer la hauteur des arbres par essence à la step 0 pour le calcul de la hauteur dominante, déterministe ou stochastique, pour chacun des arbres de chaque placette pour toutes les itérations.
 #'
 #' @details
-#' The species tree height estimation model for dominant height estimation is a non linear mixed model calibrated per species. There is a tree random effect
-#' and the residual errors are not corralated. There is no covariance matrix of fixed effects, since there is only one parameter.
+#' Le modèle est un modèle non-linéaire mixte calibré par essence, avec un effet aléatoire d'arbre. Il n'y a pas de matrice de corrélation sur les résidus.
+#' Il n'y a pas de matrice de covariances des effets fixes car il n'y a qu'un seul paramètre.
 #'
-#' @param liste_arbre Dataframe with tree ID (no_arbre) and plot Id (id_pe) for which tree height must be predicted for dominant height estimation
+#' @param liste_arbre Table contenant l'identifiant de l'arbre (no_arbre) et l'identifiant de la placette (id_pe) pour lesquels la hauteur doit être estimée.
 #' @inheritParams SimulNatura
 #'
-#' @return  A list of lists, one list per species for which there is a tree height model, and for each species, a list with 3 elements:
+#' @return  Une liste de listes. Une liste par essence pour lesquelles il y a un modèle de hauteur, et pour chaque essence, une liste avec ces 3 éléments:
 #' \enumerate{
-#'   \item essence: string with species code name
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per iteration)
-#'   \item erreur_arbre: dataframe of residual error values (random tree effect values and residual error values, one line per tree per iteration)
+#'   \item essence: une chaine de caractère contenant le code de l'essence
+#'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par itération
+#'   \item erreur_arbre: table contenant les valeurs des erreurs résiduelles et les valeurs des effets aléatoires d'arbres, une ligne par arbre par itération
 #' }
 #' @export
 #'
 # @examples
-param_hdom0_ess_stoch <- function(liste_arbre, nb_iter, mode_simul) {
+param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL) {
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   # fichier des paramètres effets fixes (hdom_param_ess_fixe.rda)
   param_ess <- hdom_param_ess_fixe
@@ -61,12 +67,16 @@ param_hdom0_ess_stoch <- function(liste_arbre, nb_iter, mode_simul) {
 
       if (mode_simul=='STO') {
 
-      param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_i[1,2]), sd = as.matrix(param_i[1,3]))) %>%
+      #param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_i[1,2]), sd = as.matrix(param_i[1,3]))) %>% # la fct rnorm ne donne pas moyenne et var axact à ceux specifies meme avec 1000000 iteration. Voir explication https://stackoverflow.com/questions/18919091/generate-random-numbers-with-fixed-mean-and-sd. Il est préférable dans mon cas d'utiliser mvrnorm avec empiracal =T, puisque  means et sd sont empiriques
+      param_hd = data.frame('b2'=mvrnorm(n = nb_iter, mu=as.matrix(param_i[1,2]), Sigma = as.matrix(param_i[1,3])^2, empirical = T)) %>% # sigma est une matrice de covariance, donc un sigma2
         mutate(iter = row_number(), ess_eq_hd=ess)
 
       # générer erreurs échelle arbre de l'essence
-      rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[3,2]))))
-      resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[2,2]))))
+      #rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[3,2]))))
+      #resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[2,2]))))
+      rand_arbre_hd = data.frame('random_arbre'=mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[3,2]), empirical = T))
+      resi_arbre_hd = data.frame('resid_arbre'=mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[2,2]), empirical = T))
+
       rand_arbre_hd = as.data.frame(bind_cols(data_arbre,rand_arbre_hd,resi_arbre_hd))
       names(rand_arbre_hd) = c('iter',names(liste_arbre),'random_arbre','resid_arbre')
       rand_arbre_hd$ess_eq_hd=ess
@@ -87,28 +97,34 @@ param_hdom0_ess_stoch <- function(liste_arbre, nb_iter, mode_simul) {
 #######################################################################################################################
 #######################################################################################################################
 
-#' Generating parameters of the global tree height model for step 0 domimant height estimation
+#' Génère les paramètres du modèle global pour estimer la hauteur des arbres à la step 0 pour le calcul de la hauteur dominante.
 #'
-#' @description Generate parameters of the global tree height model for step 0 dominant height estimation, deterministic or stochastic, for each tree of each plot and for all iterations.
+#' @description Génère les paramètres du modèle global pour estimer la hauteur des arbres à la step 0 pour le calcul de la hauteur dominante, déterministe ou stochastique, pour chacun des arbres de chaque placette pour toutes les itérations.
 #'
 #' @details
-#' The global tree height estimation model for dominant height estimation is a non linear mixed model calibrated globally for all species. There is a tree random effect
-#' and the residual errors are not corralated. There is no covariance matrix of fixed effects, since there is only one parameter.
-#' This model is used when a species is present in the tree list but not in the study-tree list.
+#' Le modèle est un modèle non-linéaire mixte calibré globalement pour toutes les essences, avec un effet aléatoire d'arbre. Il n'y a pas de matrice de corrélation sur les résidus.
+#' Il n'y a pas de matrice de covariances des effets fixes car il n'y a qu'un seul paramètre.
+#' Ce modèle est utilisé lorsqu'une essence est présente dans la liste d'arbres mias pas dans les arbres-études.
 #'
-#' @param liste_arbre Dataframe with tree ID (no_arbre) and plot Id (id_pe) for which height must be predicted for dominant height estimation
+#' @param liste_arbre Table contenant l'identifiant de l'arbre (no_arbre) et l'identifiant de la placette (id_pe) pour lesquels la hauteur doit être estimée.
 #' @inheritParams SimulNatura
 #'
-#' @return A list of 2 elements:
+#' @return Une liste de 2 éléments:
 #' \enumerate{
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per iteration)
-#'   \item erreur_arbre: dataframe of residual error values (random tree effect values and residual error values, one line per tree per iteration)
+#'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par itération
+#'   \item erreur_arbre: table contenant les valeurs des erreurs résiduelles et les valeurs des effets aléatoires d'arbres, une ligne par arbre par itération
 #' }
 #'
 #' @export
 #'
 # @examples
-param_hdom0_stoch <- function(liste_arbre, nb_iter, mode_simul) {
+param_hdom0_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL ) {
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   # fichier des paramètres (hdom_param_global_fixe.rda)
   param_global <- hdom_param_global_fixe[, 1:3]
@@ -119,12 +135,16 @@ param_hdom0_stoch <- function(liste_arbre, nb_iter, mode_simul) {
   if (mode_simul=='STO') {
 
     # générer effets fixes du modele global
-    param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_global[1,2]), sd = as.matrix(param_global[1,3]))) %>%
+    #param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_global[1,2]), sd = as.matrix(param_global[1,3]))) %>%
+    param_hd = data.frame('b2'=mvrnorm(n = nb_iter, mu=as.matrix(param_global[1,2]), Sigma = as.matrix(param_global[1,3])^2, empirical = T)) %>%
       mutate(iter = row_number())
 
     # générer erreurs échelle arbre du modèle global
-    rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[3,2]))))
-    resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[2,2]))))
+    #rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[3,2]))))
+    #resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[2,2]))))
+    rand_arbre_hd = data.frame('random_arbre'=mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[3,2]), empirical = T))
+    resi_arbre_hd = data.frame('resid_arbre'=mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[2,2]), empirical = T))
+
     rand_arbre_hd = as.data.frame(bind_cols(data_arbre,rand_arbre_hd,resi_arbre_hd))
     names(rand_arbre_hd) = c('iter',names(liste_arbre),'random_arbre','resid_arbre')
 
@@ -150,29 +170,38 @@ param_hdom0_stoch <- function(liste_arbre, nb_iter, mode_simul) {
 #######################################################################################################################
 
 
-#' Generating shannon index growth model parameter values of Natura 3.0
+#' Génère les paramètres du modèle d'évolution de l'indice de Shannon
 #'
-#' @description Generate parameters for shannon index growth model of Natura 3.0, deterministic or stochastic, for each plot for each time step and for all iterations
+#' @description Génère les paramètres du modèle d'évolution de l'indice de Shannon, déterministe ou stochastique, pour chacune des placettes et tous leurs pas de simulation, pour toutes les itérations.
 #'
 #' @details
-#' The shannon index growth model is a linear mixed model calibrated for each dominant species. There is a plot random effect
-#' and the plot residual errors are not corralated. There is a covariance matrix of fixed effects.
+#' Le modèle est un modèle linéaire mixte calibré séparément par groupe d'essences dominantes, avec un effet aléatoire de placette.
+#' Il n'y a pas de matrice de corrélation sur les résidus. Il y a une matrice de covariance des effets fixes.
 #'
-#' @param liste_place Dataframe with plot id (id_pe)
+#' @param liste_place Vecteur contenant les identifiants des placettes.
 #' @inheritParams SimulNatura
 #'
-#' @return A list of lists, one list per species group for which there is a shannon index growth model, and for each species group, a list with 4 elements:
+#' @return Une liste de listes. Une liste par groupe d'essences, et pour chaque groupe d'essences, une liste de 4 éléments:
 #' \enumerate{
-#'   \item essence: string with species group code name
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per time step per iteration per species)
-#'   \item random_placette: dataframe of random plot effect values (one line per plot per time step per iteration per species)
-#'   \item erreur_residuelle: dataframe of residual error values (one line per plot per time step per iteration per species)
+#'   \item essence: chaine de caractère contenant le code du groupe d'essences
+#'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par pas de simulation et itération
+#'   \item random_placette: table contenant les valeurs des effets aléatoires, une ligne par placette, pas de simulation et itération
+#'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
 #'
 #' @export
 #'
 # @examples
-param_is_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
+param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
+
+  #liste_place=fic; nb_iter=200; mode_simul='STO'; horizon=2; seed_value = 20;
+  # liste_place=liste_plot; mode_simul='STO'; horizon=5; nb_iter=1; seed_value = NULL
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   nb_pas <- horizon
 
@@ -180,6 +209,7 @@ param_is_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
   data_plot <- expand_grid(iter = 1:nb_iter, id_pe = liste_place)
   # liste des placettes x nb_iter x nb_pas pour accueillir les erreurs résiduelles de placette
   data_plot_pas <- as.data.frame(unclass(expand_grid(pas = 1:nb_pas, id_pe = data_plot)))
+  names(data_plot_pas) <- c('pas','iter','id_pe')
 
   # lecture des paramètres (is_param_fixe.rda, is_param_cov.rda)
   param <-  is_param_fixe
@@ -190,20 +220,31 @@ param_is_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
   tous <- list()
   for (ess in liste_ess)
     {
+    #ess="bop"
     if (mode_simul == 'STO') {
-      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter, mu = as.matrix(param[param$ess_dom==tolower(ess),c(1:4,7)]), Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6])),
-                                      nrow=nb_iter))
+      # pour que mvrnorm() fonctionne avec empirical=T, il faut autant de n que la longueur du vecteur mu à simuler
+      # ici, mu a une longueur fixe de 5
+      mu = as.matrix(param[param$ess_dom==tolower(ess),c(1:4,7)])
+      l_mu = length(mu)
+      if (nb_iter<l_mu) {nb_iter_temp=l_mu}
+        else{nb_iter_temp=nb_iter}
+      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+                                              Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6]),
+                                              empirical = T),
+                                      nrow=nb_iter_temp))[1:nb_iter,]
       names(param_is) <- names(param[param$ess_dom==tolower(ess),c(1:4,7)])
       param_is <- param_is %>% mutate(iter = row_number())
 
       # générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
-      rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
+      #rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
+      rand_plot <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
       rand_plot <- bind_cols(data_plot,rand_plot)
 
       # générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
-      res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
+      #res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
+      res_plot = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
       res_plot <- bind_cols(data_plot_pas,res_plot)
-      names(res_plot) <- c('pas','iter','id_pe','res_plot')
+      names(res_plot) <- c(names(data_plot_pas),'res_plot')
     }
     else{
       param_is <- param[param$ess_dom==tolower(ess),c(1:4,7)] %>% mutate(iter=1)
@@ -224,29 +265,36 @@ param_is_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
 #######################################################################################################################
 
 
-
-#' Generating dominant height growth model parameter values of Natura 3.0
+#' Génère les paramètres du modèle d'évolution de la hauteur dominante
 #'
-#' @description Generate parameters for dominant height growth model of Natura 3.0, deterministic or stochastic, for each plot for each time step and for all iterations
+#' @description Génère les paramètres du modèle d'évolution de la hauteur dominante, déterministe ou stochastique, pour chacune des placettes et tous leurs pas de simulation, pour toutes les itérations.
 #'
 #' @details
-#' The dominant height growth model is a nonlinear mixed model calibrated for each dominant species. There is a plot random effect
-#' and the plot residual errors are not corralated. There is a covariance matrix of fixed effects.
+#' Le modèle est un modèle non-linéaire mixte calibré séparément par groupe d'essences dominantes, avec un effet aléatoire de placette.
+#' Il n'y a pas de matrice de corrélation sur les résidus. Il y a une matrice de covariance des effets fixes.
 #'
-#' @param liste_place Dataframe with plot id (id_pe)
+#' @param liste_place Vecteur contenant les identifiants des placettes.
 #' @inheritParams SimulNatura
 #'
-#' @return A list of lists, one list per species group for which there is a dominant height growth model, and for each species group, a list with 4 elements:
+#' @return Une liste de listes. Une liste par groupe d'essences, et pour chaque groupe d'essences, une liste de 4 éléments:
 #' \enumerate{
-#'   \item essence: string with species group code name
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per time step per iteration per species)
-#'   \item random_placette: dataframe of random plot effect values (one line per plot per time step per iteration per species)
-#'   \item erreur_residuelle: dataframe of residual error values (one line per plot per time step per iteration per species)
+#'   \item essence: chaine de caractère contenant le code du groupe d'essences
+#'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par pas de simulation et itération
+#'   \item random_placette: table contenant les valeurs des effets aléatoires, une ligne par placette, pas de simulation et itération
+#'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
 #' @export
 #'
 # @examples
-param_hd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
+param_hd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
+
+  # liste_place=liste_plot; nb_iter=2; mode_simul='STO'; horizon=5; seed_value = 20;
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   nb_pas <- horizon
 
@@ -255,6 +303,7 @@ param_hd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
 
   # liste des placettes x nb_iter x nb_pas pour accueillir les erreurs résiduelles de placette
   data_plot_pas <- as.data.frame(unclass(expand_grid(pas = 1:nb_pas, id_pe = data_plot)))
+  names(data_plot_pas) <- c('pas','iter','id_pe')
 
   # lecture des paramètres (hdevol_param_fixe.rda, hdevol_param_cov.rda)
   param <-  hdevol_param_fixe
@@ -266,20 +315,26 @@ param_hd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
   for (ess in liste_ess)
   {
     if (mode_simul == 'STO') {
+      mu = as.matrix(param[param$ess_dom==tolower(ess),c(1:4,7)])
+      l_mu = length(mu)
+      if (nb_iter<l_mu) {nb_iter_temp=l_mu}
+      else{nb_iter_temp=nb_iter}
       # générer des paramètres des effets fixes pour une essence dominante donnée
-      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter, mu = as.matrix(param[param$ess_dom==tolower(ess),c(1:4,7)]), Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6])),
-                                      nrow=nb_iter))
+      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu, Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6]),empirical = T),
+                                      nrow=nb_iter_temp))[1:nb_iter,]
       names(param_hd) <- names(param[param$ess_dom==tolower(ess),c(1:4,7)])
       param_hd <- param_hd %>% mutate(iter = row_number())
 
       # générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
-      rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
+      #rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
+      rand_plot <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
       rand_plot <- bind_cols(data_plot,rand_plot)
 
       # générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
-      res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
+      #res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
+      res_plot = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
       res_plot <- bind_cols(data_plot_pas,res_plot)
-      names(res_plot) <- c('pas','iter','id_pe','res_plot')
+      names(res_plot) <- c(names(data_plot_pas),'res_plot')
     }
     else{
         param_hd <- param[param$ess_dom==tolower(ess),c(1:4,7)] %>% mutate(iter=1)
@@ -294,30 +349,39 @@ param_hd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
 }
 
 
-#' Generating dominant height growth model parameters and shannon index growth model parameters of Natura 3.0
+
+#' Génère les paramètres des modèles d'évolution de la hauteur dominante et de l'indice de Shannon
 #'
-#' @description Generate parameters for dominant height growth model and shannon index growth model parameters of Natura 3.0, deterministic or stochastic, for each plot for each time step and for all iterations
+#' @description Génère les paramètres des modèles d'évolution de la hauteur dominante et ceux de l'indice de Shannon, déterministe ou stochastique, pour chacune des placettes et tous leurs pas de simulation, pour toutes les itérations.
 #'
 #' @details
-#' The dominant height growth model is a nonlinear mixed model calibrated for each dominant species. There is a plot random effect
-#' and the plot residual errors are not corralated. There is a covariance matrix of fixed effects.
-#' The shannon index growth model is a linear mixed model calibrated for each dominant species. There is a plot random effect
-#' and the plot residual errors are not corralated. There is a covariance matrix of fixed effects.
+#' Le modèle de hauteur dominante est un modèle non-linéaire mixte calibré séparément par groupe d'essences dominantes, avec un effet aléatoire de placette.
+#' Il n'y a pas de matrice de corrélation sur les résidus. Il y a une matrice de covariance des effets fixes.
+#' Le modèle de l'indice de Shannon est un modèle linéaire mixte calibré séparément par groupe d'essences dominantes, avec un effet aléatoire de placette.
+#' Il n'y a pas de matrice de corrélation sur les résidus. Il y a une matrice de covariance des effets fixes.
 #'
-#' @param liste_place Dataframe with plot id (id_pe)
+#' @param liste_place Vecteur contenant les identifiants des placettes.
 #' @inheritParams SimulNatura
 #'
-#' @return A list of lists, one list per species group for which there is a dominant height/shannon index growth model, and for each species group, a list with 4 elements:
+#' @return Une liste de listes. Une liste par groupe d'essences, et pour chaque groupe d'essences, une liste de 4 éléments:
 #' \enumerate{
-#'   \item essence: string with species group code name
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per time step per iteration per species)
-#'   \item random_placette: dataframe of random plot effect values (one line per plot per time step per iteration per species)
-#'   \item erreur_residuelle: dataframe of residual error values (one line per plot per time step per iteration per species)
+#'   \item essence: chaine de caractère contenant le code du groupe d'essences
+#'   \item effet_fixe: table contenant les paramètres des effets fixes des deux modèles, une ligne par pas de simulation et itération
+#'   \item random_placette: table contenant les valeurs des effets aléatoires des deux modèles, une ligne par placette, pas de simulation et itération
+#'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles des deux modèles, une ligne par placette, pas de simulation et itération
 #' }
 #' @export
 #'
 # @examples
-param_ishd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
+param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
+
+  #liste_place=fic; nb_iter=200; mode_simul='STO'; horizon=2; seed_value = 20;
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   nb_pas <- horizon
 
@@ -325,46 +389,65 @@ param_ishd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
   data_plot <- expand_grid(iter = 1:nb_iter, id_pe = liste_place)
   # liste des placettes x nb_iter x nb_pas pour accueillir les erreurs résiduelles de placette
   data_plot_pas <- as.data.frame(unclass(expand_grid(pas = 1:nb_pas, id_pe = data_plot)))
+  names(data_plot_pas) <- c('pas','iter','id_pe')
 
   # utilise is_param_fixe.rda, is_param_cov.rda, hdevol_param_fixe.rda, hdevol_param_cov.rda
 
   # générer des paramètres des effets fixes pour une essence dominante donnée
-  liste_ess <- unique(is_param_fixe$ess_dom)
+  liste_ess <- unique(is_param_fixe$ess_dom) # ordre alphabetique
   tous <- list()
   for (ess in liste_ess)
   {
     if (mode_simul == 'STO') {
 
       # effets fixes, une ligne par ess
-      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter, mu = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),c(1:4,7)]),
-                                              Sigma = as.matrix(is_param_cov[is_param_cov$ess_dom==toupper(ess),2:6])),
-                                      nrow=nb_iter))
+      mu = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),c(1:4,7)])
+      l_mu = length(mu)
+      if (nb_iter<l_mu) {nb_iter_temp=l_mu}
+      else{nb_iter_temp=nb_iter}
+
+      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+                                              Sigma = as.matrix(is_param_cov[is_param_cov$ess_dom==toupper(ess),2:6]),
+                                              empirical = T),
+                                      nrow=nb_iter_temp))[1:nb_iter,]
       names(param_is) <- names(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),c(1:4,7)])
-      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter, mu = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),c(1:4,7)]),
-                                              Sigma = as.matrix(hdevol_param_cov[hdevol_param_cov$ess_dom==toupper(ess),2:6])),
-                                      nrow=nb_iter))
+
+
+      mu = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),c(1:4,7)])
+      l_mu = length(mu)
+      if (nb_iter<l_mu) {nb_iter_temp=l_mu}
+      else{nb_iter_temp=nb_iter}
+      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+                                              Sigma = as.matrix(hdevol_param_cov[hdevol_param_cov$ess_dom==toupper(ess),2:6]),
+                                              empirical = T),
+                                      nrow=nb_iter_temp))[1:nb_iter,]
+
       names(param_hd) <- names(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),c(1:4,7)])
       #param <- inner_join(param_is,param_hd,by="ess_dom") %>% mutate(iter = row_number())
       param <- bind_cols(param_is,param_hd) %>% mutate(iter = row_number())
 
 
       # is: générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
-      rand_plot_is <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]))))
+      #rand_plot_is <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]))))
+      rand_plot_is <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
       names(rand_plot_is) <- 'rand_plot_is'
       # hd: générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
-      rand_plot_hd <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]))))
+      #rand_plot_hd <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]))))
+      rand_plot_hd <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
       names(rand_plot_hd) <- 'rand_plot_hd'
       rand_plot <- bind_cols(data_plot, rand_plot_is, rand_plot_hd)
 
 
       # is: générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
-      res_plot_is = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]))))
+      #res_plot_is = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]))))
+      res_plot_is = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
       names(res_plot_is) <- 'res_plot_is'
       # hd: générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
-      res_plot_hd = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]))))
+      #res_plot_hd = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]))))
+      res_plot_hd = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
       names(res_plot_hd) <- 'res_plot_hd'
       res_plot <- bind_cols(data_plot_pas,res_plot_is,res_plot_hd)
-      names(res_plot) <- c('pas','iter','id_pe','res_plot_is','res_plot_hd')
+      names(res_plot) <- c(names(data_plot_pas),'res_plot_is','res_plot_hd')
     }
     else{
       param_is <- is_param_fixe[is_param_fixe$ess_dom==tolower(ess),c(1:4,7)]
@@ -393,28 +476,36 @@ param_ishd_evol_stoch <- function(liste_place, nb_iter, mode_simul, horizon){
 #######################################################################################################################
 
 
-#' Generating n, st and v growth models parameter values of Natura 3.0
+#' Génère les paramètres des modèles d'évolution de Nxxx, STxxx et Vxxx
 #'
-#' @description Generate parameters of n, st and v growth models of Natura 3.0, deterministic or stochastic, for each plot for each time step and for all iterations
+#' @description Génère les paramètres des modèles d'évolution de Nxxx, STxxx et Vxxx (où xxx est chacun des 8 groupes d'essences, donc 24 modèles), déterministe ou stochastique, pour chacune des placettes pour tous les pas de simulation et toutes les itérations
 #'
 #' @details
-#' The n, st and v growth models of Natura 3.0 form a system of linear equations calibrated for each species groups. There is no random effect.
-#' The plot residual errors are corralated among equations. There is a covariance matrix of fixed effects.
+#' Les modèles de Nxxx, STxxx et Vxxx forment un système d'équations linéaires, calibrés séparément par groupe d'essences. Il n'y a pas d'effets aléatoires.
+#' Les erreurs résiduelles sont corrélées entre les 3 équations. Il y a une matrice de covariances des effets fixes.
 #'
-#' @param liste_place Dataframe with plot id (id_pe)
-#' @param liste_ess Vector of species group code name of Natura 3.0 models
+#' @param liste_place Vecteur contenant les identifiants des placettes
+#' @param liste_ess Vecteur contenant les codes des groupes d'essences de Natura
 #' @inheritParams SimulNatura
 #'
-#' @return A list of lists, one list per species group for which there is n-st-v growth models, and for each species group, a list with 3 elements:
+#' @return Une liste de listes. Une liste par groupe d'essences, et pour chaque groupe d'essences, une liste de 3 éléments:
 #' \enumerate{
-#'   \item essence: string with species group code name
-#'   \item effet_fixe: dataframe of fixed effect parameter values (one line per time step per iteration)
-#'   \item erreur_residuelle: dataframe of residual error values (one line per plot per time step per iteration)
+#'   \item essence: chaine de caractères contenant le code du groupe d'essences
+#'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par pas de simulation et itération
+#'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
 #' @export
 #'
 # @examples
-param_evol_n_st_v_stoch <- function(liste_place, nb_iter, mode_simul, horizon, liste_ess){
+param_evol_n_st_v_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, liste_ess, seed_value = NULL){
+
+  # liste_place=liste_plot; nb_iter=2; mode_simul='STO'; horizon=5; liste_ess=liste_gress; seed_value = 20;
+
+  if (mode_simul=='STO'){
+    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+  }
+
+  if (length(seed_value)>0) {set.seed(seed_value)}
 
   nb_pas <- horizon
 
@@ -422,9 +513,12 @@ param_evol_n_st_v_stoch <- function(liste_place, nb_iter, mode_simul, horizon, l
   data_plot <- expand_grid(iter = 1:nb_iter, id_pe = liste_place)
   # liste des placettes x nb_iter x nb_pas pour accueillir les erreurs résiduelles de placette
   data_plot_pas <- as.data.frame(unclass(expand_grid(pas = 1:nb_pas, id_pe = data_plot)))
+  names(data_plot_pas) <- c('pas','iter','id_pe')
 
   tous <- list()
   for (ess in liste_ess) {
+
+    # ess = 'epn'
 
     # fichiers des parametres : n_st_v_param_fixe.rda, n_st_v_param_cov.rda, n_st_v_param_random.rda"
     param <- n_st_v_param_fixe[[ess]]
@@ -436,8 +530,14 @@ param_evol_n_st_v_stoch <- function(liste_place, nb_iter, mode_simul, horizon, l
       param_covb$essence <- NULL
 
       # générer un vecteur d'effet fixes pour une placette
-      param_ess = as.data.frame(matrix(mvrnorm(n = nb_iter, mu = as.matrix(param), Sigma = as.matrix(param_covb)),
-                                       nrow=nb_iter))
+      # nb_iter=2
+      mu = as.matrix(param)
+      l_mu = length(mu)
+      if (nb_iter<l_mu) {nb_iter_temp=l_mu}
+      else{nb_iter_temp=nb_iter}
+
+      param_ess = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = as.matrix(param), Sigma = as.matrix(param_covb), empirical = T),
+                                       nrow=nb_iter_temp))[1:nb_iter,]
       names(param_ess) <- names(param)
       param_ess <- param_ess %>% mutate(iter = row_number())
 
@@ -448,10 +548,10 @@ param_evol_n_st_v_stoch <- function(liste_place, nb_iter, mode_simul, horizon, l
       param_covr$essence <- NULL
 
       # générer un vecteur d'erreurs résiduelles à l'échelle de la placette, mais qui doit changer à chaque pas de temps, non corrélées
-      res_ess = as.data.frame(matrix(mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = c(0,0,0), Sigma = as.matrix(param_covr)),
+      res_ess = as.data.frame(matrix(mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = c(0,0,0), Sigma = as.matrix(param_covr), empirical = T),
                                      nrow=nb_iter*length(liste_place)*nb_pas))
-      res_ess <- bind_cols(data_plot_pas,res_ess)
-      names(res_ess) <- c('pas','iter','id_pe','res_n','res_st','res_v')
+      res_ess <- bind_cols(data_plot_pas,res_ess) ###### C'EST ICI QUE ÇA BUG
+      names(res_ess) <- c(names(data_plot_pas),'res_n','res_st','res_v')
     }
     else{
       param_ess  <- param %>% mutate(iter=1)

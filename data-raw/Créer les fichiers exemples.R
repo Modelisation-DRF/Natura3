@@ -8,7 +8,6 @@ file_etude="U:\\Projets\\IsabelleAuger\\Natura-2020\\PET\\PET_arbres_etudes.csv"
 fichier_arbres_complet <- read_delim(file=file_arbre, delim = ';')
 fichier_etudes_complet <- read_delim(file=file_etude, delim = ';')
 
-
 # choisir les vp et sdom
 fichier_arbres_complet$vp <- substr(fichier_arbres_complet$type_eco,1,3)
 fichier_arbres_vp <- fichier_arbres_complet %>% filter(vp %in% c('MS2','RE1','RE2','RS2','RE3'), SDOM_BIO %in% c('4E','4O','5E','5O','6E','6O')) %>% dplyr::select(-vp)
@@ -28,8 +27,8 @@ fichier_arbres_select <- fichier_arbres_sanscov[fichier_arbres_sanscov$ID_PE %in
 fichier_arbres_select2 <- fichier_arbres_vp[fichier_arbres_vp$ID_PE %in% liste,]
 fichier_etudes_select <- fichier_etudes_vp[fichier_etudes_vp$ID_PE %in% liste,]
 
-fichier_arbres_sanscov <- fichier_arbres_select %>% dplyr::select(-pet,-an_mes, -id)
-fichier_arbres_aveccov <- fichier_arbres_select2 %>% dplyr::select(-pet,-an_mes, -id, -iqs_pot_EPR)
+fichier_arbres_sanscov <- fichier_arbres_select %>% dplyr::select(-pet, -id)
+fichier_arbres_aveccov <- fichier_arbres_select2 %>% dplyr::select(-pet, -an_mes, -id, -iqs_pot_EPR)
 fichier_arbres_etudes <- fichier_etudes_select
 
 # sauvegarder le fichier en rda sous /data
@@ -44,7 +43,7 @@ liste <- fichier_compile_complet %>% filter(id_pe %in% c('0700200501_N_1970', '1
 liste <- unique(liste$id_pe)
 
 fichier_compile_aveccov <- fichier_compile_complet[fichier_compile_complet$id_pe %in% liste,] %>% dplyr::select(-an_mes)
-fichier_compile_sanscov <- fichier_compile_select %>% dplyr::select(-contains("iqs_"), -an_mes, -clay, -silt, -ph, -cec, -oc, -sand, -t_ma, -prec_gs, -temp_gs, -p_tot)
+fichier_compile_sanscov <- fichier_compile_complet[fichier_compile_complet$id_pe %in% liste,] %>% dplyr::select(-contains("iqs_"), -clay, -silt, -ph, -cec, -oc, -sand, -t_ma, -prec_gs, -temp_gs, -p_tot)
 
 # sauvegarder le fichier en rda sous /data
 usethis::use_data(fichier_compile_aveccov, fichier_compile_sanscov, overwrite = TRUE)

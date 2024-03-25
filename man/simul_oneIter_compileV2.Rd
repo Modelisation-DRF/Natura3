@@ -2,7 +2,7 @@
 % Please edit documentation in R/Simul_oneIter.R
 \name{simul_oneIter_compileV2}
 \alias{simul_oneIter_compileV2}
-\title{Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale, version where parameters of HD and IS are in the same objects}
+\title{Effectue une simulation complète (tous les pas de simulation) pour une itération, lorsque le fichier en entrée est à l'échelle de la placette, version à utiliser lorsque les paramètres IS et HS sont dans le même objet}
 \usage{
 simul_oneIter_compileV2(
   fichier,
@@ -23,39 +23,46 @@ simul_oneIter_compileV2(
 )
 }
 \arguments{
-\item{fichier}{Dataframe with stand characteristics at step 0 and all covariates, ready to be simulated, one line per plot}
+\item{fichier}{Table contenant toutes les variables nécessaires pour effectuer une simulation, incluant les paramètres, une ligne par placette}
 
-\item{horizon}{Number of 10-year time steps to simulate, 1 à 15}
+\item{horizon}{Nombre de décennies à simuler, un chiffre de 1 à 15.}
 
-\item{iteration}{Iteration number}
+\item{iteration}{Numéro de l'itération}
 
-\item{PlacT0}{Dataframe with only stand characteristics at step 0 (no covariates)}
+\item{PlacT0}{Table contenant seulement les colonnes associées aux caractéristiques dendrométriques des placettes}
 
-\item{data_info}{Dataframe with only fixed stand characteristics over time}
+\item{data_info}{Table contenant seulement les colonnes associées aux caractéristiques des placettes qui ne changent pas dans le temps}
 
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{param_ishd_evol}{Object with shannon index and dominant height growth model parameter values for all time steps and all iterations}
+\item{param_ishd_evol}{Objet contenant les paramètres du modèle de l'indice de Shannon et du modèle de hauteur dominante, pour toutes les itérations et pas de simulation}
 
-\item{param_n_st_v}{Object with n-st-v growth models parameter values for all time steps and all iterations}
+\item{param_n_st_v}{Objet contenant les paramètres des modèles de Nxxx, STxxx et Vxxx, pour toutes les itération et pas de smulation}
 
-\item{liste_ess}{Vector with Natura group species code names}
+\item{liste_ess}{Vecteur contenant les codes des groupes d'essences de Natura}
 
-\item{long_int}{Length of time steps (years)}
+\item{long_int}{Nombre d'années correspondant à un pas de simulation}
 
-\item{dec_perturb}{The simulation step number with a presence of perturbation (other than spruce budworm)}
+\item{dec_perturb}{Optionnel. Le numéro de la décennie dans laquelle on simule la présence d'une perturbation partielle autre qu'une épidémie de TBE (chablis partiel, verglas pertiel, dépérissement partiel, brulis partiel).}
 
-\item{dec_tbe1}{The simulation step number with a presence of a first spruce budworm defoliation}
+\item{dec_tbe1}{Optionnel. Le numéro de la décennie dans laquelle on simule une défoliation due à la TBE. \code{tbe1} doit alors est spécifié.}
 
-\item{tbe1}{Severity of the first spruce budworm defoliation, integer 0 to 5, 0  : no defoliation, 5 : 100 \% defoliation}
+\item{tbe1}{Optionnel. Indice de réduction de croissance due à la TBE durant la décennie \code{dec_tbe1}, un entier 1 à 5. \code{dec_tbe1} doit alors est spécifié.
+\itemize{
+  \item 1 = 1 année de défoliation sévères
+  \item 2 = 4 années de défoliations sévères
+  \item 3 = 6 années de défoliations sévères
+  \item 4 = 8 années de défoliations sévères
+  \item 5= 10 années de défoliations sévères.
+  }}
 
-\item{dec_tbe2}{The simulation step number with a presence of a second spruce budworm defoliation}
+\item{dec_tbe2}{Optionnel. Le numéro de la 2e décennie dans laquelle on simule une défoliation due à la TBE. \code{tbe2} doit alors est spécifié.}
 
-\item{tbe2}{Severity of the second spruce budworm defoliation, integer 0 to 5, 0  : no defoliation, 5 : 100 \% defoliation}
+\item{tbe2}{Optionnel. Indice de réduction de croissance due à la TBE durant la décennie \code{dec_tbe2}, un entier 1 à 5. Voir \code{tbe1} pour définition des niveaux.}
 }
 \value{
-Dataframe with one line per plot per time step with predicted values of HD and IS, and N, ST and V per group species
+Table avec une ligne par placette et pas de simulation contenant les prévision de HD et IS et N, ST et V de chacun des groupes d'essences
 }
 \description{
-Do a Complete simulation (all time steps) for one iteration with Natura 3.0 simulator when the start file is already compiled at the plot scale. Function version where parameters of HD and IS are in the same objects.
+Effectue une simulation complète (tous les pas de simulation) pour une itération, lorsque le fichier en entrée est à l'échelle de la placette, version à utiliser lorsque les paramètres IS et HS sont dans le même objet.
 }

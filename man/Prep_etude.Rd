@@ -2,33 +2,30 @@
 % Please edit documentation in R/Prep_fichier_etude.R
 \name{Prep_etude}
 \alias{Prep_etude}
-\title{Calculation of dominant height at step 0 from study trees and top trees for a Natura 3.0 simulation}
+\title{Calcule la hauteur dominante à la step 0}
 \usage{
 Prep_etude(
   fic_etude,
   fic_arbre,
-  iteration,
-  mode_simul,
-  param_hdom0_ess,
-  param_hdom0_global
+  nb_iter = 1,
+  mode_simul = "DET",
+  seed_value = NULL
 )
 }
 \arguments{
-\item{fic_etude}{Dataframe of the study-trees with mesured height}
+\item{fic_etude}{Table des arbres-études}
 
-\item{fic_arbre}{Dataframe of the trees, with estimated height}
+\item{fic_arbre}{Tables des arbres averc leur hauteur estimée, avec les itérations si stochastiques}
 
-\item{iteration}{Iteration number}
+\item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}
 
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{param_hdom0_ess}{Object with the species height model parameter values, model for step 0 dominant height estimation}
-
-\item{param_hdom0_global}{Object with the global height model parameter values, model for step 0 dominant height estimation}
+\item{seed_value}{Optionnel. Valeur de départ pour la génération de nombres aléatoires. Utilisé lors des tests pour la reproductibilité des résultats.}
 }
 \value{
-Dataframe, one line per plot, with step 0 estimated plot domimant height
+Table contenant la hauteur dominante de chaque placette, une ligne par placette/iter.
 }
 \description{
-Calculation of dominant height at step 0 from study trees and top trees for a Natura 3.0 simulation.
+Calcule la hauteur dominante des placettes à la step 0 à partir des arbres-études et du fichier des arbres.
 }

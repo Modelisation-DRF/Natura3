@@ -17,6 +17,7 @@ A data frame with 2 lignes et 35 colonnes:
   \item{altitude}{Altitude (m)}
   \item{origine}{Code de la perturbation d'origine}
   \item{temps}{Temps depuis l'orgine}
+  \item{an_mes}{Année de la mesure}
   \item{stft}{Surface terrière marchande des feuillus tolérants (m2/ha)}
   \item{strt}{Surface terrière marchandedes résineux tolérants (m2/ha)}
   \item{stri}{Surface terrière marchandedes résineux intolérants (m2/ha)}

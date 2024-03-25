@@ -2,7 +2,7 @@
 % Please edit documentation in R/Prep_parametre.R
 \name{Prep_parametre_pas}
 \alias{Prep_parametre_pas}
-\title{Select the growth model parameters associated with a time step for a list of plots for a simulation with Natura 3.0}
+\title{Sélectionne les paramètres des modèles associés à un pas de simulation, pour le cas où un fichier à l'échelle de la placette est fourni}
 \usage{
 Prep_parametre_pas(
   data,
@@ -16,24 +16,27 @@ Prep_parametre_pas(
 )
 }
 \arguments{
-\item{data}{Dataframe with only plot id (id_pe) and variables of percentage of group species basal area (pct_epn, pct_epx, etc)}
+\item{data}{Table contenant seulement l'identifiant des placettes (id_pe) et les variables contenant le pourcentage de surface terrière de chaque groupe d'essences (pct_epn1, pct_epx1, etc),  une ligne par placette}
 
-\item{data_info}{Dataframe with only fixed stand characteristics over time}
+\item{data_info}{Table contenant seulement les colonnes associées aux caractéristiques des placettes qui ne changent pas dans le temps}
 
-\item{iteration}{Iteration number}
+\item{iteration}{Numéro de l'itération}
 
-\item{pas}{Time step number}
+\item{pas}{Numéro du pas de simulation}
 
-\item{mode_simul}{Simulation mode: \code{"DET"} : deterministic or \code{"STO"} : stochastic}
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
-\item{param_n_st_v}{Object with n-st-v growth models parameter values for all time steps and all iterations}
+\item{param_ishd_evol}{Objet contenant les paramètres du modèle de l'indice de Shannon et du modèle de hauteur dominante, pour toutes les itérations et pas de simulation}
 
-\item{liste_ess}{Vector with Natura group species code names}
+\item{param_n_st_v}{Objet contenant les paramètres des modèles de Nxxx, STxxx et Vxxx, pour toutes les itération et pas de smulation}
+
+\item{liste_ess}{Vecteur contenant les codes des groupes d'essences de Natura}
 }
 \value{
-Dataframe of plot characteristics and all their growth models parameter values for a time step
+Table contenant toutes les colonnes nécessaires pour effectuer un pas de simulation pour un pas de simulation.
 }
 \description{
-Select and add to plot dataframe all the growth models parameters associated with a time step.
-It also determine the dominant species of the plot and select iqs associated with this species.
+Sélectionne les paramètres des modèles associés à un pas de simulation, pour le cas où un fichier à l'échelle de la placette est fourni en entrée.
+Ces paramètres sont ceux qui changent à chauqe pas de simulation pour une itération donnée, soit les erreurs résiduelles.
+Ajoute les paramètres au fichier compilé à la placette. Détermine le groupe d'essences dominant et sélectionne l'IQS associé.
 }

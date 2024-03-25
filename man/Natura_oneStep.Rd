@@ -2,7 +2,7 @@
 % Please edit documentation in R/Natura_oneStep.R
 \name{Natura_oneStep}
 \alias{Natura_oneStep}
-\title{Simulation of one time-step with Natura 3.0 growth model}
+\title{Simulation d'un pas de simulation (période) avec le modèle Natura}
 \usage{
 Natura_oneStep(
   data,
@@ -18,29 +18,36 @@ Natura_oneStep(
 )
 }
 \arguments{
-\item{data}{Dataframe to be simulated. One line per plot. Must contain only the variables associated to stands characteristics to be simulated and plot id (no covariates an no paramteers)}
+\item{data}{Table contenant les placettes et leurs caractéristiques dendrométriques (Nxxx, STxxx, Vxxx, HD, IS). Une ligne par placette. Ne doit pas contenir les covariables ni les paramètres.}
 
-\item{param}{Dataframe (one line per plot) of parameter values of all the models of Natura 3.0 for each plot}
+\item{param}{Table contenant les paramètres du modèle associés à chacune des placettes. Une ligne par placette.}
 
-\item{data_info}{Dataframe (one line per plot) with only variables associated to fixed stand characteristics over time}
+\item{data_info}{Table contenant les covariables fixes dans le temps pour chacune des placettes. Une ligne par placette.}
 
-\item{long_int}{Lenght of simulation time step in years}
+\item{long_int}{Nombre d'années d'un pas de simulation.}
 
-\item{pas}{The simulation step number}
+\item{pas}{Le numéro du pas de simulation à simuler}
 
-\item{dec_perturb}{The simulation step number with a presence of perturbation (other than spruce budworm)}
+\item{dec_perturb}{Optionnel. Le numéro de la décennie dans laquelle on simule la présence d'une perturbation partielle autre qu'une épidémie de TBE (chablis partiel, verglas pertiel, dépérissement partiel, brulis partiel).}
 
-\item{dec_tbe1}{The simulation step number with a presence of a first spruce budworm defoliation}
+\item{dec_tbe1}{Optionnel. Le numéro de la décennie dans laquelle on simule une défoliation due à la TBE. \code{tbe1} doit alors est spécifié.}
 
-\item{tbe1}{Severity of the first spruce budworm defoliation, integer 0 to 5, 0  : no defoliation, 5 : 100 \% defoliation}
+\item{tbe1}{Optionnel. Indice de réduction de croissance due à la TBE durant la décennie \code{dec_tbe1}, un entier 1 à 5. \code{dec_tbe1} doit alors est spécifié.
+\itemize{
+  \item 1 = 1 année de défoliation sévères
+  \item 2 = 4 années de défoliations sévères
+  \item 3 = 6 années de défoliations sévères
+  \item 4 = 8 années de défoliations sévères
+  \item 5= 10 années de défoliations sévères.
+  }}
 
-\item{dec_tbe2}{The simulation step number with a presence of a second spruce budworm defoliation}
+\item{dec_tbe2}{Optionnel. Le numéro de la 2e décennie dans laquelle on simule une défoliation due à la TBE. \code{tbe2} doit alors est spécifié.}
 
-\item{tbe2}{Severity of the second spruce budworm defoliation, integer 0 to 5, 0  : no defoliation, 5 : 100 \% defoliation}
+\item{tbe2}{Optionnel. Indice de réduction de croissance due à la TBE durant la décennie \code{dec_tbe2}, un entier 1 à 5. Voir \code{tbe1} pour définition des niveaux.}
 }
 \value{
-Dataframe of predicted stand characteristics
+Table contenant les caractéristiques dendrométriques prédites par le modèle pour le pas de simulation demandé. Une ligne par placette.
 }
 \description{
-Simulation of one time-step with Natura 3.0 growth model, usually of 10 years, of the growth of characteristics of a stand (number of trees, basal area and volume per group species, dominant height and shannon index), based on plot origine and time since origine.
+Simulation d'un pas de simulation (période) avec le modèle Natura, habituellement de 10 ans.
 }
