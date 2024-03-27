@@ -17,7 +17,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Une chaine de caractères contant "ok" s'il n'y a pas d'erreur, sinon, contient un message d'erreur.
-#' @export
+# #' @export
 #'
 # @examples
 CheckArguments <- function(file_arbre, file_etude, file_compile, horizon, mode_simul, nb_iter, iqs, climat, sol, ht, vol, dec_perturb, dec_tbe1, tbe1, dec_tbe2, tbe2) {

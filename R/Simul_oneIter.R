@@ -33,7 +33,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table avec une ligne par placette et pas de simulation contenant les prévision de HD et IS et N, ST et V de chacun des groupes d'essences
-#' @export
+# #' @export
 #'
 # @examples
 simul_oneIter_compileV2 <- function(fichier, horizon, iteration, PlacT0, data_info, mode_simul, param_ishd_evol, param_n_st_v, liste_ess,

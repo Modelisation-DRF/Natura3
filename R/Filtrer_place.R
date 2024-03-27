@@ -23,7 +23,7 @@
 #' @param fichier Nom de la table à l'échelle de l'arbre ou de la placette avec les colonnes nécessaires
 #'
 #' @return Table dont les placettes ont été filtrées et contenant des nouvelles covariables.
-#' @export
+# #' @export
 #'
 #' @examples
 #' \dontrun{

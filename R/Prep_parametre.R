@@ -27,7 +27,7 @@
 #' @inheritParams simul_oneIter_compileV2
 #'
 #' @return Table contenant toutes les colonnes nécessaires pour effectuer un pas de simulation pour un pas de simulation.
-#' @export
+# #' @export
 #'
 # @examples
 Prep_parametre_pas <- function(data, data_info, iteration, pas, mode_simul, param_ishd_evol, param_n_st_v, liste_ess){
@@ -115,7 +115,7 @@ Prep_parametre_pas <- function(data, data_info, iteration, pas, mode_simul, para
 #' @inheritParams simul_oneIter_compileV2
 #'
 #' @return Table avec une seule ligne contenant tous les paramètres des effets fixes des modèles
-#' @export
+# #' @export
 #'
 # @examples
 Prep_parametre_iter <-function(iteration, param_ishd_evol, param_n_st_v, liste_ess){

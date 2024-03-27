@@ -177,13 +177,13 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   {
 
   # pour pouvoir remettre l'option par defaut à la fin de la fonction
-  onMisuse <- getOption("doFuture.rng.onMisuse", getOption("future.rng.onMisuse"))
-  oopts <- options(future.rng.onMisuse = onMisuse)
-  on.exit(options(oopts), add = TRUE)
+  #onMisuse <- getOption("doFuture.rng.onMisuse", getOption("future.rng.onMisuse"))
+  #oopts <- options(future.rng.onMisuse = onMisuse)
+  #on.exit(options(oopts), add = TRUE)
 
 
   # pour ne pas afficher le message de warning de %dopar% sur les random number. Utiliser dorng serait la solution, mais ne s'utilise pas en double %dorng%
-  options(doFuture.rng.onMisuse = "ignore")
+  #options(doFuture.rng.onMisuse = "ignore")
 
   dt <- 10 #Longueur d'un pas de simulation: FIXE
 
@@ -262,7 +262,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
     # extraire les variables de climat pour le modèle de hauteur si nécessaire
     if (isTRUE(climat & isTRUE(ht))) {
-      Arbres <- extract_map_plot(file=Arbres, liste_raster="cartes_climat", variable=variable_climat) %>%
+      Arbres <- ExtractMap::extract_map_plot(file=Arbres, liste_raster="cartes_climat", variable=variable_climat) %>%
         rename(t_ma = tmean, p_tot = totalprecipitation)
     }
 
@@ -298,7 +298,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
         # file_compile = fichier_compile_sanscov; horizon=5; mode_simul='STO'; nb_iter = 30; iqs=T; climat=TRUE; sol=T; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
         # file_compile = fichier_compile_aveccov; horizon=5; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
-        # file_compile = verif; horizon=9; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
+        # file_compile = fic; horizon=9; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
 
       ##################################################################################
       ################### Lecture du fichier compilé placette ##########################
@@ -349,19 +349,19 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
   # extraire les variables de sol si nécessaire, couche=1 ==> 0-5cm
   if (isTRUE(sol)) {
-    DataCompile_final0 <- extract_map_plot(file=DataCompile_final0, liste_raster="cartes_sol", variable=variable_sol) %>%
+    DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_sol", variable=variable_sol) %>%
       rename(sand=sable, oc=mat_org, clay=argile)
   }
 
   # extraire les variables de climat si nécessaire
   if (isTRUE(climat)) {
-    DataCompile_final0 <- extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
+    DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
       rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
   }
 
   # extraire les variables d'iqs si nécessaire
   if (isTRUE(iqs)) {
-    DataCompile_final0 <- DataCompile_final0 <- extract_map_plot(file=DataCompile_final0, liste_raster="cartes_iqs", variable=variable_iqs)
+    DataCompile_final0 <- DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_iqs", variable=variable_iqs)
   }
 
   # Préparer les variables binaires, pour toutes les itérations, car on calcule vtot, qui peut varier s'il provient d'un fichier arbre en mode stochastique
@@ -399,13 +399,15 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
         if (mode_simul=='STO') {
         # paralleliser les itérations
-        #registerDoFuture()
-        #plan(multisession)
+        # doFuture::registerDoFuture() # pas nécessaire quand on utilise %dofuture%
+        # future::plan(multisession)
         n.cores <- parallel::detectCores() - 1
-        my.cluster <- parallel::makeCluster(n.cores, type = "PSOCK")
+        #my.cluster <- parallel::makeCluster(n.cores, type = "PSOCK") # type = "PSOCK" est par défaut
+        my.cluster <- parallel::makeCluster(n.cores)
         doParallel::registerDoParallel(cl = my.cluster)
         outputFinal<- bind_rows(
-          foreach(x = 1:nb_iter, .packages = "Natura3") %dopar%
+          foreach(x = 1:nb_iter) %dopar% #.packages = "Natura3"
+          #foreach(x = 1:nb_iter) %dofuture% #.packages = "Natura3"
           #foreach(x = 1:nb_iter) %dopar%
             {
 

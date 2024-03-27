@@ -19,7 +19,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Une liste de 2 éléments: table contenant les arbres avec leur hauteur et volume (une ligne par arbre) et une table des caractérisatiques des placettes (une ligne par placette)
-#' @export
+# #' @export
 #'
 # @examples
 Prep_arbres <- function(fic_arbre, ht, vol, nb_iter=1, nb_step=1, mode_simul='DET', seed_value=NULL, dt=dt){
@@ -74,14 +74,14 @@ else {arbreht <- Data1 %>% mutate(iter=1)}
 # calcul de la hauteur des arbres: Data1 doit contenir les NC, car pour la relation HD, il faut la ST incluant les NC,
 if (isTRUE(ht)) {
   #DataHt <- relation_h_d(fic_arbres=Data1, mode_simul=mode_simul, iteration=iteration, parametre_ht=parametre_ht, step=1)
-  DataHt <- relation_h_d(fic_arbre=arbreht, mode_simul=mode_simul, nb_iter=nb_iter, nb_step=nb_step, dt=dt, seed_value=seed_value)
+  DataHt <- TarifQC::relation_h_d(fic_arbre=arbreht, mode_simul=mode_simul, nb_iter=nb_iter, nb_step=nb_step, dt=dt, seed_value=seed_value)
 }
 else DataHt <- arbreht
 
 # Calcul du volume des arbres: prévoit le volumme en dm3 pour un arbre entier (ne tient pas compte du nombre d'arbres)
 if (isTRUE(vol)) {
   #DataHtVol <- cubage(fic_arbres=DataHt, iteration=iteration, mode_simul=mode_simul, parametre_vol=parametre_vol, step=1)
-  DataHtVol <- cubage(fic_arbre=DataHt, mode_simul=mode_simul, nb_iter=nb_iter, nb_step=1, seed_value=seed_value)
+  DataHtVol <- TarifQC::cubage(fic_arbre=DataHt, mode_simul=mode_simul, nb_iter=nb_iter, nb_step=1, seed_value=seed_value)
 }
 else DataHtVol <- DataHt
 

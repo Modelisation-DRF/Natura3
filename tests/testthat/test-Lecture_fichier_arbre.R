@@ -278,7 +278,7 @@ test_that("La fonction Lecture_arbres fonctionne si altitude absent avec ht=F, v
 })
 
 
-test_that("La fonction Lecture_arbres fonctionne comme attendu avec un contenue de variables hors limite ", {
+test_that("La fonction Lecture_arbres fonctionne comme attendu avec un contenu de variables hors limite ", {
 
   # si on n'a pas besoin d'estimer la hauteur, altitude n'est pas néccesaire
   fic1 = fichier_arbres_sanscov[1:10,] %>% dplyr::select(-dhpcm) %>% mutate(dhpcm=300)

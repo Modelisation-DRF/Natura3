@@ -7,7 +7,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table ou message d'erreur
-#' @export
+# #' @export
 #'
 # @examples
 valid_fic <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NULL){

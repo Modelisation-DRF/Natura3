@@ -5,7 +5,7 @@
 #' @param fichier_compile Table avec une ligne par placette
 #'
 #' @return Le fichier \code{fichier_compile} avec toutes les variables nécessaires au modèle Natura
-#' @export
+# #' @export
 #'
 # @examples
 Prep_compile <- function(fichier_compile){

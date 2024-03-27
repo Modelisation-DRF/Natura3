@@ -11,58 +11,32 @@ Lecture_arbres(file, ht, vol, iqs, climat, sol)
 
 \item{ht}{Booléen
 \itemize{
-  \item \code{TRUE} (par défaut): si la hauteur des arbres doit être estimée, si \code{file_arbre} est fourni
-  \item \code{FALSE}: si la hauteur des arbres est fournie dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être hauteur_pred (en mètres)
+  \item \code{TRUE} (par défaut): si la hauteur des arbres doit être estimée, seulement pour un fichier \code{file_arbre}
+  \item \code{FALSE}: si la hauteur des arbres est fournie dans \code{file_arbre}, ignoré si \code{file_compile}. Le nom de la colonne doit être hauteur_pred (en mètres)
   }}
 
 \item{vol}{Booléen
 \itemize{
-  \item \code{TRUE} (par défaut): si le volume des arbres doit être estimé, si \code{file_arbre} est fourni
-  \item \code{FALSE}: si le volume des arbres est fourni dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être vol_dm3 (en dm3)
+  \item \code{TRUE} (par défaut): si le volume des arbres doit être estimé, seulement pour un fichier \code{file_arbre}
+  \item \code{FALSE}: si le volume des arbres est fourni dans \code{file_arbre}, ignoré si \code{file_compile}. Le nom de la colonne doit être vol_dm3 (en dm3)
   }}
 
 \item{iqs}{Booléen
 \itemize{
-   \item \code{TRUE} (par défaut): si les indices de qualité de station potentielle doivent être extraits des cartes. Les colonnes latitude et longitude doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
-   \itemize{
-      \item latitude, longitude: coordonnées des placettes, en degré décimal
-   }
-   \item \code{FALSE}: si les indices de qualité de station potentielle (m) sont fournis dans \code{file_arbre} ou \code{in file_compile}. Le nom des 8 colonnes doit être:
-   \itemize{
-     \item iqs_pot_sab, iqs_pot_epn, iqs_pot_epb, iqs_pot_pig, iqs_pot_tho, iqs_pot_pib, iqs_pot_bop, iqs_pot_pex.
-   }
+   \item \code{TRUE} (par défaut): si les IQS potentils doivent être extraits des cartes. Les colonnes latitude et longitude doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
+   \item \code{FALSE}: si les IQS potentiels (m, hauteur dominante à 50 ans) sont fournis dans \code{file_arbre} ou \code{in file_compile}.
  }}
 
 \item{climat}{Booléen
 \itemize{
-   \item \code{TRUE} (par défaut): si les variables climatiques doivent être extraites des cartes. Les colonnes latitude, longitude et l'année de mesure de la placette doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
-   \itemize{
-     \item latitude, longitude: coordonnées des placettes, en degré décimal
-     \item an_mes: année de mesure de la placette
-   }
-  \item \code{FALSE}: si les variables climatiques sont fournies dans \code{file_arbre} ou \code{file_compile}. Le nom des 4 colonnes doit être:
-  \itemize{
-    \item p_tot: précipitations totales annuelles, moyenne sur la période 1980-2010 (mm)
-    \item t_ma: température moyenne annuelle sur la période 1980-2010 (Celcius)
-    \item prec_gs: précipitations durant la saison de croissance, moyenne sur les 10 dernières années avant le mesurage de la placette (mm)
-    \item temp_gs: température moyenne durant la saison de croissance, moyenne sur les 10 dernières années avant le mesurage de la placette (Celcius)
-  }
+  \item \code{TRUE} (par défaut): si les variables climatiques doivent être extraites des cartes. Les colonnes latitude, longitude et l'année de mesure de la placette doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
+  \item \code{FALSE}: si les variables climatiques sont fournies dans \code{file_arbre} ou \code{file_compile}.
 }}
 
 \item{sol}{Booléen
 \itemize{
   \item \code{TRUE} (par défaut): si les variables sur les propriétés des sols sont à extraires des cartes. Les colonnes latitude et longitude doivent alors être fournies dans \code{file_arbre} ou dans \code{file_compile}.
-  \itemize{
-    \item latitude, longitude: ccoordonnées des placettes, en degré décimal
-    }
-  \item \code{FALSE}: si les variables sur les propriétés des sols (SIIGSOL) sont fournies dans \code{file_arbre} ou dans \code{file_compile}. Propriétés des sols dans la profondeurt 0-5 cm. Le nom des 6 colonnes doit être:
-  \itemize{
-    \item ph: pH
-    \item clay: proportion d'argile (valeur de 0 à 100)
-    \item sand: proportion de sable (valeur de 0 à 100)
-    \item cec: capacité d'échange cationique (méq/100g)
-    \item oc: proportion de matière organique (valeur de 0 à 100)
-  }
+  \item \code{FALSE}: si les variables sur les propriétés des sols sont fournies dans \code{file_arbre} ou dans \code{file_compile}.
 }}
 }
 \value{

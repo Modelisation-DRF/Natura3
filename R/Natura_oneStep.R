@@ -23,7 +23,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table contenant les caractéristiques dendrométriques prédites par le modèle pour le pas de simulation demandé. Une ligne par placette.
-#' @export
+# #' @export
 #'
 # @examples
 Natura_oneStep <- function(data, param, data_info, long_int, pas, dec_perturb=0, dec_tbe1=0, tbe1=0, dec_tbe2=0, tbe2=0){

@@ -211,9 +211,9 @@ test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichie
 # ajouter un test en mode déterministe qui va montrer que les résultats d'une simulation donne la même chose que sas
 test_that("La fonction SimulNatura() en mode déterministe donne les même prévision que natura3 version sas sur 10 ans (avec covariable fournie et fichier compilé)", {
 
-  pred_sas_atendu <- readRDS("tests/testthat/fixtures/pred_sas_atendu.rds") %>%
-    arrange(id_pe, annee)
-  pep_depart <-      readRDS("tests/testthat/fixtures/pep_depart.rds") # 4297 placettes
+  pred_sas_atendu <- readRDS(test_path("fixtures", "pred_sas_atendu.rds"))
+  pred_sas_atendu <- pred_sas_atendu %>% arrange(id_pe, annee)
+  pep_depart <-      readRDS(test_path("fixtures", "pep_depart.rds"))  # 4297 placettes
 
   simul <- SimulNatura(file_compile = pep_depart, horizon=9, mode_simul='DET', iqs=F, sol=F, climat=F) %>%
     arrange(id_pe, annee)
@@ -304,8 +304,23 @@ test_that("La fonction SimulNatura() fonctionne comme attendu avec tbe1,tbe2,per
                               0,0,0,0,1,0))
 })
 
+
+test_that("La fonction SimulNatura() retourne un message quand il n'y a pas le bon contenu des variables", {
+
+  fic = fichier_compile_aveccov %>% dplyr::select(-nsab, -nepn, -nepx, -nri,- nrt, -nft, -nbop, -npeu) %>%
+    mutate(nsab=1000, nepn=1000, nepx=1000, nri=1000, nrt=1000, nft=1000, nbop=1000, npeu=1000)
+
+  #simul <- SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+
+  # "La somme des nombres de tiges des 8 groupes d'essences est à l'extérieur de la plage des valeurs possibles (>0 à 5000 tiges/ha ou 200 tiges dans 400 m2)"
+  expect_error(SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+
+
 # ajouter un test en mode stochastique avec seed.value qui va montrer qu'on obtient toujours les mêmes résulats à chaque fois qu'on exécute les tests
-# on ne pourra pas le comparer à un résulta externe car il n'y a pas d'autres version de natura 3.0 stochastique
+# on ne pourra pas le comparer à un résultat externe car il n'y a pas d'autres version de natura 3.0 stochastique
 
 
 

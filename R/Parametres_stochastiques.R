@@ -42,7 +42,7 @@
 #'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par itération
 #'   \item erreur_arbre: table contenant les valeurs des erreurs résiduelles et les valeurs des effets aléatoires d'arbres, une ligne par arbre par itération
 #' }
-#' @export
+# #' @export
 #'
 # @examples
 param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL) {
@@ -68,14 +68,14 @@ param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed
       if (mode_simul=='STO') {
 
       #param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_i[1,2]), sd = as.matrix(param_i[1,3]))) %>% # la fct rnorm ne donne pas moyenne et var axact à ceux specifies meme avec 1000000 iteration. Voir explication https://stackoverflow.com/questions/18919091/generate-random-numbers-with-fixed-mean-and-sd. Il est préférable dans mon cas d'utiliser mvrnorm avec empiracal =T, puisque  means et sd sont empiriques
-      param_hd = data.frame('b2'=mvrnorm(n = nb_iter, mu=as.matrix(param_i[1,2]), Sigma = as.matrix(param_i[1,3])^2, empirical = T)) %>% # sigma est une matrice de covariance, donc un sigma2
+      param_hd = data.frame('b2'=MASS::mvrnorm(n = nb_iter, mu=as.matrix(param_i[1,2]), Sigma = as.matrix(param_i[1,3])^2, empirical = T)) %>% # sigma est une matrice de covariance, donc un sigma2
         mutate(iter = row_number(), ess_eq_hd=ess)
 
       # générer erreurs échelle arbre de l'essence
       #rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[3,2]))))
       #resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_i[2,2]))))
-      rand_arbre_hd = data.frame('random_arbre'=mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[3,2]), empirical = T))
-      resi_arbre_hd = data.frame('resid_arbre'=mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[2,2]), empirical = T))
+      rand_arbre_hd = data.frame('random_arbre'=MASS::mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[3,2]), empirical = T))
+      resi_arbre_hd = data.frame('resid_arbre'=MASS::mvrnorm(n=nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_i[2,2]), empirical = T))
 
       rand_arbre_hd = as.data.frame(bind_cols(data_arbre,rand_arbre_hd,resi_arbre_hd))
       names(rand_arbre_hd) = c('iter',names(liste_arbre),'random_arbre','resid_arbre')
@@ -115,7 +115,7 @@ param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed
 #'   \item erreur_arbre: table contenant les valeurs des erreurs résiduelles et les valeurs des effets aléatoires d'arbres, une ligne par arbre par itération
 #' }
 #'
-#' @export
+# #' @export
 #'
 # @examples
 param_hdom0_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL ) {
@@ -136,14 +136,14 @@ param_hdom0_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_val
 
     # générer effets fixes du modele global
     #param_hd = data.frame('b2'=rnorm(n = nb_iter, mean=as.matrix(param_global[1,2]), sd = as.matrix(param_global[1,3]))) %>%
-    param_hd = data.frame('b2'=mvrnorm(n = nb_iter, mu=as.matrix(param_global[1,2]), Sigma = as.matrix(param_global[1,3])^2, empirical = T)) %>%
+    param_hd = data.frame('b2'=MASS::mvrnorm(n = nb_iter, mu=as.matrix(param_global[1,2]), Sigma = as.matrix(param_global[1,3])^2, empirical = T)) %>%
       mutate(iter = row_number())
 
     # générer erreurs échelle arbre du modèle global
     #rand_arbre_hd = data.frame('random_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[3,2]))))
     #resi_arbre_hd = data.frame('resid_arbre'=rnorm(nb_iter*length(liste_arbre$no_arbre), mean=0, sd = sqrt(as.matrix(param_global[2,2]))))
-    rand_arbre_hd = data.frame('random_arbre'=mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[3,2]), empirical = T))
-    resi_arbre_hd = data.frame('resid_arbre'=mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[2,2]), empirical = T))
+    rand_arbre_hd = data.frame('random_arbre'=MASS::mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[3,2]), empirical = T))
+    resi_arbre_hd = data.frame('resid_arbre'=MASS::mvrnorm(nb_iter*length(liste_arbre$no_arbre), mu=0, Sigma = as.matrix(param_global[2,2]), empirical = T))
 
     rand_arbre_hd = as.data.frame(bind_cols(data_arbre,rand_arbre_hd,resi_arbre_hd))
     names(rand_arbre_hd) = c('iter',names(liste_arbre),'random_arbre','resid_arbre')
@@ -189,7 +189,7 @@ param_hdom0_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_val
 #'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
 #'
-#' @export
+# #' @export
 #'
 # @examples
 param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
@@ -228,7 +228,7 @@ param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
       l_mu = length(mu)
       if (nb_iter<l_mu) {nb_iter_temp=l_mu}
         else{nb_iter_temp=nb_iter}
-      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+      param_is = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter_temp, mu = mu,
                                               Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6]),
                                               empirical = T),
                                       nrow=nb_iter_temp))[1:nb_iter,]
@@ -237,12 +237,12 @@ param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
 
       # générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
       #rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
-      rand_plot <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
+      rand_plot <- data.frame('random_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
       rand_plot <- bind_cols(data_plot,rand_plot)
 
       # générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
       #res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
-      res_plot = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
+      res_plot = data.frame('res_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
       res_plot <- bind_cols(data_plot_pas,res_plot)
       names(res_plot) <- c(names(data_plot_pas),'res_plot')
     }
@@ -283,7 +283,7 @@ param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
 #'   \item random_placette: table contenant les valeurs des effets aléatoires, une ligne par placette, pas de simulation et itération
 #'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
-#' @export
+# #' @export
 #'
 # @examples
 param_hd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
@@ -320,19 +320,19 @@ param_hd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
       if (nb_iter<l_mu) {nb_iter_temp=l_mu}
       else{nb_iter_temp=nb_iter}
       # générer des paramètres des effets fixes pour une essence dominante donnée
-      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu, Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6]),empirical = T),
+      param_hd = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter_temp, mu = mu, Sigma = as.matrix(param_cov[param_cov$ess_dom==toupper(ess),2:6]),empirical = T),
                                       nrow=nb_iter_temp))[1:nb_iter,]
       names(param_hd) <- names(param[param$ess_dom==tolower(ess),c(1:4,7)])
       param_hd <- param_hd %>% mutate(iter = row_number())
 
       # générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
       #rand_plot <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),6]))))
-      rand_plot <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
+      rand_plot <- data.frame('random_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),6]), empirical = T))
       rand_plot <- bind_cols(data_plot,rand_plot)
 
       # générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
       #res_plot = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(param[param$ess_dom==tolower(ess),5]))))
-      res_plot = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
+      res_plot = data.frame('res_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(param[param$ess_dom==tolower(ess),5]), empirical = T))
       res_plot <- bind_cols(data_plot_pas,res_plot)
       names(res_plot) <- c(names(data_plot_pas),'res_plot')
     }
@@ -370,7 +370,7 @@ param_hd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
 #'   \item random_placette: table contenant les valeurs des effets aléatoires des deux modèles, une ligne par placette, pas de simulation et itération
 #'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles des deux modèles, une ligne par placette, pas de simulation et itération
 #' }
-#' @export
+# #' @export
 #'
 # @examples
 param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, seed_value = NULL){
@@ -406,7 +406,7 @@ param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, hori
       if (nb_iter<l_mu) {nb_iter_temp=l_mu}
       else{nb_iter_temp=nb_iter}
 
-      param_is = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+      param_is = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter_temp, mu = mu,
                                               Sigma = as.matrix(is_param_cov[is_param_cov$ess_dom==toupper(ess),2:6]),
                                               empirical = T),
                                       nrow=nb_iter_temp))[1:nb_iter,]
@@ -417,7 +417,7 @@ param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, hori
       l_mu = length(mu)
       if (nb_iter<l_mu) {nb_iter_temp=l_mu}
       else{nb_iter_temp=nb_iter}
-      param_hd = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = mu,
+      param_hd = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter_temp, mu = mu,
                                               Sigma = as.matrix(hdevol_param_cov[hdevol_param_cov$ess_dom==toupper(ess),2:6]),
                                               empirical = T),
                                       nrow=nb_iter_temp))[1:nb_iter,]
@@ -429,22 +429,22 @@ param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, hori
 
       # is: générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
       #rand_plot_is <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]))))
-      rand_plot_is <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
+      rand_plot_is <- data.frame('random_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
       names(rand_plot_is) <- 'rand_plot_is'
       # hd: générer un effet aléatoire de placette, qui sera le même pour la placette pour toutes ses itérations
       #rand_plot_hd <- data.frame('random_plot'=rnorm(n = nb_iter*length(liste_place), mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]))))
-      rand_plot_hd <- data.frame('random_plot'=mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
+      rand_plot_hd <- data.frame('random_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place), mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),6]), empirical = T))
       names(rand_plot_hd) <- 'rand_plot_hd'
       rand_plot <- bind_cols(data_plot, rand_plot_is, rand_plot_hd)
 
 
       # is: générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
       #res_plot_is = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]))))
-      res_plot_is = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
+      res_plot_is = data.frame('res_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(is_param_fixe[is_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
       names(res_plot_is) <- 'res_plot_is'
       # hd: générer une erreur résiduelle à l'échelle de la placette, une pour chaque chaque pas de simulation
       #res_plot_hd = data.frame('res_plot'=rnorm(n = nb_iter*length(liste_place)*nb_pas, mean = 0, sd = sqrt(as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]))))
-      res_plot_hd = data.frame('res_plot'=mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
+      res_plot_hd = data.frame('res_plot'=MASS::mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = 0, Sigma = as.matrix(hdevol_param_fixe[hdevol_param_fixe$ess_dom==tolower(ess),5]), empirical = T))
       names(res_plot_hd) <- 'res_plot_hd'
       res_plot <- bind_cols(data_plot_pas,res_plot_is,res_plot_hd)
       names(res_plot) <- c(names(data_plot_pas),'res_plot_is','res_plot_hd')
@@ -494,7 +494,7 @@ param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, hori
 #'   \item effet_fixe: table contenant les paramètres des effets fixes, une ligne par pas de simulation et itération
 #'   \item erreur_residuelle: table contenant les valeurs des erreurs résiduelles, une ligne par placette, pas de simulation et itération
 #' }
-#' @export
+# #' @export
 #'
 # @examples
 param_evol_n_st_v_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizon, liste_ess, seed_value = NULL){
@@ -536,7 +536,7 @@ param_evol_n_st_v_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, ho
       if (nb_iter<l_mu) {nb_iter_temp=l_mu}
       else{nb_iter_temp=nb_iter}
 
-      param_ess = as.data.frame(matrix(mvrnorm(n = nb_iter_temp, mu = as.matrix(param), Sigma = as.matrix(param_covb), empirical = T),
+      param_ess = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter_temp, mu = as.matrix(param), Sigma = as.matrix(param_covb), empirical = T),
                                        nrow=nb_iter_temp))[1:nb_iter,]
       names(param_ess) <- names(param)
       param_ess <- param_ess %>% mutate(iter = row_number())
@@ -548,7 +548,7 @@ param_evol_n_st_v_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, ho
       param_covr$essence <- NULL
 
       # générer un vecteur d'erreurs résiduelles à l'échelle de la placette, mais qui doit changer à chaque pas de temps, non corrélées
-      res_ess = as.data.frame(matrix(mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = c(0,0,0), Sigma = as.matrix(param_covr), empirical = T),
+      res_ess = as.data.frame(matrix(MASS::mvrnorm(n = nb_iter*length(liste_place)*nb_pas, mu = c(0,0,0), Sigma = as.matrix(param_covr), empirical = T),
                                      nrow=nb_iter*length(liste_place)*nb_pas))
       res_ess <- bind_cols(data_plot_pas,res_ess) ###### C'EST ICI QUE ÇA BUG
       names(res_ess) <- c(names(data_plot_pas),'res_n','res_st','res_v')

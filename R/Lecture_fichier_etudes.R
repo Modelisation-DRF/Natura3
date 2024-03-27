@@ -18,7 +18,7 @@
 #' @param file Nom du fichier à lire (table, Excel ou csv)
 #'
 #' @return Table dont les arbres-études ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
-#' @export
+# #' @export
 #'
 # @examples
 Lecture_etudes <- function(file){
@@ -26,7 +26,7 @@ Lecture_etudes <- function(file){
   # vérifier si le fichier est un objet R, sinon importer le fichier
   if (!is.data.frame(file)) {
     suppressMessages(
-    if (grepl(".xls", file)) {etudes <- read_excel(file)}
+    if (grepl(".xls", file)) {etudes <- readxl::read_excel(file)}
     else if (grepl(".csv", file)) {etudes <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }

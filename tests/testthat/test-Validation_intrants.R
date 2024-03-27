@@ -415,5 +415,39 @@ test_that("La fonction valid_fic() fonctionne comme attendu pour le fichier arbr
 
 })
 
+test_that("La fonction valid_fic() fonctionne comme attendu avec type_fic=valid avec un fichier avec des erreurs", {
+
+  # nxxx1 doit être en 400 m2, donc ne pas dépasser 200
+  fic = data.frame(nsab1=1000, nepn1=1000, nepx1=1000, nri1=1000, nrt1=1000, nft1=1000, nbop1=1000, npeu1=1000,
+                   stsab1=1000, stepn1=1000, stepx1=1000, stri1=1000, strt1=1000, stft1=1000, stbop1=1000, stpeu1=1000,
+                   vsab1=1000, vepn1=1000, vepx1=1000, vri1=1000, vrt1=1000, vft1=1000, vbop1=1000, vpeu1=1000)
+
+
+  verif <- valid_fic(type_fic='valid', fichier=fic)
+  nb <- length(verif)
+  dataframe <- is.data.frame(verif)
+
+  expect_equal(nb,3)
+  expect_equal(dataframe,FALSE)
+
+})
+
+test_that("La fonction valid_fic() fonctionne comme attendu avec type_fic=valid avec un fichier sans erreurs", {
+
+  # nxxx1 doit être en 400 m2, donc ne pas dépasser 200
+  fic = data.frame(nsab1=10, nepn1=10, nepx1=10, nri1=10, nrt1=10, nft1=10, nbop1=10, npeu1=10,
+                   stsab1=0, stepn1=0, stepx1=0, stri1=10, strt1=10, stft1=10, stbop1=10, stpeu1=10,
+                   vsab1=0, vepn1=0, vepx1=0, vri1=0, vrt1=0, vft1=0, vbop1=0, vpeu1=0)
+
+
+  verif <- valid_fic(type_fic='valid', fichier=fic)
+  nb <- nrow(verif)
+  dataframe <- is.data.frame(verif)
+
+  expect_equal(nb,1)
+  expect_equal(dataframe,TRUE)
+
+})
+
 
 

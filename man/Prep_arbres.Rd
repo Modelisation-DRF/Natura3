@@ -20,14 +20,14 @@ Prep_arbres(
 
 \item{ht}{Booléen
 \itemize{
-  \item \code{TRUE} (par défaut): si la hauteur des arbres doit être estimée, si \code{file_arbre} est fourni
-  \item \code{FALSE}: si la hauteur des arbres est fournie dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être hauteur_pred (en mètres)
+  \item \code{TRUE} (par défaut): si la hauteur des arbres doit être estimée, seulement pour un fichier \code{file_arbre}
+  \item \code{FALSE}: si la hauteur des arbres est fournie dans \code{file_arbre}, ignoré si \code{file_compile}. Le nom de la colonne doit être hauteur_pred (en mètres)
   }}
 
 \item{vol}{Booléen
 \itemize{
-  \item \code{TRUE} (par défaut): si le volume des arbres doit être estimé, si \code{file_arbre} est fourni
-  \item \code{FALSE}: si le volume des arbres est fourni dans \code{file_arbre}, ignoré si \code{file_compile} est fourni. Le nom de la colonne doit être vol_dm3 (en dm3)
+  \item \code{TRUE} (par défaut): si le volume des arbres doit être estimé, seulement pour un fichier \code{file_arbre}
+  \item \code{FALSE}: si le volume des arbres est fourni dans \code{file_arbre}, ignoré si \code{file_compile}. Le nom de la colonne doit être vol_dm3 (en dm3)
   }}
 
 \item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}

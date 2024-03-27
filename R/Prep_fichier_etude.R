@@ -21,7 +21,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table contenant la hauteur dominante de chaque placette, une ligne par placette/iter.
-#' @export
+# #' @export
 #'
 # @examples
 Prep_etude <- function(fic_etude, fic_arbre, nb_iter=1, mode_simul='DET', seed_value = NULL){

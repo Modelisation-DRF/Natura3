@@ -20,7 +20,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table dont les arbres ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
-#' @export
+# #' @export
 #'
 # @examples
 Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
@@ -30,7 +30,7 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
   # vérifier si le fichier est un objet R, sinon importer le fichier
   if (!is.data.frame(file)) {
     suppressMessages(
-    if (grepl(".xls", file)) {arbres <- read_excel(file)}
+    if (grepl(".xls", file)) {arbres <- readxl::read_excel(file)}
     else if (grepl(".csv", file)) {arbres <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }

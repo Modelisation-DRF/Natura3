@@ -37,7 +37,7 @@
 #'             vide pour générer la forme générale de l'équation hd
 #'
 #' @return Une chaine de caractères contenant l'équation pour prédire la variable \code{vari} du groupe d'essences \code{ess}
-#' @export
+# #' @export
 #'
 #' @examples
 #' \dontrun{

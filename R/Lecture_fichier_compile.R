@@ -19,7 +19,7 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table à l'échelle de la placette ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
-#' @export
+# #' @export
 #'
 # @examples
 Lecture_compile <- function(file, iqs, climat, sol){
@@ -28,7 +28,7 @@ Lecture_compile <- function(file, iqs, climat, sol){
   # vérifier si le fichier est un objet R, sinon importer le fichier
   if (!is.data.frame(file)) {
     suppressMessages(
-      if (grepl(".xls", file)) {comp <- read_excel(file)}
+      if (grepl(".xls", file)) {comp <- readxl::read_excel(file)}
       else if (grepl(".csv", file)) {comp <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }
