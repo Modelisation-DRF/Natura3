@@ -21,7 +21,7 @@ Non disponibles pour l'instant.
 ## Dépendences
 Ce package dépends des packages ExtractMap et TarifQC.
 
-- TarifQC est disponible ici https: //github.com/Modelisation-DRF/TarifQC
+- TarifQC est disponible ici: https://github.com/Modelisation-DRF/TarifQC
 
 - ExtractMap est disponible ici: https://github.com/Modelisation-DRF/ExtractMap
 
