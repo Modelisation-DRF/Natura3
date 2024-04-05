@@ -1,8 +1,8 @@
 #' Vérifier le contenu des variables des fichier d'entrée
 #'
-#' @description Vérifier le contenu des variables des fichier d'entrée
+#' @description Vérifier le contenu des variables des fichiers d'entrée
 #
-#' @param type_fic Type du fichier à vérifier: arbres, etudes ou compil
+#' @param type_fic Type du fichier à vérifier: arbres ou compil ou valid
 #' @param fichier Nom de la table à vérifier
 #' @inheritParams SimulNatura
 #'
@@ -10,7 +10,7 @@
 # #' @export
 #'
 # @examples
-valid_fic <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NULL){
+valid_placette <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NULL){
 
   # type_fic = 'arbres'
 
@@ -19,14 +19,17 @@ valid_fic <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NUL
   # etat = c('10','10','10','11')
   # longitude = c(-70, -70, -70, -82)
   # fichier <- data.frame(essence, dhpcm, etat, longitude)
+  # ht=T; vol=T; iqs=T; climat=T; sol=T;
 
-# type_fic="arbres"; fichier=fichier_arbres_aveccov; ht=T; vol=T; iqs=F; climat=F; sol=F;
+  # test: test <- fichier_arbres_aveccov %>% mutate(type_eco = ifelse(type_eco=='RE20','FE32',type_eco)); names(test) <- tolower(names(test))
+  # type_fic="arbres"; fichier=test; ht=T; vol=T; iqs=F; climat=F; sol=F;
+  # type_fic="compile"; iqs=F; climat=F; sol=F;
 
   if (type_fic=='arbres') {
 
     valid1 <- NULL; valid2 <- NULL; valid3 <- NULL; valid4 <- NULL; valid5 <- NULL; valid6 <- NULL; valid7 <- NULL; valid8 <- NULL;
 
-    valid1 <- fic_validation %>% filter(fichier %in% c("arbres", "arbres, etudes", "peup"))
+    valid1 <- fic_validation %>% filter(fichier %in% c("peup"))
 
     # si on fournit le climat et pas besoin de calculer ht, il faut juste verfier prec_gs et temp_gs
     if (isFALSE(climat) & isFALSE(ht)) valid2 <- fic_validation %>% filter(fichier == 'climat')
@@ -49,9 +52,6 @@ valid_fic <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NUL
 
     valid <- bind_rows(valid1, valid2, valid3, valid4, valid5, valid6, valid7, valid8)
 
-  }
-  if (type_fic=='etudes') {
-    valid <- fic_validation %>% filter(fichier %in% c("etudes", "arbres, etudes"))
   }
 
   if (type_fic=='compile') {
@@ -83,19 +83,31 @@ valid_fic <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NUL
     valid <- fic_validation %>% filter(fichier=='valid')
   }
 
+  # fichier=test # 29 obs
+  # fichier = fichier_arbres_aveccov; names(fichier_arbres_aveccov) <- tolower(names(fichier_arbres_aveccov))
+  # fichier <- fichier_compile_aveccov; names(fichier)  <- tolower(names(fichier))
+  fichier_complet <- fichier
   erreur <- NULL  # on accumule tous les messages
   for (i in 1:nrow(valid)) {
+    #i=1
     val <-   as.character(valid[i,2])  # les valeurs possibles
     message <- as.character(valid[i,3]) # le message d'erreur si mauvaises valeurs
-    fichier_val <- fichier %>% filter(!eval(parse(text = val)))  # on garde les lignes qui ne sont pas dans les valeurs possible d'une variable
-    if (nrow(fichier_val)>0) {erreur <- c(erreur, message)} # s'il y a des lignes, on ajoute le message d'erreur
+    fichier_val <- fichier_complet %>% filter(!eval(parse(text = val)))  # on garde les lignes qui ne sont pas dans les valeurs possibles d'une variable
+    fichier <- fichier %>% filter(eval(parse(text = val)))  # on filtre le fichier
+    if (nrow(fichier_val)>0) {# s'il y a des lignes en dehors des plages
+      fichier_val$message <- message # on ajoute le message au fichier
+      erreur <- bind_rows(erreur, fichier_val) # on accumule les lignes avec erreur
+    }
   }
 
+  # si erreur n'est pas vide on garde une ligne par placette/message
+  if (!is.null(erreur)) {
+    #erreur <- erreur %>% group_by(id_pe) %>% slice(1)
+    erreur <- erreur %>% dplyr::select(id_pe,message) %>% unique() %>% arrange(id_pe)
+    }
 
-  # si erreur n'est pas vide on retourne l'erreur, sinon on retourne le fichier
-  if (length(erreur)>0) {result <- erreur} else result <- fichier
 
- return(result)
+ return(list(fichier, erreur))
 
 }
 

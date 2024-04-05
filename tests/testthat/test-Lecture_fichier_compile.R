@@ -152,12 +152,12 @@ test_that("La fonction Lecture_compile fonctionne tel qu'attendu avec ht=F, vol=
 })
 
 
-test_that("La fonction Lecture_compile fonctionne tel qu'attendu avec un contenu des variables hors limite ", {
-
-
-  fic1 <- fichier_compile_aveccov %>% dplyr::select(-iqs_pot_BOP) %>% mutate(iqs_pot_bop=45)
-  compile = Lecture_compile(file=fic1, iqs=F, climat=F, sol=F)
-  expect_equal(compile,"iqs_pot_bop à l'extérieur de la plage des valeurs possibles (>7 et <21 m)")
-
-})
+# test_that("La fonction Lecture_compile fonctionne tel qu'attendu avec un contenu des variables hors limite ", {
+#
+#
+#   fic1 <- fichier_compile_aveccov %>% dplyr::select(-iqs_pot_BOP) %>% mutate(iqs_pot_bop=45)
+#   compile = Lecture_compile(file=fic1, iqs=F, climat=F, sol=F)
+#   expect_equal(compile,"iqs_pot_bop à l'extérieur de la plage des valeurs possibles (>7 et <21 m)")
+#
+# })
 

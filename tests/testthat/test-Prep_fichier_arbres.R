@@ -17,9 +17,9 @@ test_that("La fonction Prep_arbres() retourne un fichier arbres avec les essence
            iqs_pot_epn=12, iqs_pot_epb=14, iqs_pot_pig=15, iqs_pot_sab=8, iqs_pot_tho=14, iqs_pot_pib=16, iqs_pot_bop=10, iqs_pot_pex=10,
            no_arbre=row_number(), dhpcm=10, nb_tige=1, tige_ha=25, etat='10', hauteur_pred=8, vol_dm3=300)
 
-  arbres2 <- Filtrer_place(fichier=arbres)
+  #arbres2 <- Filtrer_place(fichier=arbres)
 
-  prep_arbre <- Prep_arbres(fic_arbre=arbres2, ht=F, vol=F, mode_simul='DET')
+  prep_arbre <- Prep_arbres(fic_arbre=arbres, ht=F, vol=F, mode_simul='DET')
 
   arbres3 <- prep_arbre[[1]]
 
@@ -115,8 +115,8 @@ test_that("La fonction Prep_arbres() fonctionne quand Ht et Vol doivent être ca
            iqs_pot_epn=12, iqs_pot_epb=14, iqs_pot_pig=15, iqs_pot_sab=8, iqs_pot_tho=14, iqs_pot_pib=16, iqs_pot_bop=10, iqs_pot_pex=10,
            no_arbre=1, dhpcm=10, nb_tige=1, tige_ha=25, etat='10', essence='SAB')
 
-  arbres2 <- Filtrer_place(fichier=arbres)
-  prep_arbre <- Prep_arbres(fic_arbre=arbres2, ht=T, vol=T, mode_simul='DET')
+  #arbres2 <- Filtrer_place(fichier=arbres)
+  prep_arbre <- Prep_arbres(fic_arbre=arbres, ht=T, vol=T, mode_simul='DET')
 
   arbres3 <- prep_arbre[[1]]
 
@@ -144,8 +144,8 @@ test_that("La fonction Prep_arbres() compile bien les placettes", {
 
   arbres <- left_join(info, arbres, by="id_pe")
 
-  arbres2 <- Filtrer_place(fichier=arbres)
-  prep_arbre <- Prep_arbres(fic_arbre=arbres2, ht=T, vol=T, mode_simul='DET')
+  #arbres2 <- Filtrer_place(fichier=arbres)
+  prep_arbre <- Prep_arbres(fic_arbre=arbres, ht=T, vol=T, mode_simul='DET')
 
   fic_compile <- prep_arbre[[2]]
   # fic_compile2 <- fic_compile %>% dplyr::select(id_pe, annee, tbe, pert,

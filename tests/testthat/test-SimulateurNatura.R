@@ -305,17 +305,138 @@ test_that("La fonction SimulNatura() fonctionne comme attendu avec tbe1,tbe2,per
 })
 
 
-test_that("La fonction SimulNatura() retourne un message quand il n'y a pas le bon contenu des variables", {
+# test_that("La fonction SimulNatura() retourne un message quand il n'y a pas le bon contenu des variables du fichier compile", {
+#
+#   fic = fichier_compile_aveccov %>% dplyr::select(-nsab, -nepn, -nepx, -nri,- nrt, -nft, -nbop, -npeu) %>%
+#     mutate(nsab=1000, nepn=1000, nepx=1000, nri=1000, nrt=1000, nft=1000, nbop=1000, npeu=1000)
+#
+#   #simul <- SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+#
+#   # "La somme des nombres de tiges des 8 groupes d'essences est à l'extérieur de la plage des valeurs possibles (>0 à 5000 tiges/ha ou 200 tiges dans 400 m2)"
+#   expect_error(SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+#
+# })
+# tester aucune placette valide dans file_compile
+test_that("La fonction SimulNatura() arrête quand toutes les placettes du file_compile sont rejetées", {
+
+  fic = fichier_compile_aveccov %>% dplyr::select(-nsab, -nepn, -nepx, -nri,- nrt, -nft, -nbop, -npeu) %>%
+    mutate(nsab=6000, nepn=1000, nepx=1000, nri=1000, nrt=1000, nft=1000, nbop=1000, npeu=1000)
+
+  expect_error(SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+# tester aucune placette valide dans arbres
+test_that("La fonction SimulNatura() arrête quand toutes les placettes du fichier arbres sont rejetées", {
+
+  fic = fichier_arbres_aveccov %>% mutate(type_eco='FE32')
+  expect_error(SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+# tester aucune placette valide dans arbres-etude
+test_that("La fonction SimulNatura() arrête quand toutes les placettes du fichier arbres-etude sont rejetées", {
+
+  fic = fichier_arbres_etudes %>% mutate(etage='I')
+  expect_error(SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+# tester aucun arbre valide dans arbres
+test_that("La fonction SimulNatura() arrête quand tous les arbres du fichier arbres sont rejetés", {
+
+  fic = fichier_arbres_aveccov  %>% mutate(dhpcm=8)
+  expect_error(SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+# tester avec un arbre non valide dans arbres
+test_that("La fonction SimulNatura() arrête quand un arbre du fichier arbres est rejeté", {
+
+  fic = fichier_arbres_aveccov  %>% mutate(dhpcm=201)
+  expect_error(SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+# tester avec un arbre-arbre non valide
+test_that("La fonction SimulNatura() arrête quand un arbre du fichier arbres-etudes est rejeté", {
+
+  fic = fichier_arbres_etudes %>% mutate(etage='x')
+  expect_error(SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+
+})
+
+
+# tester aucune placette valide dans totaux
+test_that("La fonction SimulNatura() arrête quand toutes les placettes ont des totaux trop grands", {
 
   fic = fichier_compile_aveccov %>% dplyr::select(-nsab, -nepn, -nepx, -nri,- nrt, -nft, -nbop, -npeu) %>%
     mutate(nsab=1000, nepn=1000, nepx=1000, nri=1000, nrt=1000, nft=1000, nbop=1000, npeu=1000)
 
-  #simul <- SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
-
-  # "La somme des nombres de tiges des 8 groupes d'essences est à l'extérieur de la plage des valeurs possibles (>0 à 5000 tiges/ha ou 200 tiges dans 400 m2)"
   expect_error(SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
 
 })
+
+
+
+# tester quand juste quelques placettes rejetées dans arbres
+test_that("La fonction SimulNatura() fonctionne quelques placettes du fichier arbres sont rejetées", {
+
+  fic <- fichier_arbres_aveccov %>% mutate(type_eco = ifelse(type_eco=='RE20','FE32',type_eco))
+
+  simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+
+  nb_message <- nrow(simul %>% filter(!is.na(message)))
+  nb_valid <- nrow(simul %>% filter(is.na(message)))
+
+  expect_equal(nb_message,1)
+  expect_equal(nb_valid,6)
+
+})
+
+
+
+# tester quand juste quelques placettes rejetées dans compil
+test_that("La fonction SimulNatura() fonctionne quelques placettes du fichier file_compile sont rejetées", {
+
+  fic <- fichier_compile_aveccov %>% mutate(type_eco = ifelse(type_eco=='RE22','FE32',type_eco))
+
+  simul <- SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+
+  nb_message <- nrow(simul %>% filter(!is.na(message)))
+  nb_valid <- nrow(simul %>% filter(is.na(message)))
+
+  expect_equal(nb_message,1)
+  expect_equal(nb_valid,6)
+
+})
+
+# et juste quelques placettes rejetées dans etudes
+test_that("La fonction SimulNatura() fonctionne quelques placettes du fichier arbres-études sont rejetées", {
+
+  fic <- fichier_arbres_etudes %>% mutate(etage = ifelse(ID_PE=='0319801702','I',etage))
+
+  simul <- SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+
+  nb_valid <- nrow(simul) # il n'y en a pas 12, car une placette des deux placettes n'avait plus d'arbres-etude, donc seulement 6 obs
+
+  expect_equal(nb_valid,6)
+
+})
+
+
+
+# # ajouter test quand lecture_arbres, lecture_etude ou lecture_compile retourne une erreur
+# test_that("La fonction SimulNatura() retourne un message quand il n'y a pas le bon contenu des variables du fichier arbre", {
+#
+#   fic <- fichier_arbres_aveccov %>% mutate(type_eco = ifelse(type_eco=='RE20','FE32',type_eco))
+#
+#   simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F)
+#
+#   # "La somme des nombres de tiges des 8 groupes d'essences est à l'extérieur de la plage des valeurs possibles (>0 à 5000 tiges/ha ou 200 tiges dans 400 m2)"
+#   expect_error(SimulNatura(file_compile = fic, horizon=5, mode_simul='DET', iqs=F, sol=F, climat=F))
+#
+# })
 
 
 

@@ -40,14 +40,17 @@ if (isFALSE(vol)) { # si le volume est fourni, on n'a pas besoin de la hauteur
 
 # sélectionner les variables
 Data1 <- Data %>%
-  mutate(nb_tige = tige_ha*400/10000) #%>% # Natura utilise le nombre dans 400 m2, mais pourquoi je calcule ça ici? probablement pas necessaire
+  mutate(nb_tige = tige_ha*400/10000) %>% # Natura utilise le nombre dans 400 m2, mais pourquoi je calcule ça ici? probablement pas necessaire
+  #  créer les variables veg_pot et milieu nécessaire pour la relation h-d
+  mutate(veg_pot = substr(type_eco,1,3),
+         milieu = substr(type_eco,4,4))
   #dplyr::select(id_pe, sdom_bio, altitude, veg_pot, contains("vp"), milieu, contains("mp"), type_eco, p_tot, t_ma, prec_gs, temp_gs, contains("orig"), temps, iqs_epn, iqs_epx, iqs_bop, iqs_peu,
   #              iqs_ri, iqs_sab, iqs_ft, iqs_rt, ph, cec, oc, sand, clay, no_arbre, essence, dhpcm, nb_tige, tige_ha, etat, hauteur_pred, vol_dm3)
 
 # créer un fichier des info placettes: enlever altitude, p_tot, t_ma de la liste, car on en a plus besoin après avoir estimer la hauteur des arbres
 #info_plac <- Data1[, c(variables_fixes_temps,"temps")]
-info_plac <- Data1 %>%
-  dplyr::select(-dhpcm, -etat, -essence, -tige_ha, -hauteur_pred, -vol_dm3, -nb_tige) %>% # enlever les variables à l'échelle de l'arbre
+info_plac <- Data %>%
+  dplyr::select(-dhpcm, -etat, -essence, -tige_ha, -hauteur_pred, -vol_dm3) %>% # enlever les variables à l'échelle de l'arbre
  # mutate(annee=0, tbe=0, pert=0) %>%
   group_by(id_pe) %>%
   slice(1) # ne garder qu'une ligne par placette
@@ -113,7 +116,7 @@ gr <- gr %>%
 compil2 <- full_join(compil, gr, by=c('iter','groupe_ess'))
 
 
-#### n-st-shannon, transposer seulement l'iter 1 car les dhp sopnt tous les memes pour toutes les iter, seulement v change selon l'iter, ça va etre moins gros à rouler
+#### n-st-shannon, transposer seulement l'iter 1 car les dhp sont tous les memes pour toutes les iter, seulement v change selon l'iter, ça va etre moins gros à rouler
 
 # transposer les groupes d'essences en colonne pour n-st-v
 compil_n <- compil2 %>%

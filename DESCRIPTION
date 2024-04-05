@@ -1,7 +1,7 @@
 Package: Natura3
 Type: Package
 Title: Forest growth simulator Natura 3.0
-Version: 1.0.1
+Version: 1.0.3
 Author: Isabelle Auger, isabelle.auger@mrnf.gouv.qc.ca
 Maintainer: Isabelle Auger <isabelle.auger@mrnf.gouv.qc.ca>
 Description: Natura 3.0 is a stand level forest growth model based on stand origine and time since origine.

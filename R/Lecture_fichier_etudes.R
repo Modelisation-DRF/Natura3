@@ -13,11 +13,11 @@
 
 #' Lire le fichier des arbres-études et valider le nom des colonnes
 #'
-#' @description Lire le fichier des arbres-études et valider le nom des colonnes. Filtrer les arbres selon leur dhp, hauteur et etage
+#' @description Lire le fichier des arbres-études et valider le nom des colonnes.
 #'
 #' @param file Nom du fichier à lire (table, Excel ou csv)
 #'
-#' @return Table dont les arbres-études ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
+#' @return Table arbres-études ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 # #' @export
 #'
 # @examples
@@ -42,23 +42,21 @@ Lecture_etudes <- function(file){
   # vérification des noms de variables de base
   if (length(setdiff(nom_base, nom)) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-etudes")}
 
-  # filtrer les etudes d'arbres
-  if (!is.character(etudes)) {
+   # filtrer les etudes d'arbres
+  # if (!is.character(etudes)) {
+  #
+  #   # Valider le contenu des colonnes
+  #   etudes <- valid_fic(type_fic='etudes', fichier=etudes)
+  #
+  #   if (!is.character(etudes)) {
+  #
+  #   etudes <- etudes %>%
+  #     filter(dhpcm>9, toupper(etage) %in% c('C','D')) %>%
+  #     #filter(!is.na(hauteur), hauteur>=2) %>%
+  #     dplyr::select(id_pe, essence, dhpcm, hauteur)
+  #
+  #   }
+  # }
 
-    # Valider le contenu des colonnes
-    etudes <- valid_fic(type_fic='etudes', fichier=etudes)
-
-    # verifier les covariables de peuplements dans filter_place
-    # verfier les compil dans lecture_compil
-
-    if (!is.character(etudes)) {
-
-    etudes <- etudes %>%
-      filter(dhpcm>9, toupper(etage) %in% c('C','D')) %>%
-      #filter(!is.na(hauteur), hauteur>=2) %>%
-      dplyr::select(id_pe, essence, dhpcm, hauteur)
-
-    }
-  }
   return(etudes)
 }

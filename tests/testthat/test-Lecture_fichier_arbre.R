@@ -1,19 +1,38 @@
 # fct 2: Lecture_arbres(): importer le fichier d'arbres et garder les vivant et dhp>9.
 #                          vérification si on n'a mis les bons noms de variables
 
+# test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T, iqs=T, climat=T, sol=T ", {
+#
+#   fic1 = fichier_arbres_sanscov[1:10,]
+#   fic2 = data.frame(essence='EPN', ID_PE='2', TIGE_HA=25, dhpcm=8, ETAT=10, LATITUDE=47, LONGITUDE=-67, SDOM_BIO='4O', REG_ECO='4d', type_eco='MS22', ALTITUDE=100, ORIGINE='BR', pet='4',an_mes=1990, temps=50,id='1')
+#   fic_tous = bind_rows(fic1,fic2)
+#
+#   arbre = Lecture_arbres(file=fic_tous, ht=T, vol=T, iqs=T, climat=T, sol=T)
+#
+#   nbligne = nrow(arbre)
+#   nom_retourne = names(arbre)
+#   nom_lu = names(fic_tous)
+#
+#   # filtrer les dhp et les etats
+#   expect_equal(nbligne,10)
+#
+#   # variable de base manquante
+#   fic2 <- fic1 %>% dplyr::select(-ID_PE)
+#   arbre = Lecture_arbres(file=fic2, ht=T, vol=T, iqs=T, climat=T, sol=T)
+#   expect_equal(arbre,"Nom des variables de base incorrect dans le fichier des arbres")
+#
+#   # retrait de variable non nécessaires: id et reg_eco et pet
+#   #retrait <- setdiff(tolower(nom_lu),nom_retourne)
+#   #expect_equal(retrait, c("reg_eco","pet","id"))
+# })
+
 test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T, iqs=T, climat=T, sol=T ", {
 
   fic1 = fichier_arbres_sanscov[1:10,]
-  fic2 = data.frame(essence='EPN', ID_PE='2', TIGE_HA=25, dhpcm=8, ETAT=10, LATITUDE=47, LONGITUDE=-67, SDOM_BIO='4O', REG_ECO='4d', type_eco='MS22', ALTITUDE=100, ORIGINE='BR', pet='4',an_mes=1990, temps=50,id='1')
-  fic_tous = bind_rows(fic1,fic2)
 
-  arbre = Lecture_arbres(file=fic_tous, ht=T, vol=T, iqs=T, climat=T, sol=T)
+  arbre = Lecture_arbres(file=fic1, ht=T, vol=T, iqs=T, climat=T, sol=T)
 
   nbligne = nrow(arbre)
-  nom_retourne = names(arbre)
-  nom_lu = names(fic_tous)
-
-  # filtrer les dhp et les etats
   expect_equal(nbligne,10)
 
   # variable de base manquante
@@ -21,9 +40,6 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   arbre = Lecture_arbres(file=fic2, ht=T, vol=T, iqs=T, climat=T, sol=T)
   expect_equal(arbre,"Nom des variables de base incorrect dans le fichier des arbres")
 
-  # retrait de variable non nécessaires: id et reg_eco et pet
-  #retrait <- setdiff(tolower(nom_lu),nom_retourne)
-  #expect_equal(retrait, c("reg_eco","pet","id"))
 })
 
 
@@ -278,14 +294,14 @@ test_that("La fonction Lecture_arbres fonctionne si altitude absent avec ht=F, v
 })
 
 
-test_that("La fonction Lecture_arbres fonctionne comme attendu avec un contenu de variables hors limite ", {
-
-  # si on n'a pas besoin d'estimer la hauteur, altitude n'est pas néccesaire
-  fic1 = fichier_arbres_sanscov[1:10,] %>% dplyr::select(-dhpcm) %>% mutate(dhpcm=300)
-  fic1$hauteur_pred=10
-  arbre1 = Lecture_arbres(file=fic1, ht=F, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Valeurs de dhpcm non permises (>9.0 et <200 cm)")
-
-
-
-})
+# test_that("La fonction Lecture_arbres fonctionne comme attendu avec un contenu de variables hors limite ", {
+#
+#   # si on n'a pas besoin d'estimer la hauteur, altitude n'est pas néccesaire
+#   fic1 = fichier_arbres_sanscov[1:10,] %>% dplyr::select(-dhpcm) %>% mutate(dhpcm=300)
+#   fic1$hauteur_pred=10
+#   arbre1 = Lecture_arbres(file=fic1, ht=F, vol=T, iqs=T, climat=T, sol=T)
+#   expect_equal(arbre1,"Valeurs de dhpcm non permises (>9.0 et <200 cm)")
+#
+#
+#
+# })

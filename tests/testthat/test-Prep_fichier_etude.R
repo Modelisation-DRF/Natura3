@@ -7,7 +7,8 @@ test_that("La fonction Prep_etude() retourne un fichier à l'échelle de la plac
   arbres <- fichier_arbres_aveccov %>% mutate(no_arbre=row_number())
   names(etudes) <- tolower(names(etudes))
   names(arbres) <- tolower(names(arbres))
-  arbres <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
+  #arbres <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
+  arbres <- arbres %>% mutate(iter=1)
 
   hd <- Prep_etude(fic_etude=etudes, fic_arbre=arbres, mode_simul='DET')
 
@@ -27,8 +28,10 @@ test_that("La fonction Prep_etude() fonctionne en mode stochastique", {
   arbres <- fichier_arbres_aveccov %>% mutate(no_arbre=row_number())
   names(etudes) <- tolower(names(etudes))
   names(arbres) <- tolower(names(arbres))
-  arbres1 <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
-  arbres2 <- Filtrer_place(fichier=arbres) %>% mutate(iter=2)
+  #arbres1 <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
+  #arbres2 <- Filtrer_place(fichier=arbres) %>% mutate(iter=2)
+  arbres1 <- arbres %>% mutate(iter=1)
+  arbres2 <- arbres %>% mutate(iter=2)
   arbres <- bind_rows(arbres1, arbres2)
 
   hd <- Prep_etude(fic_etude=etudes, fic_arbre=arbres, nb_iter=2, mode_simul='STO')
@@ -48,7 +51,8 @@ test_that("La fonction Prep_etude() fonctionne s'il y a moins que 4 arbres dans 
   names(arbres) <- tolower(names(arbres))
   arbresb <- arbres %>% filter((id_pe=='0400102903' & no_arbre==22) | id_pe=='0319801702')
 
-  arbresc <- Filtrer_place(fichier=arbresb) %>% mutate(iter=1)
+  #arbresc <- Filtrer_place(fichier=arbresb) %>% mutate(iter=1)
+  arbresc <- arbresb %>% mutate(iter=1)
 
   hd <- Prep_etude(fic_etude=etudes, fic_arbre=arbresc, mode_simul='DET')
 
@@ -67,7 +71,8 @@ test_that("La fonction Prep_etude() fonctionne s'il y a une placette sans arbres
   arbres <- fichier_arbres_aveccov %>% mutate(no_arbre=row_number())
   names(arbres) <- tolower(names(arbres))
 
-  arbres <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
+  #arbres <- Filtrer_place(fichier=arbres) %>% mutate(iter=1)
+  arbres <- arbres %>% mutate(iter=1)
 
   hd <- Prep_etude(fic_etude=etudesb, fic_arbre=arbres,mode_simul='DET')
 
