@@ -16,11 +16,11 @@
 
 ########################################################################################
 
-# liste des veg_pot traitées dans Natura (utilisées dans la fonction Filtrer_place())
+# liste des veg_pot traitées dans Natura (utilisées dans la fonction Filtrer_place() et valid_placette())
 vp_retenues <- read_delim("data-raw/Vegpot.csv", delim = ';') %>%
     dplyr::select(VegPotName) %>%
     rename(veg_pot=VegPotName)
-
+vp_retenues <- as.matrix(vp_retenues)
 
 ########################################################################################
 

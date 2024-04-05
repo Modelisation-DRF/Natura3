@@ -14,12 +14,12 @@
 
 #' Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes
 #'
-#' @description Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes. Filtrer les arbres selon leur état et leur dhp.
+#' @description Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes.
 #'
 #' @param file Nom du fichier des arbres à lire (table, Excel ou csv)
 #' @inheritParams SimulNatura
 #'
-#' @return Table dont les arbres ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
+#' @return Table des arbres ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 # #' @export
 #'
 # @examples
@@ -105,43 +105,41 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
   }
 
 
-
-
-  # ajouter un no_arbre et filter les arbres
-  if (!is.character(arbres)) {
-
-    # Valider le contenu des colonnes
-    arbres <- valid_fic(type_fic='arbres', fichier=arbres, ht=ht, iqs=iqs, climat=climat, sol=sol)
-
-    # vérifier les arbres etude dans lecture_etude
-    # verifier les covariables de peuplements dans filter_place
-    # verfier les compil dans lecture_compil
-
-    if (!is.character(arbres)) {
-
-    # # retier les variables non nécessaires
-    #
-    # # listes des variables nécessaires
-    # if (isTRUE(ht)){ # si hauteur à estimer, il faut en plus les variables nom_mod_ht
-    #   var_base <- c(nom_plot, nom_iqs, nom_clim, nom_sol, nom_coor, nom_an_mes, nom_arbre, nom_vol, nom_ht, nom_mod_ht)
-    # }
-    # if (isFALSE(ht)){
-    #   var_base <- c(nom_plot, nom_iqs, nom_clim, nom_sol, nom_coor, nom_an_mes, nom_arbre, nom_vol, nom_ht)
-    # }
-    # # nom des variables dans le fichier
-    # nom_fic <- names(arbres)
-    # # variables non nécessaires
-    # retrait <- setdiff(nom_fic, var_base) # setdiff(x, y) finds all rows in x that aren't in y
-    # # retirer les variables non nécessaires
-    # arbres[retrait] <- list(NULL)
-
-  # créer et filtrer les variables qui seront nécessaires
-  arbres <- arbres %>%
-    filter(dhpcm>9) %>%
-    mutate(no_arbre=row_number())
-    }
-
-  }
+  # # ajouter un no_arbre et filter les arbres
+  # if (!is.character(arbres)) {
+  #
+  #   # Valider le contenu des colonnes
+  #   arbres <- valid_fic(type_fic='arbres', fichier=arbres, ht=ht, iqs=iqs, climat=climat, sol=sol)
+  #
+  #  #if (!is.character(arbres)) {
+  #   if (length(grep('message', names(arbres)))==0) { # si la variable message n'est pas dans le fichier, alors tout était ok
+  #
+  #     # créer et filtrer les variables qui seront nécessaires
+  #     arbres <- arbres %>%
+  #       filter(dhpcm>9) %>%
+  #       mutate(no_arbre=row_number())
+  #      }
+  #
+  #   }
 
   return(arbres)
 }
+
+
+
+
+# # retier les variables non nécessaires
+#
+# # listes des variables nécessaires
+# if (isTRUE(ht)){ # si hauteur à estimer, il faut en plus les variables nom_mod_ht
+#   var_base <- c(nom_plot, nom_iqs, nom_clim, nom_sol, nom_coor, nom_an_mes, nom_arbre, nom_vol, nom_ht, nom_mod_ht)
+# }
+# if (isFALSE(ht)){
+#   var_base <- c(nom_plot, nom_iqs, nom_clim, nom_sol, nom_coor, nom_an_mes, nom_arbre, nom_vol, nom_ht)
+# }
+# # nom des variables dans le fichier
+# nom_fic <- names(arbres)
+# # variables non nécessaires
+# retrait <- setdiff(nom_fic, var_base) # setdiff(x, y) finds all rows in x that aren't in y
+# # retirer les variables non nécessaires
+# arbres[retrait] <- list(NULL)

@@ -39,7 +39,7 @@
 #'  \itemize{
 #'    \item id_pe: identifiant unique de la placette
 #'    \item origine: code d'origine de la placette (ES: épidémie sévère, BR: brulis, CT: coupe totale)
-#'    \item temps_origine: temps depuis l'origine (ans)
+#'    \item temps: temps depuis l'origine (ans)
 #'    \item type_eco: code du type écologique (ex: MS22)
 #'    \item essence: code de l'essences de l'arbre (ex: SAB, EPN, BOP)
 #'    \item dhpcm: dhp (cm) de l'arbre ou classe de dhp (seuls les arbres de plus de 9 cm sont retenus)
@@ -72,7 +72,7 @@
 #'  \itemize{
 #'    \item id_pe: identifiant unique de la placette
 #'    \item origine: code d'origine de la placette (ES: épidémie sévère, BR: brulis, CT: coupe totale)
-#'    \item temps_origine: temps depuis l'origine (ans)
+#'    \item temps: temps depuis l'origine (ans)
 #'    \item type_eco: code du type écologique (ex: MS22)
 #'    \item sdom_bio: code du sous-domaine bioclimatique, en majuscule (ex: 2E, 4O).
 #'    \item is: indice de structure diamètrale de Shannon (valeur entre 0 et 1; 0 : toutes les tiges sont dans la même classe de dhp; 1 : les tiges sont également distribuées dans les classes de dhp)
@@ -151,6 +151,7 @@
 #'    \item pct_xxx: pourcentage de la surface terrière du groupe d'essences xxx (pourcentage) (bop, peu, ft, ri, rt, epx, epn, sab)
 #'    \item dqxxx: diamètre quadratique moyen du groupe d'essences xxx (cm) (bop, peu, ft, ri, rt, epx, epn, sab)
 #'    \item dqtot: diamètre quadratique moyen de l'ensemble des essences (cm)
+#'    \item message: si la placette n'a pas été simulée, message indiquant la raison. Colonne absente si toutes les placettes ont été simulées
 #' }
 #' @export
 #'
@@ -234,19 +235,44 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
     # Lecture du fichier des arbres
     Arbres <- Lecture_arbres(file=file_arbre, ht=ht, vol=vol, iqs=iqs, climat=climat, sol=sol)
-    #if (is.character(Arbres)) print(Arbres) # Erreur lors de la lecture du fichier des arbres
     if (is.character(Arbres)) {stop(Arbres)}
+    # Valider le contenu des colonnes reliées aux arbres (si ht et/ou vol fournis, ils ne sont pas validés. Ils seront validés indirectement par les vxxx et vtot)
+    Arbres <- valid_arbre(type_fic='arbres', fichier=Arbres)
+    if (is.character(Arbres)) {stop(Arbres)} # s'il y a des erreurs, on arrête la simulation
+
+    Arbres <- Arbres %>%
+      filter(dhpcm>9) %>%
+      mutate(no_arbre=row_number())
+
+
+    # Lecture du fichier des arbres études
     EtudeA <- Lecture_etudes(file=file_etude)
-    #if (is.character(EtudeA)) print(EtudeA) # Erreur de la lecture des arbres études
     if (is.character(EtudeA)) {stop(EtudeA)}
+    # Valider le contenu des colonnes reliées aux arbres etudes
+    EtudeA <- valid_arbre(type_fic='etudes', fichier=EtudeA)
+    if (is.character(EtudeA)) {stop(EtudeA)} # s'il y a des erreurs, on arrête la simulation
+
+    EtudeA <- EtudeA %>%
+      filter(dhpcm>9, toupper(etage) %in% c('C','D')) %>%
+      dplyr::select(id_pe, essence, dhpcm, hauteur)
 
 
     ##################################################################################
     ################### Filtrer et préparer les données        #######################
     ##################################################################################
 
+    # Filtrer les placettes
+    filtre <- valid_placette(type_fic='arbres', fichier=Arbres, ht=ht, iqs=iqs, climat=climat, sol=sol)
+
+    Arbres <- filtre[[1]] # fichier filtré
+    placette_rejet <- filtre[[2]] # liste des placettes rejetées avec le message
+
+    # si toutes les placettes ont été rejetées, arrêter la simulation
+    if (nrow(Arbres)==0) stop("Aucune placette valide dans le fichier des arbres")
+
     # filtrer les placettes et créer les variables échelle placettes (mp, vp, sdom)
-    Arbres <- Filtrer_place(fichier=Arbres)
+    # Arbres <- Filtrer_place(fichier=Arbres)
+
     # liste des placettes
     liste_place <- unique(Arbres$id_pe)
     # ne garder les placettes qui sont dans les arbres et dans les etude
@@ -254,7 +280,9 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     liste_place_etude <- unique(EtudeA$id_pe)
     # ne garder que les placettes qui ont des arbres études
     Arbres <- Arbres[Arbres$id_pe %in% liste_place_etude,]
-    ### AJOUTER UNE VÉRIFICATION SI LE FICHIER ARBRES EST VIDE APRÈS AVOIR FILTRE LES PLACETTES
+
+    # Vérifier s'il reste des placettes valides
+    if (nrow(Arbres)==0) {stop("Aucune placette valide dans le fichier des arbres-études")}
 
     # faire un fichier des variables fixes dans le temps: PAS NÉCESSAIRE ICI
     #data_info0 <- Arbres %>% dplyr::select(id_pe, sdom_bio, type_eco, origine) %>% unique()
@@ -299,23 +327,31 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
         # file_compile = fichier_compile_sanscov; horizon=5; mode_simul='STO'; nb_iter = 30; iqs=T; climat=TRUE; sol=T; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
         # file_compile = fichier_compile_aveccov; horizon=5; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
         # file_compile = fic; horizon=9; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
+        # file_compile = fic; horizon=5; mode_simul='DET'; iqs=F; sol=F; climat=F;
 
       ##################################################################################
       ################### Lecture du fichier compilé placette ##########################
       ##################################################################################
 
-        # Lectude du fichier compilé à la placette
+        # Lecture du fichier compilé à la placette
         DataCompile_final0 <- Lecture_compile(file=file_compile, iqs=iqs, climat=climat, sol=sol)
-        #if (is.character(DataCompile_final0)) print(DataCompile_final0) # Erreur lors de la lecture du fichier compilé
         if (is.character(DataCompile_final0)) {stop(DataCompile_final0)}
-
 
         ##################################################################################
         ################### Filtrer et préparer les données        #######################
         ##################################################################################
 
         # Filtrer les placettes
-        DataCompile_final0 <- Filtrer_place(fichier=DataCompile_final0)
+        #DataCompile_final0 <- Filtrer_place(fichier=DataCompile_final0)
+
+        # Filtrer les placettes
+        filtre <- valid_placette(type_fic='compile', fichier=DataCompile_final0, iqs=iqs, climat=climat, sol=sol)
+
+        DataCompile_final0 <- filtre[[1]] # fichier filtré
+        placette_rejet <- filtre[[2]] # liste des placettes rejetées avec le message
+
+        # si toutes les placettes ont été rejetées, arrêter la simulation
+        if (nrow(DataCompile_final0)==0) stop("Aucune placette valide dans le fichier file_compile")
 
         # si stochastique, créer un fichier avec toutes les itérations
         if (mode_simul=='STO'){
@@ -329,6 +365,14 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
           DataCompile_final0 <- DataCompile_final0 %>% mutate(iter=1)
         }
 
+        # créer et renommer les variables qui seront nécessaires
+        DataCompile_final0 <- DataCompile_final0 %>%
+          mutate(nbop1 = nbop/25, npeu1 = npeu/25, nft1 = nft/25, nepn1 = nepn/25, nepx1 = nepx/25, nsab1 = nsab/25, nri1 = nri/25, nrt1 = nrt/25) %>%
+          dplyr::select(-nbop, -npeu, -nft, -nri, -nrt, -nepx, -nepn, -nsab) %>%
+          rename(stbop1=stbop, stpeu1=stpeu, stft1=stft, stri1=stri, strt1=strt, stepx1=stepx, stepn1=stepn, stsab1=stsab,
+                 vbop1=vbop, vpeu1=vpeu, vft1=vft, vri1=vri, vrt1=vrt, vepx1=vepx, vepn1=vepn, vsab1=vsab,
+                 hd1=hd, is1=is)
+
     } # fin de la préparation du fichier compilé
 
 
@@ -337,8 +381,13 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     ################################################################################################
 
   # validation des ntot, sttot et vtot
-  DataCompile_final0 <- valid_fic(type_fic='valid', fichier=DataCompile_final0)
-  if (is.character(DataCompile_final0)) {stop(DataCompile_final0)}
+  filtre <- valid_placette(type_fic='valid', fichier=DataCompile_final0)
+  #if (is.character(DataCompile_final0)) {stop(DataCompile_final0)}
+  DataCompile_final0 <- filtre[[1]] # fichier filtré
+  placette_rejet2 <- filtre[[2]] # liste des placettes rejetées avec le message
+
+  # si toutes les placettes ont été rejetées, arrêter la simulation
+  if (nrow(DataCompile_final0)==0) stop("Aucune placette valide selon les totaux de N, St ou V")
 
 
   ##################################################################################
@@ -358,7 +407,11 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
       rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
   }
-
+  # extraire les variables de climat si nécessaire, avec le package de MF
+  #if (isTRUE(climat)) {
+  #  DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
+  #    rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
+  #}
   # extraire les variables d'iqs si nécessaire
   if (isTRUE(iqs)) {
     DataCompile_final0 <- DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_iqs", variable=variable_iqs)
@@ -468,12 +521,19 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
      write_delim(outputFinal2, file_export, delim = ';')
    }
 
-   return(outputFinal2)
+    # liste des placettes rejetées
+    if (!is.null(placette_rejet) | !is.null(placette_rejet2)) {
+      placette_rejet_tous <- as.data.frame(bind_rows(placette_rejet, placette_rejet2) %>% arrange(id_pe))
+      # ajouter les placettes rejetées à la fin du fichier des simulations
+      outputFinal2 <- bind_rows(outputFinal2, placette_rejet_tous)
+      }
+
+
+   return(as.data.frame(outputFinal2))
 
 } # fin de la fct principale
 
 
-# ajouter les placettes non simulées aux placettes simulées
 
 
 

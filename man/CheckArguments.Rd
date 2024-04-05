@@ -29,7 +29,7 @@ Si ce paramètre n'est pas utilisé, \code{file_compile} doit l'être. Le nom de
  \itemize{
    \item id_pe: identifiant unique de la placette
    \item origine: code d'origine de la placette (ES: épidémie sévère, BR: brulis, CT: coupe totale)
-   \item temps_origine: temps depuis l'origine (ans)
+   \item temps: temps depuis l'origine (ans)
    \item type_eco: code du type écologique (ex: MS22)
    \item essence: code de l'essences de l'arbre (ex: SAB, EPN, BOP)
    \item dhpcm: dhp (cm) de l'arbre ou classe de dhp (seuls les arbres de plus de 9 cm sont retenus)
@@ -64,7 +64,7 @@ Si ce paramètre n'est pas utilisé, \code{file_compile} doit l'être. Le nom de
  \itemize{
    \item id_pe: identifiant unique de la placette
    \item origine: code d'origine de la placette (ES: épidémie sévère, BR: brulis, CT: coupe totale)
-   \item temps_origine: temps depuis l'origine (ans)
+   \item temps: temps depuis l'origine (ans)
    \item type_eco: code du type écologique (ex: MS22)
    \item sdom_bio: code du sous-domaine bioclimatique, en majuscule (ex: 2E, 4O).
    \item is: indice de structure diamètrale de Shannon (valeur entre 0 et 1; 0 : toutes les tiges sont dans la même classe de dhp; 1 : les tiges sont également distribuées dans les classes de dhp)
