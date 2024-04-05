@@ -63,5 +63,7 @@ Pour une description du data.frame
 
 | Date |  Version  | Features et bugs | Détails |
 |:-----|:---------:|:-----------------|:--------|
+| 2024-04-05 | 1.0.3 |  | ajouter la liste des placettes rejetées au fichier des résultats |
+| 2024-04-03 | 1.0.2 |  | élargir les pages de valeurs possibles |
 | 2024-03-27 | 1.0.1 |  | déplacer les packages de Depends à Imports dans DESCRIPTION, ajouter les références aux packages avec :: pour TarifQC et ExtractMap |
 | 2024-03-25 | 1.0.0 |  | Première version stable |
