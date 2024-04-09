@@ -10,8 +10,8 @@ Lecture_etudes(file)
 \item{file}{Nom du fichier à lire (table, Excel ou csv)}
 }
 \value{
-Table dont les arbres-études ont été filtrés ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
+Table arbres-études ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 }
 \description{
-Lire le fichier des arbres-études et valider le nom des colonnes. Filtrer les arbres selon leur dhp, hauteur et etage
+Lire le fichier des arbres-études et valider le nom des colonnes.
 }

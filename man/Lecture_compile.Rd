@@ -31,5 +31,5 @@ Lecture_compile(file, iqs, climat, sol)
 Table à l'échelle de la placette ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
 }
 \description{
-Lire le fichier des placettes à simuler avec Natura et valider le nom des colonnes. Calculer le toalt des groupes d'essences pour N, ST et V et calculer les pourcentage de ST de chaque groupe d'essences.
+Lire le fichier des placettes à simuler avec Natura et valider le nom des colonnes.
 }

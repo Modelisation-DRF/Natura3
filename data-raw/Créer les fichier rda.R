@@ -202,4 +202,9 @@ usethis::use_data(vp_retenues, n_st_max, nom_variables, n_st_v_ass_ess,
                   fic_validation,
                   internal=TRUE, overwrite = TRUE)
 
-
+# mettre certains fichiers disponibles à l'utilisateur
+# sauvegarder le fichier en rda sous /data
+liste_essence <- n_st_v_ass_ess %>% dplyr::select(-ess_eq_hd)
+liste_veg_pot <- vp_retenues
+usethis::use_data(liste_veg_pot, liste_essence,
+                  overwrite = TRUE)
