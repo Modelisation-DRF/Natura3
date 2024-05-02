@@ -18,7 +18,7 @@
 #' @param file Nom du fichier à lire (table, Excel ou csv)
 #'
 #' @return Table arbres-études ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
-# #' @export
+#' @export
 #'
 # @examples
 Lecture_etudes <- function(file){
@@ -26,8 +26,8 @@ Lecture_etudes <- function(file){
   # vérifier si le fichier est un objet R, sinon importer le fichier
   if (!is.data.frame(file)) {
     suppressMessages(
-    if (grepl(".xls", file)) {etudes <- readxl::read_excel(file)}
-    else if (grepl(".csv", file)) {etudes <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
+      if (grepl(".xls", file)) {etudes <- readxl::read_excel(file)}
+      else if (grepl(".csv", file)) {etudes <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }
   else etudes <- file
@@ -37,12 +37,16 @@ Lecture_etudes <- function(file){
   nom <- names(etudes)
   nom_base <- as.matrix(nom_variables[nom_variables$categorie=="etude","variable"])
 
+
   # setdiff : Find Elements that Exist Only in First, But Not in Second Vector
 
   # vérification des noms de variables de base
-  if (length(setdiff(nom_base, nom)) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-etudes")}
+  difference_nom_etude <- setdiff(nom_base, nom)
 
-   # filtrer les etudes d'arbres
+  if (length(difference_nom_etude) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-etudes. les variables suivantes sont requis: ",
+                                                        paste(difference_nom_etude, collapse = ', '))}
+
+  # filtrer les etudes d'arbres
   # if (!is.character(etudes)) {
   #
   #   # Valider le contenu des colonnes

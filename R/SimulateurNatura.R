@@ -226,6 +226,8 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
   if (!missing(file_arbre)) {
 
+    names(file_etude) <- tolower(names(file_etude))
+    names(file_arbre) <- tolower(names(file_arbre))
     ##################################################################################
     ################### Lecture des fichiers arbres         ##########################
     ##################################################################################
@@ -277,13 +279,14 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     liste_place <- unique(Arbres$id_pe)
     # ne garder les placettes qui sont dans les arbres et dans les etude
     EtudeA <- EtudeA[EtudeA$id_pe %in% liste_place,]
+
+
     liste_place_etude <- unique(EtudeA$id_pe)
     # ne garder que les placettes qui ont des arbres études
     Arbres <- Arbres[Arbres$id_pe %in% liste_place_etude,]
 
     # Vérifier s'il reste des placettes valides
     if (nrow(Arbres)==0) {stop("Aucune placette valide dans le fichier des arbres-études")}
-
     # faire un fichier des variables fixes dans le temps: PAS NÉCESSAIRE ICI
     #data_info0 <- Arbres %>% dplyr::select(id_pe, sdom_bio, type_eco, origine) %>% unique()
     #print("fin prep des fichiers")

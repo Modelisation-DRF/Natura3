@@ -6,11 +6,12 @@
 #' @param fichier Nom de la table à vérifier
 #'
 #' @return Table ou message d'erreur
-# #' @export
+#' @export
 #'
 # @examples
 valid_arbre <- function(type_fic, fichier){
 
+  names(fichier) <- tolower(names(fichier))
   # type_fic = 'arbres'
 
   # essence = c('SAB','EPX','EPB','BOP')
@@ -44,7 +45,9 @@ valid_arbre <- function(type_fic, fichier){
   # si erreur n'est pas vide on retourne l'erreur, sinon on retourne le fichier
   if (!is.null(erreur)) {result <- erreur} else result <- fichier
 
- return(result)
+
+  return(result)
+
 
 }
 

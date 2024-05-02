@@ -11,7 +11,7 @@
 #                                                              #
 ################################################################
 
-
+#'
 #' Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes
 #'
 #' @description Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes.
@@ -19,10 +19,11 @@
 #' @param file Nom du fichier des arbres à lire (table, Excel ou csv)
 #' @inheritParams SimulNatura
 #'
-#' @return Table des arbres ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
-# #' @export
+#' @return Table des arbres ou un message d'arbres s'il y a une arbres dans le nom des colonnes.
+#' @export
 #'
-# @examples
+# #' @examples
+
 Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
 
   # file=file_arbre; ht=ht; vol=vol; iqs=iqs; climat=climat; sol=sol;
@@ -30,8 +31,8 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
   # vérifier si le fichier est un objet R, sinon importer le fichier
   if (!is.data.frame(file)) {
     suppressMessages(
-    if (grepl(".xls", file)) {arbres <- readxl::read_excel(file)}
-    else if (grepl(".csv", file)) {arbres <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
+      if (grepl(".xls", file)) {arbres <- readxl::read_excel(file)}
+      else if (grepl(".csv", file)) {arbres <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }
   else {arbres <- file}
@@ -54,54 +55,76 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
   nom_base <- c(nom_plot, nom_arbre)
 
 
+
   # setdiff : Find Elements that Exist Only in First, But Not in Second Vector
 
   # vérification des noms de variables de base
-  if (length(setdiff(nom_base, nom)) >0)
-    {arbres = paste0("Nom des variables de base incorrect dans le fichier des arbres")} else {
+
+  difference <- setdiff(nom_base, nom)
+
+  if (length(difference) >0){
+
+    arbres  <- paste0("Les variables suivantes manquent dans le fichier des arbres : ", paste(difference, collapse = ', '))
+
+  } else {
 
     # vérification des variables si ht est à estimer et que le climat est fourni
     if (isTRUE(ht) & isFALSE(climat)) {
-      if (length(setdiff(nom_mod_ht, nom)) >0) {arbres = paste0("Nom des variables incorrect dans le fichier des arbres pour estimer la hauteur")}
+
+      difference_nom_mod_ht <- setdiff(nom_mod_ht, nom)
+
+      if (length(difference_nom_mod_ht) >0) {
+        arbres = paste0("Les variables suivantes sont manquantes dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht, collapse = ', '))
+      }
+
     }
-      # vérification des variables si ht est à estimer et que le climat n'est pas fourni
-      if (isTRUE(ht) & isTRUE(climat)) {
-        nom_mod_ht2 <- nom_mod_ht[-which(nom_mod_ht=="t_ma")] # enlever t_ma de la liste
-        nom_mod_ht2 <- nom_mod_ht2[-which(nom_mod_ht2=="p_tot")] # enlever p_tot de la liste
-        if (length(setdiff(c(nom_mod_ht2, nom_coor), nom)) >0) {arbres = paste0("Nom des variables incorrect dans le fichier des arbres pour estimer la hauteur")}
+    # vérification des variables si ht est à estimer et que le climat n'est pas fourni
+    if (isTRUE(ht) & isTRUE(climat)) {
+      nom_mod_ht2 <- nom_mod_ht[-which(nom_mod_ht=="t_ma")] # enlever t_ma de la liste
+      nom_mod_ht2 <- nom_mod_ht2[-which(nom_mod_ht2=="p_tot")] # enlever p_tot de la liste
+
+      difference_nom_mod_ht2 <- setdiff(c(nom_mod_ht2, nom_coor), nom)
+
+      if (length(difference_nom_mod_ht2) >0) {
+        arbres = paste0("Les variables suivantes sont manquantes dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht2, collapse = ', '))
       }
-      # vérification des noms de variables iqs ou sol à extraire : il faut lat-long
-      if (isTRUE(iqs) | isTRUE(sol)) {
-        if (length(setdiff(nom_coor, nom)) >0) {arbres = paste0("Coordonnées des placettes manquantes pour extraire iqs/sol")}
+    }
+    # vérification des noms de variables iqs ou sol à extraire : il faut lat-long
+    if (isTRUE(iqs) | isTRUE(sol)) {
+      difference_nom_coor<- setdiff(nom_coor, nom)
+
+      if (length(difference_nom_coor) >0) {
+        arbres = paste0("Coordonnées des placettes manquantes pour extraire iqs/sol. les variables suivantes sont requis: ", paste(difference_nom_coor, collapse = ', '))
       }
-      # vérification des noms de variables si climat sont à extraire : il faut lat-long-an_mes
-      if (isTRUE(climat)) {
-        if (length(setdiff(c(nom_coor, nom_an_mes), nom)) >0) {arbres = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire climat")}
-      }
-      # vérification des iqs s'ils sont fournis dans le fichier d'inventaire
-      if (isFALSE(iqs)) {
-        if (length(setdiff(nom_iqs, nom)) >0) {arbres = paste0("Nom des variables d'iqs incorrect dans le fichier des arbres")}
-      }
-      # vérification des variables de sol s'ils sont fournis dans le fichier d'inventaire
-      if (isFALSE(sol)) {
-        if (length(setdiff(nom_sol, nom)) >0) {arbres = paste0("Nom des variables de sol incorrect dans le fichier des arbres")}
-      }
-      # vérification de la ht si elle est fournie dans le fichier d'inventaire
-      if (isFALSE(ht)) {
-        if (length(setdiff(nom_ht, nom)) >0) {arbres = paste0("Nom de la variable de hauteur incorrect dans le fichier des arbres")}
-      }
-      # vérification du volume s'il est fourni dans le fichier d'inventaire
-      if (isFALSE(vol)) {
-        if (length(setdiff(nom_vol, nom)) >0) {arbres = paste0("Nom de la variable du volume incorrect dans le fichier des arbres")}
-      }
-      # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais pas besoin d'estimer la hauteur
-      if (isFALSE(climat) & isFALSE(ht)) {
-       if (length(setdiff(nom_clim, nom)) >0) {arbres = paste0("Nom des variables climatiques annuelles incorrect dans le fichier des arbres")}
-      }
-      # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais aussi besoin d'estimer la hauteur
-      if (isFALSE(climat) & isTRUE(ht)) {
-        if (length(setdiff(c(nom_clim,"t_ma","p_tot"), nom)) >0) {arbres = paste0("Nom des variables climatiques incorrect dans le fichier des arbres")}
-      }
+    }
+    # vérification des noms de variables si climat sont à extraire : il faut lat-long-an_mes
+    if (isTRUE(climat)) {
+      if (length(setdiff(c(nom_coor, nom_an_mes), nom)) >0) {arbres = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire climat")}
+    }
+    # vérification des iqs s'ils sont fournis dans le fichier d'inventaire
+    if (isFALSE(iqs)) {
+      if (length(setdiff(nom_iqs, nom)) >0) {arbres = paste0("Nom des variables d'iqs incorrect dans le fichier des arbres")}
+    }
+    # vérification des variables de sol s'ils sont fournis dans le fichier d'inventaire
+    if (isFALSE(sol)) {
+      if (length(setdiff(nom_sol, nom)) >0) {arbres = paste0("Nom des variables de sol incorrect dans le fichier des arbres")}
+    }
+    # vérification de la ht si elle est fournie dans le fichier d'inventaire
+    if (isFALSE(ht)) {
+      if (length(setdiff(nom_ht, nom)) >0) {arbres = paste0("Nom de la variable de hauteur incorrect dans le fichier des arbres")}
+    }
+    # vérification du volume s'il est fourni dans le fichier d'inventaire
+    if (isFALSE(vol)) {
+      if (length(setdiff(nom_vol, nom)) >0) {arbres = paste0("Nom de la variable du volume incorrect dans le fichier des arbres")}
+    }
+    # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais pas besoin d'estimer la hauteur
+    if (isFALSE(climat) & isFALSE(ht)) {
+      if (length(setdiff(nom_clim, nom)) >0) {arbres = paste0("Nom des variables climatiques annuelles incorrect dans le fichier des arbres")}
+    }
+    # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais aussi besoin d'estimer la hauteur
+    if (isFALSE(climat) & isTRUE(ht)) {
+      if (length(setdiff(c(nom_clim,"t_ma","p_tot"), nom)) >0) {arbres = paste0("Nom des variables climatiques incorrect dans le fichier des arbres")}
+    }
   }
 
 
@@ -124,7 +147,6 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
 
   return(arbres)
 }
-
 
 
 

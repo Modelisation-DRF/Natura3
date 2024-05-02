@@ -7,10 +7,26 @@
 #' @inheritParams SimulNatura
 #'
 #' @return Table ou message d'erreur
-# #' @export
+#' @export
 #'
 # @examples
 valid_placette <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, sol=NULL){
+
+  names(fichier) <- tolower(names(fichier))
+
+
+  fichier <- fichier %>%
+    group_by(id_pe) %>%
+    mutate(
+      sdom_bio = case_when(
+        n_distinct(sdom_bio) == 1 & sdom_bio == 2 ~ "2E",
+        n_distinct(sdom_bio) == 1 & sdom_bio == 3 ~ "3E",
+        n_distinct(sdom_bio) == 1 & sdom_bio == 4 ~ "4E",
+        n_distinct(sdom_bio) == 1 & sdom_bio == 5 ~ "5E",
+        n_distinct(sdom_bio) == 1 & sdom_bio == 6 ~ "6E",
+        TRUE ~ as.character(sdom_bio)  # default case to handle other conditions
+      )
+    )
 
   # type_fic = 'arbres'
 
@@ -24,6 +40,7 @@ valid_placette <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, so
   # test: test <- fichier_arbres_aveccov %>% mutate(type_eco = ifelse(type_eco=='RE20','FE32',type_eco)); names(test) <- tolower(names(test))
   # type_fic="arbres"; fichier=test; ht=T; vol=T; iqs=F; climat=F; sol=F;
   # type_fic="compile"; iqs=F; climat=F; sol=F;
+  names(fichier) <- tolower(names(fichier))
 
   if (type_fic=='arbres') {
 

@@ -40,7 +40,7 @@ Lecture_arbres(file, ht, vol, iqs, climat, sol)
 }}
 }
 \value{
-Table des arbres ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
+Table des arbres ou un message d'arbres s'il y a une arbres dans le nom des colonnes.
 }
 \description{
 Lire le fichier des arbres à simuler avec Natura et valider le nom des colonnes.
