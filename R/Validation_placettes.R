@@ -24,6 +24,7 @@ valid_placette <- function(type_fic, fichier, ht=NULL, iqs=NULL, climat=NULL, so
         n_distinct(sdom_bio) == 1 & sdom_bio == 4 ~ "4E",
         n_distinct(sdom_bio) == 1 & sdom_bio == 5 ~ "5E",
         n_distinct(sdom_bio) == 1 & sdom_bio == 6 ~ "6E",
+        n_distinct(sdom_bio) == 1 & sdom_bio == 7 ~ "7E",
         TRUE ~ as.character(sdom_bio)  # default case to handle other conditions
       )
     )
