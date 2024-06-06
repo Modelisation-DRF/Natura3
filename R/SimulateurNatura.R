@@ -186,6 +186,10 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   # pour ne pas afficher le message de warning de %dopar% sur les random number. Utiliser dorng serait la solution, mais ne s'utilise pas en double %dorng%
   #options(doFuture.rng.onMisuse = "ignore")
 
+  variable_climat_ <- c("p_tot", "t_ma", "prec_gs", "temp_gs")
+  variable_sol_ <- c("ph", "clay", "cec", "oc", "sand" )
+  variable_iqs_ <- c("iqs_pot_epn", "iqs_pot_epb", "iqs_pot_sab", "iqs_pot_pex", "iqs_pot_bop", "iqs_pot_tho", "iqs_pot_pib", "iqs_pot_pig")
+
   dt <- 10 #Longueur d'un pas de simulation: FIXE
 
   liste_gress <- c('epn','epx','rt','ri','sab','bop','peu','ft')
@@ -226,8 +230,21 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
   if (!missing(file_arbre)) {
 
-    names(file_etude) <- tolower(names(file_etude))
-    names(file_arbre) <- tolower(names(file_arbre))
+
+    if (isTRUE(climat)){
+      file_arbre <- remove_columns(file_arbre, variable_climat_)
+    }
+
+    if (isTRUE(sol)){
+      file_arbre <- remove_columns(file_arbre, variable_sol_)
+    }
+
+    if (isTRUE(iqs)){
+      file_arbre <- remove_columns(file_arbre, variable_iqs_)
+    }
+
+
+
     ##################################################################################
     ################### Lecture des fichiers arbres         ##########################
     ##################################################################################
@@ -335,6 +352,18 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
       ##################################################################################
       ################### Lecture du fichier compilé placette ##########################
       ##################################################################################
+
+      if (isTRUE(climat)){
+        file_compile <- remove_columns(file_compile, variable_climat)
+      }
+
+      if (isTRUE(sol)){
+        file_compile <- remove_columns(file_compile, variable_sol)
+      }
+
+      if (isTRUE(iqs)){
+        file_compile <- remove_columns(file_compile, variable_iqs)
+      }
 
         # Lecture du fichier compilé à la placette
         DataCompile_final0 <- Lecture_compile(file=file_compile, iqs=iqs, climat=climat, sol=sol)

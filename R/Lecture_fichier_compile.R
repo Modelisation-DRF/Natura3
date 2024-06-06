@@ -32,7 +32,7 @@ Lecture_compile <- function(file, iqs, climat, sol){
       else if (grepl(".csv", file)) {comp <- read_delim(file, delim = ";")} # fread met ID_PE numérique, mais pas read_delim
     )
   }
-  else comp <- file
+  else{ comp <- file}
 
   names(comp) <- tolower(names(comp))
   nom <- names(comp)
@@ -55,7 +55,7 @@ Lecture_compile <- function(file, iqs, climat, sol){
   difference_nom_base <- setdiff(nom_base, nom)
 
   if (length(difference_nom_base) >0){
-    comp =  paste0("Les variables suivantes manquent dans le fichier d'inventaire compile : ", paste(difference_nom_base, collapse = ', '))
+    comp =  paste0("les variables suivantes sont requises dans le fichier d'inventaire compile : ", paste(difference_nom_base, collapse = ', '))
 
   }else{
 
