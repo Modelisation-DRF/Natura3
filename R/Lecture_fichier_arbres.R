@@ -64,7 +64,7 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
 
   if (length(difference) >0){
 
-    arbres  <- paste0("les variables suivantes sont requises dans le fichier des arbres : ", paste(difference, collapse = ', '))
+    arbres  <- paste0("Les variables suivantes sont requises dans le fichier des arbres : ", paste(difference, collapse = ', '))
 
   } else {
 
@@ -74,7 +74,7 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
       difference_nom_mod_ht <- setdiff(nom_mod_ht, nom)
 
       if (length(difference_nom_mod_ht) >0) {
-        arbres = paste0("les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht, collapse = ', '))
+        arbres = paste0("Les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht, collapse = ', '))
       }
 
     }
@@ -86,7 +86,7 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
       difference_nom_mod_ht2 <- setdiff(c(nom_mod_ht2, nom_coor), nom)
 
       if (length(difference_nom_mod_ht2) >0) {
-        arbres = paste0("les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht2, collapse = ', '))
+        arbres = paste0("Les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : " , paste(difference_nom_mod_ht2, collapse = ', '))
       }
     }
     # vérification des noms de variables iqs ou sol à extraire : il faut lat-long
@@ -94,46 +94,46 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
       difference_nom_coor<- setdiff(nom_coor, nom)
 
       if (length(difference_nom_coor) >0) {
-        arbres = paste0("Coordonnées des placettes manquantes pour extraire iqs/sol. les variables suivantes sont requis: ", paste(difference_nom_coor, collapse = ', '))
+        arbres = paste0("Coordonnées des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : ", paste(difference_nom_coor, collapse = ', '))
       }
     }
     # vérification des noms de variables si climat sont à extraire : il faut lat-long-an_mes
     if (isTRUE(climat)) {
       difference_nom_coor_nom_an_mes <- setdiff(c(nom_coor, nom_an_mes), nom)
-      if (length(difference_nom_coor_nom_an_mes) >0) {arbres = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire climat", paste(difference_nom_coor_nom_an_mes, collapse = ', '))}
+      if (length(difference_nom_coor_nom_an_mes) >0) {arbres = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire le climat. Les variables suivantes sont requises : ", paste(difference_nom_coor_nom_an_mes, collapse = ', '))}
     }
     # vérification des iqs s'ils sont fournis dans le fichier d'inventaire
     if (isFALSE(iqs)) {
 
       difference_nom_iqs <-setdiff(nom_iqs, nom)
 
-      if (length(difference_nom_iqs) >0) {arbres = paste0("Nom des variables d'iqs incorrect dans le fichier des arbres" , paste(difference_nom_iqs, collapse = ', '))}
+      if (length(difference_nom_iqs) >0) {arbres = paste0("Nom des variables d'IQS incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_iqs, collapse = ', '))}
     }
     # vérification des variables de sol s'ils sont fournis dans le fichier d'inventaire
     if (isFALSE(sol)) {
       difference_nom_sol <- setdiff(nom_sol, nom)
-      if (length(difference_nom_sol) >0) {arbres = paste0("Nom des variables de sol incorrect dans le fichier des arbres" , paste(difference_nom_sol, collapse = ', '))}
+      if (length(difference_nom_sol) >0) {arbres = paste0("Nom des variables de sol incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_sol, collapse = ', '))}
     }
     # vérification de la ht si elle est fournie dans le fichier d'inventaire
-    if (isFALSE(ht)) {
+    if (isFALSE(ht) && isTRUE(vol)) {
       difference_nom_ht <-setdiff(nom_ht, nom)
-      if (length(difference_nom_ht) >0) {arbres = paste0("Nom de la variable de hauteur incorrect dans le fichier des arbres" , paste(difference_nom_ht, collapse = ', '))}
+      if (length(difference_nom_ht) >0) {arbres = paste0("Nom de la variable de hauteur incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_ht, collapse = ', '))}
     }
     # vérification du volume s'il est fourni dans le fichier d'inventaire
     if (isFALSE(vol)) {
       difference_nom_vol <- setdiff(nom_vol, nom)
-      if (length(difference_nom_vol) >0) {arbres = paste0("Nom de la variable du volume incorrect dans le fichier des arbres" , paste(difference_nom_vol, collapse = ', '))}
+      if (length(difference_nom_vol) >0) {arbres = paste0("Nom de la variable de volume incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_vol, collapse = ', '))}
     }
     # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais pas besoin d'estimer la hauteur
     if (isFALSE(climat) & isFALSE(ht)) {
       difference_nom_clim <- setdiff(nom_clim, nom)
-      if (length(difference_nom_clim) >0) {arbres = paste0("Nom des variables climatiques annuelles incorrect dans le fichier des arbres" , paste(difference_nom_clim, collapse = ', '))}
+      if (length(difference_nom_clim) >0) {arbres = paste0("Nom des variables climatiques annuelles incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_clim, collapse = ', '))}
     }
     # vérification des variables climatiques s'ils sont fournis dans le fichier d'inventaire mais aussi besoin d'estimer la hauteur
     if (isFALSE(climat) & isTRUE(ht)) {
       difference_nom_clim_nom <- setdiff(c(nom_clim,"t_ma","p_tot"), nom)
 
-      if (length(difference_nom_clim_nom) >0) {arbres = paste0("Nom des variables climatiques incorrect dans le fichier des arbres" , paste(difference_nom_clim_nom, collapse = ', '))}
+      if (length(difference_nom_clim_nom) >0) {arbres = paste0("Nom des variables climatiques incorrect dans le fichier des arbres. Les variables suivantes sont requises : " , paste(difference_nom_clim_nom, collapse = ', '))}
     }
   }
 

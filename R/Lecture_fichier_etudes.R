@@ -43,7 +43,7 @@ Lecture_etudes <- function(file){
   # vérification des noms de variables de base
   difference_nom_etude <- setdiff(nom_base, nom)
 
-  if (length(difference_nom_etude) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-etudes. les variables suivantes sont requises: ",
+  if (length(difference_nom_etude) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-études. Les variables suivantes sont requises : ",
                                                         paste(difference_nom_etude, collapse = ', '))}
 
   # filtrer les etudes d'arbres

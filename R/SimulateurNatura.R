@@ -186,9 +186,6 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   # pour ne pas afficher le message de warning de %dopar% sur les random number. Utiliser dorng serait la solution, mais ne s'utilise pas en double %dorng%
   #options(doFuture.rng.onMisuse = "ignore")
 
-  variable_climat_ <- c("p_tot", "t_ma", "prec_gs", "temp_gs")
-  variable_sol_ <- c("ph", "clay", "cec", "oc", "sand" )
-  variable_iqs_ <- c("iqs_pot_epn", "iqs_pot_epb", "iqs_pot_sab", "iqs_pot_pex", "iqs_pot_bop", "iqs_pot_tho", "iqs_pot_pib", "iqs_pot_pig")
 
   dt <- 10 #Longueur d'un pas de simulation: FIXE
 
@@ -199,6 +196,14 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   variable_climat_an <- c("growingseasonprecipitation","growingseasontmean")
   variable_sol <- c("cec","ph","sable","argile","mat_org")
   variable_iqs <- c("iqs_pot_bop","iqs_pot_epb","iqs_pot_epn","iqs_pot_pex","iqs_pot_pib","iqs_pot_pig","iqs_pot_sab","iqs_pot_tho")
+
+
+  #variables nécessaires à Natura et à extraire des cartes
+  variable_climat_ <- c("p_tot", "t_ma", "prec_gs", "temp_gs")
+  variable_sol_ <- c("ph", "clay", "cec", "oc", "sand" )
+  variable_iqs_ <- c("iqs_pot_epn", "iqs_pot_epb", "iqs_pot_sab", "iqs_pot_pex", "iqs_pot_bop", "iqs_pot_tho", "iqs_pot_pib", "iqs_pot_pig")
+
+
 
   # variables fixes dans le temps nécessaires au modèle Natura (id_pe doit être en premier dans la liste)
   # variables_fixes_temps <- c("id_pe", "sdom_bio", "prec_gs", "temp_gs", "type_eco", "veg_pot", "milieu", "origine",
