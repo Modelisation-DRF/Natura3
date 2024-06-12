@@ -30,7 +30,7 @@ test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un datafr
 
 test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un Excel", {
 
-  fic = "U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_etude_test.xlsx"
+  fic = "./fixtures/fichier_etude_test.xlsx"
   etude = Lecture_etudes(fic)
 
   nbrow = nrow(etude)
@@ -40,7 +40,7 @@ test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un Excel"
 
 test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un csv", {
 
-  fic = "U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_etude_test.csv"
+  fic = "./fixtures/fichier_etude_test.csv"
   etude = Lecture_etudes(fic)
 
   nbrow = nrow(etude)

@@ -20,9 +20,12 @@ Imports:
 	TarifQC
 Depends:
     doParallel,
-	parallel,
+	  parallel,
     tidyverse,
     R (>= 4.2)  
+Remotes:
+    Modelisation-DRF/TarifQC,
+    Modelisation-DRF/ExtractMap
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
