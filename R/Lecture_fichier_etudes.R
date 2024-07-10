@@ -44,7 +44,12 @@ Lecture_etudes <- function(file){
   difference_nom_etude <- setdiff(nom_base, nom)
 
   if (length(difference_nom_etude) >0) {etudes = paste0("Nom des variables incorrect dans le fichier des arbres-études. Les variables suivantes sont requises : ",
-                                                        paste(difference_nom_etude, collapse = ', '))}
+                                                        paste(difference_nom_etude, collapse = ', '))
+  }else if(!any(file$etage %in% c("C", "D"))){
+
+    etudes = paste0("Aucun arbre avec l'étage C ou D " )
+  }
+
 
   # filtrer les etudes d'arbres
   # if (!is.character(etudes)) {

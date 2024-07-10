@@ -359,15 +359,15 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
       ##################################################################################
 
       if (isTRUE(climat)){
-        file_compile <- remove_columns(file_compile, variable_climat)
+        file_compile <- remove_columns(file_compile, variable_climat_)
       }
 
       if (isTRUE(sol)){
-        file_compile <- remove_columns(file_compile, variable_sol)
+        file_compile <- remove_columns(file_compile, variable_sol_)
       }
 
       if (isTRUE(iqs)){
-        file_compile <- remove_columns(file_compile, variable_iqs)
+        file_compile <- remove_columns(file_compile, variable_iqs_)
       }
 
         # Lecture du fichier compilé à la placette

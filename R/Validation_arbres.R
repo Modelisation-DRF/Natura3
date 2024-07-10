@@ -43,7 +43,12 @@ valid_arbre <- function(type_fic, fichier){
   }
 
   # si erreur n'est pas vide on retourne l'erreur, sinon on retourne le fichier
-  if (!is.null(erreur)) {result <- erreur} else result <- fichier
+  if (!is.null(erreur)) {
+
+   # result <- erreur
+    result <- paste(erreur, collapse = ", ")
+
+  } else result <- fichier
 
 
   return(result)
