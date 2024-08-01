@@ -143,28 +143,28 @@ fic_validation <- read_excel("data-raw\\Validation_intrants.xlsx")
 ########################################################################################
 # ESSAI/TEST
 # fichier avec les noms de variables attendus dans les fichiers d'intrants
-nom_coor <- data.frame ("variable"=c("latitude","longitude"), "categorie"=rep(x="coor", times=2))
-nom_mod_ht <- data.frame("variable"=c("p_tot", "t_ma", "altitude"), "categorie"=rep("modele_ht",3)) # nom des variables supplémentaires pour modèle de ht
-
-# variables pour Natura
-nom_plot <- data.frame("variable"=c("id_pe", "sdom_bio", "type_eco", "temps", "origine"), "categorie"=rep("plot",5))
-nom_iqs <- data.frame("variable"=c("iqs_pot_sab", "iqs_pot_epn", "iqs_pot_epb", "iqs_pot_pib", "iqs_pot_bop", "iqs_pot_pex", "iqs_pot_pig", "iqs_pot_tho"), "categorie"=rep("iqs",8))
-nom_clim <- data.frame("variable"=c("prec_gs", "temp_gs"), "categorie"=rep("clim",2))
-nom_sol <- data.frame("variable"=c("cec","oc","ph","sand","clay"), "categorie"=rep("sol",5))
-
-nom_arbre <- data.frame("variable"=c( "essence", "dhpcm", "tige_ha", "etat"), "categorie"=rep("arbre",4))
-nom_etude <- data.frame("variable"=c("id_pe", "etage", "essence", "dhpcm","hauteur"), "categorie"=rep("etude",5))
-
-nom_an_mes <- data.frame("variable"=c("an_mes"), "categorie"=rep("an_mes",1))
-nom_vol <- data.frame("variable"=c("vol_dm3"), "categorie"=rep("vol",1))
-nom_ht <- data.frame("variable"=c("hauteur_pred"), "categorie"=rep("ht",1))
-nom_dendro <- data.frame("variable"=c("nbop","npeu","nft","nepn","nepx","nsab","nri","nrt",
-                                      "stbop","stpeu","stft","stepn","stepx","stsab","stri","strt",
-                                      "vbop","vpeu","vft","vepn","vepx","vsab","vri","vrt",
-                                      "hd","is"),
-                         "categorie"=rep("dendro",26))
-nom_variables <- bind_rows(nom_coor,nom_mod_ht,nom_iqs,nom_clim,nom_sol,nom_arbre,nom_etude,nom_plot,nom_vol,nom_ht, nom_dendro, nom_an_mes)
-write_delim(nom_variables, file="data-raw\\nom_variables.csv", delim = ';')
+# nom_coor <- data.frame ("variable"=c("latitude","longitude"), "categorie"=rep(x="coor", times=2))
+# nom_mod_ht <- data.frame("variable"=c("p_tot", "t_ma", "altitude"), "categorie"=rep("modele_ht",3)) # nom des variables supplémentaires pour modèle de ht
+#
+# # variables pour Natura
+# nom_plot <- data.frame("variable"=c("id_pe", "sdom_bio", "type_eco", "temps", "origine"), "categorie"=rep("plot",5))
+# nom_iqs <- data.frame("variable"=c("iqs_pot_sab", "iqs_pot_epn", "iqs_pot_epb", "iqs_pot_pib", "iqs_pot_bop", "iqs_pot_pex", "iqs_pot_pig", "iqs_pot_tho"), "categorie"=rep("iqs",8))
+# nom_clim <- data.frame("variable"=c("prec_gs", "temp_gs"), "categorie"=rep("clim",2))
+# nom_sol <- data.frame("variable"=c("cec","oc","ph","sand","clay"), "categorie"=rep("sol",5))
+#
+# nom_arbre <- data.frame("variable"=c( "essence", "dhpcm", "tige_ha", "etat"), "categorie"=rep("arbre",4))
+# nom_etude <- data.frame("variable"=c("id_pe", "etage", "essence", "dhpcm","hauteur"), "categorie"=rep("etude",5))
+#
+# nom_an_mes <- data.frame("variable"=c("an_mes"), "categorie"=rep("an_mes",1))
+# nom_vol <- data.frame("variable"=c("vol_dm3"), "categorie"=rep("vol",1))
+# nom_ht <- data.frame("variable"=c("hauteur_pred"), "categorie"=rep("ht",1))
+# nom_dendro <- data.frame("variable"=c("nbop","npeu","nft","nepn","nepx","nsab","nri","nrt",
+#                                       "stbop","stpeu","stft","stepn","stepx","stsab","stri","strt",
+#                                       "vbop","vpeu","vft","vepn","vepx","vsab","vri","vrt",
+#                                       "hd","is"),
+#                          "categorie"=rep("dendro",26))
+# nom_variables <- bind_rows(nom_coor,nom_mod_ht,nom_iqs,nom_clim,nom_sol,nom_arbre,nom_etude,nom_plot,nom_vol,nom_ht, nom_dendro, nom_an_mes)
+# write_delim(nom_variables, file="data-raw\\nom_variables.csv", delim = ';')
 nom_variables <- read_delim("data-raw\\nom_variables.csv",delim = ';')
 
 
