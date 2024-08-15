@@ -39,13 +39,13 @@ Graph <- function(Data, Espece = "tot", Variable = 'st', listePlacette) {
   } else if (Variable == 'dq') {
     Etiquette = "Diamètre quadratique moyen (cm)"
   }
-  if (!(var %in% colnames(Data))) {
-    stop(paste("The column", var, "does not exist in the data."))
-  }
 
-  if (!is.numeric(Data[[var]])) {
-    stop(paste("The column", var, "is not numeric."))
-  }
+
+if (!is.numeric(Data[[var]])) {
+  Data[[var]] <- 0
+}
+
+
 
   Data <- Data %>%
     group_by(id_pe, temps) %>%
