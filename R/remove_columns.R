@@ -73,10 +73,10 @@ valide_placette_etudes <-function (data_arbre , data_etude){
 
   erreurs <-list()
 
-  if (!length(diff_placette) == 0) {
-
-    erreurs<-paste("Aucune des placettes suivantes ne sont valide dans le fichier des arbres-études : ", paste(diff_placette, collapse = ", "))
+  if (length(diff_placette) != 0 & all(pacette_arbre == diff_placette)) {
+    erreurs <- paste("Aucune des placettes suivantes ne sont valides dans le fichier des arbres-études : ", paste(diff_placette, collapse = ", "))
   }
+
 
 
   return(erreurs)
