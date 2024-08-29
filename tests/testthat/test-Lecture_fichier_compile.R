@@ -26,12 +26,12 @@ test_that("La fonction Lecture_compile() fonctionne tel qu'attendu avec iqs=T, c
   # variable de base manquante
   fic2 <- fic1 %>% dplyr::select(-nbop)
   compile = Lecture_compile(file=fic2, iqs=T, climat=T, sol=T)
-  expect_equal(compile,"Nom des variables de base incorrect dans le fichier d'inventaire compile")
+  expect_equal(compile,"Les variables suivantes sont requises dans le fichier d'inventaire compile : nbop")
 
   # variable de base manquante
   fic2 <- fic1 %>% dplyr::select(-id_pe)
   compile = Lecture_compile(file=fic2, iqs=T, climat=T, sol=T)
-  expect_equal(compile,"Nom des variables de base incorrect dans le fichier d'inventaire compile")
+  expect_equal(compile,"Les variables suivantes sont requises dans le fichier d'inventaire compile : id_pe")
 
 
 })
@@ -40,7 +40,7 @@ test_that("La fonction Lecture_compile() fonctionne tel qu'attendu avec iqs=F, c
 
   fic1 = fichier_compile_sanscov
   compile = Lecture_compile(file=fic1, iqs=F, climat=T, sol=T)
-  expect_equal(compile,"Nom des variables d'iqs incorrect dans le fichier d'inventaire compile")
+  expect_equal(compile,"Nom des variables d'IQs incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : iqs_pot_sab, iqs_pot_epn, iqs_pot_epb, iqs_pot_pib, iqs_pot_bop, iqs_pot_pex, iqs_pot_pig, iqs_pot_tho")
 
   fic1$iqs_pot_epn = 10
   fic1$iqs_pot_epb = 10
@@ -59,7 +59,7 @@ test_that("La fonction Lecture_compile() fonctionne tel qu'attendu avec iqs=T, c
 
   fic1 = fichier_compile_sanscov
   compile = Lecture_compile(file=fic1, iqs=T, climat=F, sol=T)
-  expect_equal(compile,"Nom des variables climatiques annuelles incorrect dans le fichier d'inventaire compile")
+  expect_equal(compile,"Nom des variables climatiques annuelles incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : prec_gs, temp_gs")
 
   fic1$prec_gs=10
   fic1$temp_gs=10
@@ -72,7 +72,7 @@ test_that("La fonction Lecture_compile() fonctionne tel qu'attendu avec iqs=T, c
 
   fic1 = fichier_compile_sanscov
   compile = Lecture_compile(file=fic1, iqs=T, climat=t, sol=F)
-  expect_equal(compile,"Nom des variables de sol incorrect dans le fichier d'inventaire compile")
+  expect_equal(compile,"Nom des variables de sol incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : cec, oc, ph, sand, clay")
 
   fic1$cec=10
   fic1$ph=5
@@ -102,7 +102,7 @@ test_that("La fonction Lecture_compile fonctionne tel qu'attendu avec iqs=F, cli
   fic2$prec_gs=10
   fic2$temp_gs=10
   compile = Lecture_compile(file=fic2, iqs=F, climat=F, sol=T)
-  expect_equal(compile,"Coordonnées des placettes manquantes pour extraire iqs/sol")
+  expect_equal(compile,"Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : latitude")
 
 
   fic1 = fichier_compile_sanscov
@@ -135,7 +135,7 @@ test_that("La fonction Lecture_compile fonctionne tel qu'attendu avec ht=F, vol=
   fic2$prec_gs=10
   fic2$temp_gs=10
   compile = Lecture_compile(file=fic2, iqs=T, climat=F, sol=F)
-  expect_equal(compile,"Coordonnées des placettes manquantes pour extraire iqs/sol")
+  expect_equal(compile,"Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : latitude")
 
 
   fic2 = fichier_compile_sanscov

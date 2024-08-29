@@ -11,16 +11,16 @@ Description: Natura 3.0 is a stand level forest growth model based on stand orig
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports:
     data.table,
-	ExtractMap,
-	MASS,
-	readxl,
-	TarifQC
+    ExtractMap,
+    MASS,
+    readxl,
+    TarifQC
 Depends:
     doParallel,
-	parallel,
+  	parallel,
     tidyverse,
     R (>= 4.2)  
 Suggests: 

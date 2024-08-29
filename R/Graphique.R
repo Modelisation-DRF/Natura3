@@ -17,18 +17,18 @@
 #'   incluent "st" (surface terrière marchande en m2/ha), "n" (nombre d’arbres marchands par ha),
 #'   "v" (volume marchand en m3/ha), "hd" (hauteur dominante en m), "dq" (diamètre quadratique moyen
 #'   en cm). La valeur par défaut est "st".
-#' @param listePlacette Une liste ou un vecteur contenant les identifiants des placettes à inclure
-#'   dans le graphique.
 #' @return Un objet ggplot représentant le graphique d'évolution de la variable spécifiée sur la
 #'   période de temps
 #' @export
 
-Graph <- function(Data, Espece = "tot", Variable = 'st', listePlacette) {
+Graph <- function(Data, Espece = "tot", Variable = 'st') {
+  # Data=fic; Espece = "tot"; Variable = 'st';
+
   var <- paste0(paste(Variable), paste(Espece))
 
   # Ensure the variable column exists and is numeric
   if (Variable == 'st') {
-    Etiquette <- "Surface terrière marchande (m2/ha)"
+    Etiquette <- "Surface terriere marchande (m2/ha)"
   } else if (Variable == 'n') {
     Etiquette = "Nombre d’arbres marchands par ha"
   } else if (Variable == 'v') {
@@ -37,7 +37,7 @@ Graph <- function(Data, Espece = "tot", Variable = 'st', listePlacette) {
     var <- "hd"
     Etiquette = "Hauteur dominante (m)"
   } else if (Variable == 'dq') {
-    Etiquette = "Diamètre quadratique moyen (cm)"
+    Etiquette = "Diametre quadratique moyen (cm)"
   }
 
 
@@ -46,7 +46,7 @@ if (!is.numeric(Data[[var]])) {
 }
 
 
-
+  # on fait la moyenne des itérations, si mode déterministe, ca va faire la moyenne de n=1 ok
   Data <- Data %>%
     group_by(id_pe, temps) %>%
     summarise(mean_value = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
@@ -67,14 +67,14 @@ if (!is.numeric(Data[[var]])) {
 
   Essence <- switch(Espece,
                     "tot" = "Toutes essences",
-                    "bop" = "Bouleau à papier",
+                    "bop" = "Bouleau a papier",
                     "peu" = "Peupliers",
-                    "ft" = "Feuillus tolérants",
+                    "ft" = "Feuillus tolerants",
                     "sab" = "Sapin baumier",
-                    "epn" = "Épinette noire",
-                    "epx" = "Autres épinettes",
-                    "ri" = "Résineux intolérants",
-                    "rt" = "Autres résineux tolérants",
+                    "epn" = "Epinette noire",
+                    "epx" = "Autres epinettes",
+                    "ri" = "Resineux intolerants",
+                    "rt" = "Autres resineux tolerants",
                     "Toutes essences"
   )
 
@@ -86,7 +86,7 @@ if (!is.numeric(Data[[var]])) {
   GraphEvol <- ggplot(data = Data, aes(x = temps, y = mean_value, group = id_pe, label = id_pe)) +
     geom_line(show.legend = FALSE, lwd = 1.25, colour = "#008000") +
     ylim(0, ifelse(is.na(ymax), 5, ymax + 5)) +
-    xlab(bquote(bold("Temps depuis la perturbation"))) +
+    xlab(bquote(bold("Temps depuis la perturbation (ans)"))) +
     ylab(Etiquette) +
     scale_x_continuous(breaks = seq(tempsMin, tempsMax, by = 5)) +
     ggtitle(paste(Etiquette, "  ", Essence)) +

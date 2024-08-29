@@ -24,95 +24,95 @@ CheckArguments <- function(file_arbre, file_etude, file_compile, horizon, mode_s
 
   # on doit spécifier au moins un des 3 fichiers
   if (missing(file_arbre) & missing(file_etude) & missing(file_compile)) {
-    erreur <- "Au moins un des deux: file_arbre+file_etude OU file_compile doit être specifié"
+    erreur <- "Au moins un des deux: file_arbre+file_etude OU file_compile doit etre specifie"
   }
   # il faut ne faut pas spécifier les types de fichier en même temps
   #else if (!missing(file_arbre) & !missing(file_etude) & !missing(file_compile)) {
-  #  erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit être specifé"
+  #  erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit etre specifé"
   #}
-  # Si on spécifie le fichier compilé, les 2 autres fichiers doivent être vides
+  # Si on spécifie le fichier compilé, les 2 autres fichiers doivent etre vides
   else if ((!missing(file_arbre)  | !missing(file_etude)) & !missing(file_compile)){
-    erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit être specifé"
+    erreur <- "Seulement un des deux: file_arbre+file_etude OU file_compile doit etre specifie"
   }
   # Si on ne spécifie pas de fichier compilé, il faut spécifier les 2 autres
   else if ((missing(file_arbre)  | missing(file_etude)) & missing(file_compile)){
-    erreur <- "Si file_compile n'est pas specifié, file_arbre ET file_etude doivent être specifiés"
+    erreur <- "Si file_compile n'est pas specifie, file_arbre ET file_etude doivent etre specifies"
   }
-  # l'horizon doit être entre 1 et 15
+  # l'horizon doit etre entre 1 et 15
   else if (horizon>15 | horizon<1) {
-    erreur <- c("horizon doit être de 1 a 15")
+    erreur <- c("horizon doit etre de 1 a 15")
   }
   # la décennie de la perturbation ne doit pas dépasser l'horizon
   else if (dec_perturb > horizon) {
-    erreur <- c("dec_perturb doit être <= horizon")
+    erreur <- c("dec_perturb doit etre <= horizon")
   }
   # la décennie de la 1e tbe ne doit pas dépasser l'horizon
   else if (dec_tbe1 > horizon) {
-    erreur <- c("dec_tbe1 doit être <= horizon")
+    erreur <- c("dec_tbe1 doit etre <= horizon")
   }
   # si on spécifie une décennie de tbe, on doit aussi spécifier l'indice de tbe
   else if (dec_tbe1>0 & tbe1==0) {
-    erreur <- c("Si dec_tbe1 est specifié, tbe1 doit être > 0")
+    erreur <- c("Si dec_tbe1 est specifie, tbe1 doit etre > 0")
   }
   # si on spécifie un indice de tbe, on doit aussi spécifier la décennie de tbe
   else if (dec_tbe1==0 & tbe1>0) {
-    erreur <- c("Si tbe1 est specifié, dec_tbe1 doit être specifié aussi")
+    erreur <- c("Si tbe1 est specifie, dec_tbe1 doit etre specifie aussi")
   }
-  # l'indice de tbe doit être un entier 1-2-3-4-5
+  # l'indice de tbe doit etre un entier 1-2-3-4-5
   else if (dec_tbe1>0 & !tbe1 %in% c(1,2,3,4,5)) {
-    erreur <- c("Si dec_tbe1 est specifié, tbe1 doit etre 1, 2, 3, 4 ou 5")
+    erreur <- c("Si dec_tbe1 est specifie, tbe1 doit etre 1, 2, 3, 4 ou 5")
   }
   # pour spécifier une 2e tbe, il faut en avoir spécifié une premiere
   else if (dec_tbe2>0 & (dec_tbe1==0 | tbe1==0)) {
-    erreur <- c("dec_tbe1 et tbe1 doivent être specifiés pour pouvoir utiliser dec_tbe2")
+    erreur <- c("dec_tbe1 et tbe1 doivent etre specifies pour pouvoir utiliser dec_tbe2")
   }
   # la décennie de la 2e tbe ne doit pas dépasser l'horizon
   else if (dec_tbe2 > horizon) {
-    erreur <- c("dec_tbe2 doit être <= horizon")
+    erreur <- c("dec_tbe2 doit etre <= horizon")
   }
-  # la 2e tbe doit être après la 1e tbe
+  # la 2e tbe doit etre après la 1e tbe
   else if (dec_tbe2>0 & dec_tbe2 <= dec_tbe1) {
-    erreur <- c("dec_tbe2 doit être > dec_tbe1")
+    erreur <- c("dec_tbe2 doit etre > dec_tbe1")
   }
   # si on spécifie une décennie de tbe, on doit aussi spécifier l'indice de tbe
   else if (dec_tbe2>0 & tbe2==0) {
-    erreur <- c("Si dec_tbe2 est specifié, tbe2 doit etre > 0")
+    erreur <- c("Si dec_tbe2 est specifie, tbe2 doit etre > 0")
   }
   # si on spécifie un indice de tbe, on doit aussi spécifier la décennie de tbe
   else if (dec_tbe2==0 & tbe2>0) {
-    erreur <- c("Si tbe2 est specifié, dec_tbe2 doit être specifié aussi")
+    erreur <- c("Si tbe2 est specifie, dec_tbe2 doit etre specifie aussi")
   }
-  # l'indice de tbe doit être un entier 1-2-3-4-5
+  # l'indice de tbe doit etre un entier 1-2-3-4-5
   else if (dec_tbe2>0 & !tbe2 %in% c(1,2,3,4,5)) {
-    erreur <- c("Si dec_tbe2 est specifié, tbe2 doit être 1, 2, 3, 4 ou 5")
+    erreur <- c("Si dec_tbe2 est specifie, tbe2 doit etre 1, 2, 3, 4 ou 5")
   }
-  # l'argument du calcul de la hauteur doit être binaire
+  # l'argument du calcul de la hauteur doit etre binaire
   else if (!missing(file_arbre) & !ht %in% c(TRUE, FALSE)) {
-    erreur <- c("ht doit être TRUE ou FALSE")
+    erreur <- c("ht doit etre TRUE ou FALSE")
   }
-  # l'argument du calcul du volume doit être binaire
+  # l'argument du calcul du volume doit etre binaire
   else if (!missing(file_arbre) & !vol %in% c(TRUE, FALSE)) {
-    erreur <- c("vol doit être TRUE ou FALSE")
+    erreur <- c("vol doit etre TRUE ou FALSE")
   }
-  # l'argument des iqs doit être binaire
+  # l'argument des iqs doit etre binaire
   else if (!iqs %in% c(TRUE, FALSE)) {
-    erreur <- c("iqs doit être TRUE ou FALSE")
+    erreur <- c("iqs doit etre TRUE ou FALSE")
   }
-  # l'argument du climat doit être binaire
+  # l'argument du climat doit etre binaire
   else if (!climat %in% c(TRUE, FALSE)) {
-    erreur <- c("climat doit être TRUE ou FALSE")
+    erreur <- c("climat doit etre TRUE ou FALSE")
   }
-  # l'argument du sol doit être binaire
+  # l'argument du sol doit etre binaire
   else if (!sol %in% c(TRUE, FALSE)) {
-    erreur <- c("sol doit être TRUE ou FALSE")
+    erreur <- c("sol doit etre TRUE ou FALSE")
   }
-  # l'argument mode_simul doit être binaire
+  # l'argument mode_simul doit etre binaire
   else if (!mode_simul %in% c('DET', 'STO')) {
-    erreur <- c("mode_simul doit être DET ou STO")
+    erreur <- c("mode_simul doit etre DET ou STO")
   }
-  # l'argument nb_iter doit être >30 si mode_simul=STO
+  # l'argument nb_iter doit etre >30 si mode_simul=STO
   else if (mode_simul=='STO' & nb_iter<30) {
-    erreur <- c("nb_iter doit être >=30 en mode stochastique")
+    erreur <- c("nb_iter doit etre >=30 en mode stochastique")
   }
   else erreur <- c("ok")
   return(erreur)

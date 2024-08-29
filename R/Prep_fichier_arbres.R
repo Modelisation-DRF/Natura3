@@ -16,6 +16,8 @@
 #' @description Compilation des placettes à la step 0: estime la hauteur et le volume des arbres si nécessaire, calcule l'indice de Shannon et calcule les caractéristiques dendrométriques (N, ST, V) par groupe d'essences.
 #'
 #' @param fic_arbre Table avec une ligne par arbre (ou par classe de dhp) pour chaque placette, avec les colonnes : id_pe, sdom_bio, altitude, veg_pot, dummy vp, milieu, dummy mp, type_eco, p_tot, t_ma, prec_gs, temp_gs, dummy origine, temps, iqs_xxx, ph, cec, oc, sand, clay, no_arbre, essence, dhpcm, nb_tige, tige_ha, etat, (hauteur_pred, vol_dm3 optionnels)
+#' @param dt La durée de l'intervalle de temps entre deux mesures d'un même arbre si \code{nb_step>1} (par défaut 10).
+#' @param nb_step Le nombre d'années pour lesquelles on veut estimer la hauteur pour un même arbre (par défaut 1).
 #' @inheritParams SimulNatura
 #'
 #' @return Une liste de 2 éléments: table contenant les arbres avec leur hauteur et volume (une ligne par arbre) et une table des caractérisatiques des placettes (une ligne par placette)

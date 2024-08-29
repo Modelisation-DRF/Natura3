@@ -207,5 +207,32 @@
 "fichier_compile_aveccov"
 
 
+#' Liste des végétations potentielles acceptées
+#'
+#' Vecteurs de taille 18
+#'
+#' @format ## `liste_veg_pot`
+#'  Vecteurs avec les 18 codes de végétations potentielles acceptées
+#' @examples
+#' liste_veg_pot
+"liste_veg_pot"
+
+
+
+#' Liste des essences acceptées
+#'
+#' Data frame de 2 colonnes et 34 lignes
+#'
+#' @format ## `liste_essence`
+#'  Data frame avec la liste des essences acceptées et leur groupe
+#'  \describe{
+#'   \item{essence}{Code d'essence}
+#'   \item{groupe_ess}{Groupe d'essences auquel appartient l'essence}
+#' }
+#' @examples
+#' liste_essence
+"liste_essence"
+
+
 
 

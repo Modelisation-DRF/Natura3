@@ -38,7 +38,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   # variable de base manquante
   fic2 <- fic1 %>% dplyr::select(-ID_PE)
   arbre = Lecture_arbres(file=fic2, ht=T, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre,"Nom des variables de base incorrect dans le fichier des arbres")
+  expect_equal(arbre,"Les variables suivantes sont requises dans le fichier des arbres : id_pe")
 
 })
 
@@ -50,7 +50,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=F, vol=T
   # il manque hauteur_pred
   fic1 = fichier_arbres_sanscov[1:10,]
   arbre1 = Lecture_arbres(file=fic1, ht=F, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Nom de la variable de hauteur incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom de la variable de hauteur incorrect dans le fichier des arbres. Les variables suivantes sont requises : hauteur_pred")
 
   nom_lu <- names(fic1) # hauteur_pred pas dans le fichier
 
@@ -63,12 +63,12 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=F, vol=T
   # s'il manque lat, retourne un message
   fic2 <- fic1 %>% dplyr::select(-LATITUDE)
   arbre1 = Lecture_arbres(file=fic2, ht=F, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Coordonnées des placettes manquantes et année de mesure pour extraire climat")
+  expect_equal(arbre1,"Coordonnees des placettes manquantes et annee de mesure pour extraire le climat. Les variables suivantes sont requises : latitude")
 
   # s'il manque an_mes, retourne un message
   fic2 <- fic1 %>% dplyr::select(-an_mes)
   arbre1 = Lecture_arbres(file=fic2, ht=F, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Coordonnées des placettes manquantes et année de mesure pour extraire climat")
+  expect_equal(arbre1,"Coordonnees des placettes manquantes et annee de mesure pour extraire le climat. Les variables suivantes sont requises : an_mes")
 
 })
 
@@ -78,7 +78,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=F
   # il manque la variable vol_dm3
   fic1 = fichier_arbres_sanscov[1:10,]
   arbre1 = Lecture_arbres(file=fic1, ht=T, vol=F, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Nom de la variable du volume incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom de la variable de volume incorrect dans le fichier des arbres. Les variables suivantes sont requises : vol_dm3")
 
   # si tous est là, ça retourne un data-frame
   fic1$vol_dm3 = 100
@@ -92,7 +92,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   # il manque les variables d'iqs
   fic1 = fichier_arbres_sanscov[1:10,]
   arbre1 = Lecture_arbres(file=fic1, ht=T, vol=T, iqs=F, climat=T, sol=T)
-  expect_equal(arbre1,"Nom des variables d'iqs incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom des variables d'IQS incorrect dans le fichier des arbres. Les variables suivantes sont requises : iqs_pot_sab, iqs_pot_epn, iqs_pot_epb, iqs_pot_pib, iqs_pot_bop, iqs_pot_pex, iqs_pot_pig, iqs_pot_tho")
 
   # si tous est là, ça retourne un data-frame
   fic1$iqs_pot_epn = 10
@@ -117,7 +117,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   fic1$prec_gs=10
   fic1$temp_gs=10
   arbre1 = Lecture_arbres(file=fic1, ht=T, vol=T, iqs=T, climat=F, sol=T)
-  expect_equal(arbre1,"Nom des variables climatiques incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom des variables climatiques incorrect dans le fichier des arbres. Les variables suivantes sont requises : t_ma, p_tot")
 
   # pour estimer la hauteur quand climat=F, il faut l'altitude, en plus de p_tot et t_moy
   fic1 = fichier_arbres_sanscov[1:10,]
@@ -127,7 +127,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   fic2$p_tot=10
   fic2$t_ma=10
   arbre1 = Lecture_arbres(file=fic2, ht=T, vol=T, iqs=T, climat=F, sol=T)
-  expect_equal(arbre1,"Nom des variables incorrect dans le fichier des arbres pour estimer la hauteur")
+  expect_equal(arbre1,"Les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : altitude")
 
 
   # si tous est là, ça retourne un data-frame
@@ -150,7 +150,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=F, vol=T
   # il faut 2 variables climatiques si ht n'est pas à estimer
   fic1 = fichier_arbres_sanscov[1:10,]
   arbre1 = Lecture_arbres(file=fic1, ht=F, vol=T, iqs=T, climat=F, sol=T)
-  expect_equal(arbre1,"Nom des variables climatiques annuelles incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom des variables climatiques annuelles incorrect dans le fichier des arbres. Les variables suivantes sont requises : prec_gs, temp_gs")
 
   # si tous est là, ça retourne un data-frame
   fic1$prec_gs=10
@@ -165,7 +165,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
 
   fic1 = fichier_arbres_sanscov[1:10,]
   arbre1 = Lecture_arbres(file=fic1, ht=T, vol=T, iqs=T, climat=T, sol=F)
-  expect_equal(arbre1,"Nom des variables de sol incorrect dans le fichier des arbres")
+  expect_equal(arbre1,"Nom des variables de sol incorrect dans le fichier des arbres. Les variables suivantes sont requises : cec, oc, ph, sand, clay")
 
   fic1$cec=10
   fic1$ph=5
@@ -195,7 +195,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=F, vol=T
   fic2$temp_gs=10
   fic2$hauteur_pred=10
   arbre1 = Lecture_arbres(file=fic2, ht=F, vol=T, iqs=F, climat=F, sol=T)
-  expect_equal(arbre1,"Coordonnées des placettes manquantes pour extraire iqs/sol")
+  expect_equal(arbre1,"Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : latitude")
 
 
   fic2 = fichier_arbres_sanscov[1:10,]
@@ -232,7 +232,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=F, vol=T
   fic2$temp_gs=10
   fic2$hauteur_pred=10
   arbre1 = Lecture_arbres(file=fic2, ht=F, vol=T, iqs=T, climat=F, sol=F)
-  expect_equal(arbre1,"Coordonnées des placettes manquantes pour extraire iqs/sol")
+  expect_equal(arbre1,"Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : latitude")
 
 
   fic2 = fichier_arbres_sanscov[1:10,]
@@ -261,7 +261,7 @@ test_that("La fonction Lecture_arbres fonctionne tel qu'attendu avec ht=T, vol=T
   fic2$p_tot=10
   fic2$t_ma=0
   arbre1 = Lecture_arbres(file=fic2, ht=T, vol=T, iqs=T, climat=T, sol=T)
-  expect_equal(arbre1,"Nom des variables incorrect dans le fichier des arbres pour estimer la hauteur")
+  expect_equal(arbre1,"Les variables suivantes sont requises dans le fichier des arbres pour estimer la hauteur : altitude")
 
 
   # si tous est là, ça retourne un data-frame

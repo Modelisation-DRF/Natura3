@@ -94,13 +94,13 @@ Lecture_arbres <- function(file, ht, vol, iqs, climat, sol){
       difference_nom_coor<- setdiff(nom_coor, nom)
 
       if (length(difference_nom_coor) >0) {
-        arbres = paste0("Coordonnées des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : ", paste(difference_nom_coor, collapse = ', '))
+        arbres = paste0("Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : ", paste(difference_nom_coor, collapse = ', '))
       }
     }
     # vérification des noms de variables si climat sont à extraire : il faut lat-long-an_mes
     if (isTRUE(climat)) {
       difference_nom_coor_nom_an_mes <- setdiff(c(nom_coor, nom_an_mes), nom)
-      if (length(difference_nom_coor_nom_an_mes) >0) {arbres = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire le climat. Les variables suivantes sont requises : ", paste(difference_nom_coor_nom_an_mes, collapse = ', '))}
+      if (length(difference_nom_coor_nom_an_mes) >0) {arbres = paste0("Coordonnees des placettes manquantes et annee de mesure pour extraire le climat. Les variables suivantes sont requises : ", paste(difference_nom_coor_nom_an_mes, collapse = ', '))}
     }
     # vérification des iqs s'ils sont fournis dans le fichier d'inventaire
     if (isFALSE(iqs)) {

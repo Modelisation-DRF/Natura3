@@ -15,13 +15,5 @@ valide_placette_etudes(data_arbre, data_etude)
 Une liste de messages d'erreurs. Si aucune erreur n'est trouvée, une liste vide est retournée.
 }
 \description{
-Cette fonction vérifie que toutes les placettes présentes dans le fichier des arbres sont également présentes dans le fichier des arbres-études
-}
-\examples{
-
-data_arbre <- data.frame(Placette = c("TEM23APC5001", "TEM23APC5002", "TEM23APC5003"))
-data_etude <- data.frame(Placette = c("TEM23APC5001", "TEM23APC5002"))
-valide_placette_etudes(data_arbre, data_etude)
-# Les erreurs seront retournées comme ceci
-# 'Aucune des placettes suivantes ne sont valide dans le fichier des arbres-études : TEM23APC5003'
+Cette fonction vérifie qu'au moins une des placettes présentes dans le fichier des arbres est également présente dans le fichier des arbres-études
 }

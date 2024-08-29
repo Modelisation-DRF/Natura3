@@ -14,11 +14,11 @@ test_that("La fonction valid_arbre() fonctionne comme attendu pour le fichier ar
   # il devrait avoir 4 messages d'erreurs
 
   verif <- valid_arbre(type_fic='etudes', fichier=etude)
-  nb <- length(verif)
-  dataframe <- is.data.frame(verif)
-
-  expect_equal(nb,4)
-  expect_equal(dataframe,FALSE)
+  #nb <- length(verif)
+  #dataframe <- is.data.frame(verif)
+  #expect_equal(nb,4)
+  #expect_equal(dataframe,FALSE)
+  expect_equal(verif,"Code d'essence a l'exterieur de la plage de valeurs possibles, Valeurs de dhpcm non permises (<200 cm), Code d'etage a l'exterieur des valeurs possibles (C, D, I, O, V), hauteur des arbres-etudes a l'exterieur de la plage des valeurs possibles (>2 et <40 m)")
 
 })
 
@@ -69,11 +69,11 @@ test_that("La fonction valid_arbre() fonctionne comme attendu pour le fichier ar
 
 
   verif <- valid_arbre(type_fic='arbres', fichier=arbre)
-  nb <- length(verif)
-  dataframe <- is.data.frame(verif)
-
-  expect_equal(nb,2)
-  expect_equal(dataframe,FALSE)
+  expect_equal(verif,"Code d'etat a l'exterieur de la plage de valeurs possibles (10, 12, 30, 32, 40, 42, 50, 52), Valeurs de nb_tiges non permises (>0)")
+  #nb <- length(verif)
+  #dataframe <- is.data.frame(verif)
+  #expect_equal(nb,2)
+  #expect_equal(dataframe,FALSE)
 
 })
 

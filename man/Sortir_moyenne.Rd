@@ -2,19 +2,16 @@
 % Please edit documentation in R/Sortir_moyenne.R
 \name{Sortir_moyenne}
 \alias{Sortir_moyenne}
-\title{Cette fonction permet de calculer la moyenne des itérations .}
+\title{Cette fonction permet de calculer la moyenne des itérations par placette/temps.}
 \usage{
 Sortir_moyenne(SortieIter)
 }
 \arguments{
-\item{SortieIter}{Un data frame à partir duquel la moyenne des itérations vas être calculer.}
+\item{SortieIter}{Un data frame à partir duquel la moyenne des itérations sera calculée.}
 }
 \value{
-Un data frame avec la moyenne des itérations calculé.
+Un data frame avec la moyenne des itérations calculée.
 }
 \description{
-Cette fonction permet de calculer la moyenne des itérations .
-}
-\examples{
-data <- Sortir_moyenne(SortieIter)
+Cette fonction permet de calculer la moyenne des itérations par placette/temps.
 }

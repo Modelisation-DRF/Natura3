@@ -63,21 +63,21 @@ Lecture_compile <- function(file, iqs, climat, sol){
     if (isTRUE(iqs) | isTRUE(sol)) {
       difference_nom_coor <- setdiff(nom_coor, nom)
 
-      if (length(difference_nom_coor) >0) {comp =  paste0("Coordonnées des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : ",
+      if (length(difference_nom_coor) >0) {comp =  paste0("Coordonnees des placettes manquantes pour extraire IQS/sol. Les variables suivantes sont requises : ",
                                                           paste(difference_nom_coor, collapse = ', '))}
     }
     # vérification des noms de variables si climat sont à extraire : il faut lat-long-an_mes
     if (isTRUE(climat)) {
       difference_nom_coor_climat <- setdiff(c(nom_coor, nom_an_mes), nom)
 
-      if (length(difference_nom_coor_climat) >0) {comp = paste0("Coordonnées des placettes manquantes et année de mesure pour extraire le climat. Les variables suivantes sont requises : ",
+      if (length(difference_nom_coor_climat) >0) {comp = paste0("Coordonnees des placettes manquantes et annee de mesure pour extraire le climat. Les variables suivantes sont requises : ",
                                                                 paste(difference_nom_coor_climat, collapse = ', '))}
     }
     # vérification des iqs s'ils sont fournis dans le fichier d'inventaire
     if (isFALSE(iqs)) {
       difference_nom_iqs <- setdiff(nom_iqs, nom)
 
-      if (length(difference_nom_iqs) >0) {comp = paste0("Nom des variables d'IQs incorrect dans le fichier d'inventaire compilé. Les variables suivantes sont requises : ",
+      if (length(difference_nom_iqs) >0) {comp = paste0("Nom des variables d'IQs incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : ",
                                                         paste(difference_nom_iqs, collapse = ', '))}
     }
 
@@ -85,7 +85,7 @@ Lecture_compile <- function(file, iqs, climat, sol){
     if (isFALSE(sol)) {
       difference_nom_sol <- setdiff(nom_sol, nom)
 
-      if (length(difference_nom_sol) >0) {comp = paste0("Nom des variables de sol incorrect dans le fichier d'inventaire compilé. Les variables suivantes sont requises : ",
+      if (length(difference_nom_sol) >0) {comp = paste0("Nom des variables de sol incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : ",
                                                         paste(difference_nom_sol, collapse = ', '))}
     }
 
@@ -94,7 +94,7 @@ Lecture_compile <- function(file, iqs, climat, sol){
 
       difference_nom_clim <- setdiff(nom_clim, nom)
 
-      if (length(difference_nom_clim) >0) {comp = paste0("Nom des variables climatiques annuelles incorrect dans le fichier d'inventaire compilé. Les variables suivantes sont requises : ",
+      if (length(difference_nom_clim) >0) {comp = paste0("Nom des variables climatiques annuelles incorrect dans le fichier d'inventaire compile. Les variables suivantes sont requises : ",
                                                          paste(difference_nom_clim, collapse = ', '))}
     }
 

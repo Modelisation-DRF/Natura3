@@ -32,9 +32,13 @@ Prep_arbres(
 
 \item{nb_iter}{Si mode stochastique, le nombre d'itérations à effectuer (> 1), ignoré si \code{mode_simul="DET"}}
 
+\item{nb_step}{Le nombre d'années pour lesquelles on veut estimer la hauteur pour un même arbre (par défaut 1).}
+
 \item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 
 \item{seed_value}{Optionnel. Valeur de départ pour la génération de nombres aléatoires. Utilisé lors des tests pour la reproductibilité des résultats.}
+
+\item{dt}{La durée de l'intervalle de temps entre deux mesures d'un même arbre si \code{nb_step>1} (par défaut 10).}
 }
 \value{
 Une liste de 2 éléments: table contenant les arbres avec leur hauteur et volume (une ligne par arbre) et une table des caractérisatiques des placettes (une ligne par placette)

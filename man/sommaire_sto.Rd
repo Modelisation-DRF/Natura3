@@ -22,7 +22,8 @@ Calcule de la moyenne, du 97.5 et 2.5 percentile des itérations par placette.
 }
 \examples{
 \dontrun{
-data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
+data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
 sommaire_sto(data=data_simul_sto, variable=sttot)
 }
 }

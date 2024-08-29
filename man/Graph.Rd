@@ -4,7 +4,7 @@
 \alias{Graph}
 \title{Graphique d'évolution des variables forestières}
 \usage{
-Graph(Data, Espece = "tot", Variable = "st", listePlacette)
+Graph(Data, Espece = "tot", Variable = "st")
 }
 \arguments{
 \item{Data}{Un data.frame contenant les données forestières. Le data.frame doit inclure
@@ -21,9 +21,6 @@ La valeur par défaut est "tot".}
 incluent "st" (surface terrière marchande en m2/ha), "n" (nombre d’arbres marchands par ha),
 "v" (volume marchand en m3/ha), "hd" (hauteur dominante en m), "dq" (diamètre quadratique moyen
 en cm). La valeur par défaut est "st".}
-
-\item{listePlacette}{Une liste ou un vecteur contenant les identifiants des placettes à inclure
-dans le graphique.}
 }
 \value{
 Un objet ggplot représentant le graphique d'évolution de la variable spécifiée sur la
