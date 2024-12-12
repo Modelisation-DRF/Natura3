@@ -30,7 +30,8 @@ test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un datafr
 
 test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un Excel", {
 
-  fic = "U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_etude_test.xlsx"
+  #fic = "U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_etude_test.xlsx"
+  fic <- test_path("fixtures", "fichier_etude_test.xlsx")
   etude = Lecture_etudes(fic)
 
   nbrow = nrow(etude)
@@ -40,7 +41,7 @@ test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un Excel"
 
 test_that("La fonction Lecture_etudes() fonctionne tel qu'attendu avec un csv", {
 
-  fic = "U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_etude_test.csv"
+  fic =  test_path("fixtures", "fichier_etude_test.csv")
   etude = Lecture_etudes(fic)
 
   nbrow = nrow(etude)
@@ -53,7 +54,16 @@ test_that("La fonction Lecture_etudes() retourne un message quand il n'y a pas l
   fic = data.frame(ID_PE="0400102903", ess='SAB',etage='D', dhpcm=10, hauteur=10)
   etude = Lecture_etudes(fic)
 
-  expect_equal(etude, "Nom des variables incorrect dans le fichier des arbres-etudes")
+  expect_equal(etude, "Nom des variables incorrect dans le fichier des arbres-etudes. Les variables suivantes sont requises : essence")
+
+})
+
+test_that("La fonction Lecture_etudes() retourne un message quand il n'y aucun C-D dans le fichier", {
+
+  fic = data.frame(ID_PE="0400102903", essence='SAB',etage='I', dhpcm=10, hauteur=10)
+  etude = Lecture_etudes(fic)
+
+  expect_equal(etude, "Aucun arbre avec l'etage C ou D")
 
 })
 

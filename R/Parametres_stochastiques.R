@@ -48,7 +48,7 @@
 param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL) {
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}
@@ -121,7 +121,7 @@ param_hdom0_ess_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed
 param_hdom0_stoch <- function(liste_arbre, mode_simul='DET', nb_iter=1, seed_value = NULL ) {
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}
@@ -198,7 +198,7 @@ param_is_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
   # liste_place=liste_plot; mode_simul='STO'; horizon=5; nb_iter=1; seed_value = NULL
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}
@@ -291,7 +291,7 @@ param_hd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, horizo
   # liste_place=liste_plot; nb_iter=2; mode_simul='STO'; horizon=5; seed_value = 20;
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}
@@ -378,7 +378,7 @@ param_ishd_evol_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, hori
   #liste_place=fic; nb_iter=200; mode_simul='STO'; horizon=2; seed_value = 20;
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}
@@ -502,7 +502,7 @@ param_evol_n_st_v_stoch <- function(liste_place, mode_simul='DET', nb_iter=1, ho
   # liste_place=liste_plot; nb_iter=2; mode_simul='STO'; horizon=5; liste_ess=liste_gress; seed_value = 20;
 
   if (mode_simul=='STO'){
-    if (nb_iter==1) {stop("Le nombre d'itérations doit être plus grand que 1 en mode stochastique")}
+    if (nb_iter==1) {stop("Le nombre d'iterations doit etre plus grand que 1 en mode stochastique")}
   }
 
   if (length(seed_value)>0) {set.seed(seed_value)}

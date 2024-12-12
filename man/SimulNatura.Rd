@@ -191,15 +191,19 @@ Les groupes d'essences du simulateur sont composés des essences suivantes:
 \examples{
 \dontrun{
 # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés et les variables d'IQS, de climat et de sol doivent être extraites
-data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+file_etude=fichier_arbres_etudes, horizon=5)
 
 #' # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés, mais les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
+data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes,
+horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
 
 # Simulation stochastique sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés, mais les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter=30, iqs=FALSE, sol=FALSE, climat=FALSE)
+data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes,
+horizon=5, mode_simul='STO', nb_iter=30, iqs=FALSE, sol=FALSE, climat=FALSE)
 
 # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de la placette, les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-data_simul <- SimulNatura(file_compile=fichier_compile_aveccov, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
+data_simul <- SimulNatura(file_compile=fichier_compile_aveccov,
+horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
 }
 }

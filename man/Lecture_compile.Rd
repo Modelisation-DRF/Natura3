@@ -28,7 +28,7 @@ Lecture_compile(file, iqs, climat, sol)
 }}
 }
 \value{
-Table à l'échelle de la placette ou un message d'erreur s'il y a une erreur dans le nom des colonnes.
+Table à l'échelle de la placette ou un message d'comp s'il y a une comp dans le nom des colonnes.
 }
 \description{
 Lire le fichier des placettes à simuler avec Natura et valider le nom des colonnes.

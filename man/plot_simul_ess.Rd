@@ -10,6 +10,8 @@ plot_simul_ess(data, variable, mode_simul = "DET")
 \item{data}{Table contenant les résultats d'une simulation déterministe avec la fonction \code{SimulNatura}}
 
 \item{variable}{Le nom de la variable pour laquelle on veut un graphique: 'st', 'v', 'n', ou 'dq'}
+
+\item{mode_simul}{Mode de simulation: \code{"DET"} : déterministe ou \code{"STO"} : stochastique}
 }
 \value{
 Un graphique par essence
@@ -19,7 +21,8 @@ Un graphique par essence
 }
 \examples{
 \dontrun{
-data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+file_etude=fichier_arbres_etudes, horizon=5)
 plot_simul_ess(data=data_simul, variable='st')
 }
 

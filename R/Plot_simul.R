@@ -12,7 +12,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+#' file_etude=fichier_arbres_etudes, horizon=5)
 #' plot_simul(data=data_simul, variable=sttot)
 #' }
 #'
@@ -43,6 +44,7 @@ plot_simul <- function(data, variable, orig=TRUE)
 #'
 #' @param data Table contenant les résultats d'une simulation déterministe avec la fonction \code{SimulNatura}
 #' @param variable Le nom de la variable pour laquelle on veut un graphique: 'st', 'v', 'n', ou 'dq'
+#' @inheritParams SimulNatura
 #'
 #' @return Un graphique par essence
 
@@ -50,7 +52,8 @@ plot_simul <- function(data, variable, orig=TRUE)
 #'
 #' @examples
 #' \dontrun{
-#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+#' file_etude=fichier_arbres_etudes, horizon=5)
 #' plot_simul_ess(data=data_simul, variable='st')
 #' }
 #'
@@ -87,7 +90,8 @@ plot_simul_ess <- function(data, variable, mode_simul='DET')
 #'
 #' @examples
 #' \dontrun{
-#' data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
+#' data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+#' file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
 #' sommaire_sto(data=data_simul_sto, variable=sttot)
 #' }
 sommaire_sto <- function(data, variable)
@@ -125,7 +129,8 @@ sommaire_sto <- function(data, variable)
 #'
 #' @examples
 #' \dontrun{
-#' data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
+#' data_simul_sto <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+#' file_etude=fichier_arbres_etudes, horizon=5, mode_simil='STO', nb_iter=30)
 #' plot_simul_sto(data=data_simul_sto, variable=sttot)
 #' }
 #'

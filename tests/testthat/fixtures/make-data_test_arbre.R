@@ -143,3 +143,12 @@ pep_depart <- inner_join(pep_temps0a,pred_sas2, by=c("id_pe","origine")) %>% fil
 saveRDS(pred_sas_atendu, "tests/testthat/fixtures/pred_sas_atendu.rds")
 saveRDS(pep_depart, "tests/testthat/fixtures/pep_depart.rds")
 
+
+
+# fichier de resultats de simulation pour tester la fct graphique
+data_simul <- SimulNatura(file_compile=fichier_compile_aveccov, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
+saveRDS(data_simul, "tests/testthat/fixtures/data_simul.rds")
+
+# fichier de resultats de simulation pour tester la fct graphique
+data_simul_sto <- SimulNatura(file_compile=fichier_compile_aveccov, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE, mode_simul = 'STO', nb_iter = 30)
+saveRDS(data_simul_sto, "tests/testthat/fixtures/data_simul_sto.rds")

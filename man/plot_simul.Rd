@@ -21,7 +21,8 @@ Un graphique
 }
 \examples{
 \dontrun{
-data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+file_etude=fichier_arbres_etudes, horizon=5)
 plot_simul(data=data_simul, variable=sttot)
 }
 

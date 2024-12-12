@@ -158,16 +158,20 @@
 #' @examples
 #' \dontrun{
 #' # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés et les variables d'IQS, de climat et de sol doivent être extraites
-#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov, file_etude=fichier_arbres_etudes, horizon=5)
+#' data_simul <- SimulNatura(file_arbre=fichier_arbres_sanscov,
+#' file_etude=fichier_arbres_etudes, horizon=5)
 #'
 #' #' # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés, mais les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-#' data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
+#' data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes,
+#' horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
 #'
 #' # Simulation stochastique sur 50 ans à partir d'un fichier à l'échelle de l'arbre, hauteur et volume des arbres doit être estimés, mais les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-#' data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter=30, iqs=FALSE, sol=FALSE, climat=FALSE)
+#' data_simul <- SimulNatura(file_arbre=fichier_arbres_aveccov, file_etude=fichier_arbres_etudes,
+#' horizon=5, mode_simul='STO', nb_iter=30, iqs=FALSE, sol=FALSE, climat=FALSE)
 #'
 #' # Simulation déterministe sur 50 ans à partir d'un fichier à l'échelle de la placette, les variables d'IQS, de climat et de sol sont fournies dans le fichier d'entrée
-#' data_simul <- SimulNatura(file_compile=fichier_compile_aveccov, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
+#' data_simul <- SimulNatura(file_compile=fichier_compile_aveccov,
+#' horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE)
 #' }
 
 # file_arbre=fichier_arbres_aveccov; file_etude=fichier_arbres_etudes; horizon=5; mode_simul='DET'; nb_iter=1; iqs=FALSE; climat=FALSE; sol=FALSE; ht=TRUE; vol=TRUE; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
@@ -186,6 +190,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   # pour ne pas afficher le message de warning de %dopar% sur les random number. Utiliser dorng serait la solution, mais ne s'utilise pas en double %dorng%
   #options(doFuture.rng.onMisuse = "ignore")
 
+
   dt <- 10 #Longueur d'un pas de simulation: FIXE
 
   liste_gress <- c('epn','epx','rt','ri','sab','bop','peu','ft')
@@ -195,6 +200,14 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   variable_climat_an <- c("growingseasonprecipitation","growingseasontmean")
   variable_sol <- c("cec","ph","sable","argile","mat_org")
   variable_iqs <- c("iqs_pot_bop","iqs_pot_epb","iqs_pot_epn","iqs_pot_pex","iqs_pot_pib","iqs_pot_pig","iqs_pot_sab","iqs_pot_tho")
+
+
+  #variables nécessaires à Natura et à extraire des cartes
+  variable_climat_ <- c("p_tot", "t_ma", "prec_gs", "temp_gs")
+  variable_sol_ <- c("ph", "clay", "cec", "oc", "sand" )
+  variable_iqs_ <- c("iqs_pot_epn", "iqs_pot_epb", "iqs_pot_sab", "iqs_pot_pex", "iqs_pot_bop", "iqs_pot_tho", "iqs_pot_pib", "iqs_pot_pig")
+
+
 
   # variables fixes dans le temps nécessaires au modèle Natura (id_pe doit être en premier dans la liste)
   # variables_fixes_temps <- c("id_pe", "sdom_bio", "prec_gs", "temp_gs", "type_eco", "veg_pot", "milieu", "origine",
@@ -226,7 +239,8 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
   if (!missing(file_arbre)) {
 
-    ##################################################################################
+
+       ##################################################################################
     ################### Lecture des fichiers arbres         ##########################
     ##################################################################################
 
@@ -243,6 +257,20 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     Arbres <- Arbres %>%
       filter(dhpcm>9) %>%
       mutate(no_arbre=row_number())
+
+
+    # Enlever les colonnes de climat, sol, iqs si elle sont dans le fichier mais qu'on demande de les extraire des cartes
+    if (isTRUE(climat)){
+      Arbres <- remove_columns(Arbres, variable_climat_)
+    }
+
+    if (isTRUE(sol)){
+      Arbres <- remove_columns(Arbres, variable_sol_)
+    }
+
+    if (isTRUE(iqs)){
+      Arbres <- remove_columns(Arbres, variable_iqs_)
+    }
 
 
     # Lecture du fichier des arbres études
@@ -277,13 +305,14 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     liste_place <- unique(Arbres$id_pe)
     # ne garder les placettes qui sont dans les arbres et dans les etude
     EtudeA <- EtudeA[EtudeA$id_pe %in% liste_place,]
+
+
     liste_place_etude <- unique(EtudeA$id_pe)
     # ne garder que les placettes qui ont des arbres études
     Arbres <- Arbres[Arbres$id_pe %in% liste_place_etude,]
 
     # Vérifier s'il reste des placettes valides
-    if (nrow(Arbres)==0) {stop("Aucune placette valide dans le fichier des arbres-études")}
-
+    if (nrow(Arbres)==0) {stop("Aucune placette valide dans le fichier des arbres-etudes")}
     # faire un fichier des variables fixes dans le temps: PAS NÉCESSAIRE ICI
     #data_info0 <- Arbres %>% dplyr::select(id_pe, sdom_bio, type_eco, origine) %>% unique()
     #print("fin prep des fichiers")
@@ -333,6 +362,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
       ################### Lecture du fichier compilé placette ##########################
       ##################################################################################
 
+
         # Lecture du fichier compilé à la placette
         DataCompile_final0 <- Lecture_compile(file=file_compile, iqs=iqs, climat=climat, sol=sol)
         if (is.character(DataCompile_final0)) {stop(DataCompile_final0)}
@@ -343,6 +373,19 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
         # Filtrer les placettes
         #DataCompile_final0 <- Filtrer_place(fichier=DataCompile_final0)
+
+        # Enlever les colonnes de climat, sol, iqs si elle sont dans le fichier mais qu'on demande de les extraire des cartes
+        if (isTRUE(climat)){
+          DataCompile_final0 <- remove_columns(DataCompile_final0, variable_climat_)
+        }
+
+        if (isTRUE(sol)){
+          DataCompile_final0 <- remove_columns(DataCompile_final0, variable_sol_)
+        }
+
+        if (isTRUE(iqs)){
+          DataCompile_final0 <- remove_columns(DataCompile_final0, variable_iqs_)
+        }
 
         # Filtrer les placettes
         filtre <- valid_placette(type_fic='compile', fichier=DataCompile_final0, iqs=iqs, climat=climat, sol=sol)
@@ -516,17 +559,19 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
       outputFinal2 <- outputFinal2 %>% dplyr::select(-iter)
     }
 
-   # Exporter la simulation
-   if (!missing(file_export)) {
-     write_delim(outputFinal2, file_export, delim = ';')
-   }
-
-    # liste des placettes rejetées
+      # liste des placettes rejetées
     if (!is.null(placette_rejet) | !is.null(placette_rejet2)) {
       placette_rejet_tous <- as.data.frame(bind_rows(placette_rejet, placette_rejet2) %>% arrange(id_pe))
       # ajouter les placettes rejetées à la fin du fichier des simulations
       outputFinal2 <- bind_rows(outputFinal2, placette_rejet_tous)
-      }
+    } else {
+      outputFinal2$message <- NA
+    }
+
+    # Exporter la simulation
+    if (!missing(file_export)) {
+      write_delim(outputFinal2, file_export, delim = ';')
+    }
 
 
    return(as.data.frame(outputFinal2))
