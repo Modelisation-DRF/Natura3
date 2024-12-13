@@ -22,7 +22,8 @@
 #' @export
 
 Graph <- function(Data, Espece = "tot", Variable = 'st') {
-  # Data=fic; Espece = "tot"; Variable = 'st';
+  # Data=simul; Espece = "tot"; Variable = 'st';
+
 
   var <- paste0(paste(Variable), paste(Espece))
 

@@ -372,6 +372,107 @@ test_that("La fonction SimulNatura() fonctionne avec un fichier compilé avec so
 })
 
 
+# fichier avec des coordonnées dont l'extraction dans les cartes retourne des NA pour toutes les placettes
+test_that("La fonction SimulNatura() retourne une erreur avec un fichier dont l'extraction dans les cartes retourne des NA pour toutes les placettes", {
+
+  fic <- readRDS(test_path("fixtures", "test_na.rds"))
+  simul <- SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T)
+  simul <- simul %>% dplyr::select(message) %>% unique
+  #expect_error(SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T), "Aucune placette valide après l'extraction dans les cartes")
+  expect_true(simul=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+test_that("La fonction SimulNatura() en mode STO retourne une erreur avec un fichier dont l'extraction dans les cartes retourne des NA pour toutes les placettes", {
+
+  fic <- readRDS(test_path("fixtures", "test_na.rds"))
+  simul <- SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T, mode_simul = 'STO', nb_iter = 30)
+  simul <- simul %>% dplyr::select(message) %>% unique
+  #expect_error(SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T), "Aucune placette valide après l'extraction dans les cartes")
+  expect_true(simul=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+# fichier avec des coordonnées dont l'extraction dans les cartes retourne des NA pour quelques placettes
+test_that("La fonction SimulNatura() fonctionne avec un fichier dont l'extraction dans les cartes retourne des NA pour quelques placettes", {
+
+  fic <- readRDS(test_path("fixtures", "test_na.rds"))
+  fic2 <- fic %>% mutate(latitude=50, longitude=-73)
+  fic <- bind_rows(fic, fic2) %>% mutate(id_pe = row_number())
+  simul <- SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T)
+
+  simul_nonNA <- simul %>% filter(id_pe %in% c(4,5,6)) %>% dplyr::select(sttot) %>% sum
+  simul_NA <- simul %>% filter(id_pe %in% c(1,2,3)) %>% dplyr::select(message) %>% unique
+  expect_true(simul_nonNA>0)
+  expect_true(simul_NA[1,1]=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+
+# fichier avec des coordonnées dont l'extraction dans les cartes retourne des NA pour quelques placettes
+test_that("La fonction SimulNatura() en mode STO fonctionne avec un fichier dont l'extraction dans les cartes retourne des NA pour quelques placettes", {
+
+  fic <- readRDS(test_path("fixtures", "test_na.rds"))
+  fic2 <- fic %>% mutate(latitude=50, longitude=-73)
+  fic <- bind_rows(fic, fic2) %>% mutate(id_pe = row_number())
+  simul <- SimulNatura(file_compile = fic, horizon=1, iqs=T, sol=T, climat=T, mode_simul = 'STO', nb_iter = 30)
+  simul_nonNA <- simul %>% filter(id_pe %in% c(4,5,6)) %>% dplyr::select(sttot) %>% sum
+  simul_NA <- simul %>% filter(id_pe %in% c(1,2,3)) %>% dplyr::select(message) %>% unique
+  expect_true(simul_nonNA>0)
+  expect_true(simul_NA[1,1]=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+
+# fichier des arbres avec des coordonnées dont l'extraction dans les cartes retourne des NA pour quelques placettes
+# la partie estimation des ht fonctionne et ht=na et vol_dm3=na, et les volumes dans le fichier compilé sont à 0
+# ensuite, quand le fichier compilé passe à l'extraction des variables climatiques annuels, ça retourne des na, donc les placettes sont rejetées
+test_that("La fonction SimulNatura() fonctionne avec un fichier arbres dont l'extraction dans les cartes retourne des NA pour quelques placettes", {
+
+  fic <- fichier_arbres_sanscov
+  fic <- fic %>% mutate(LATITUDE=ifelse(ID_PE=='0319801702', 50.2, LATITUDE),
+                        LONGITUDE=ifelse(ID_PE=='0319801702', -66.5, LONGITUDE))
+  simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T)
+  simul_nonNA <- simul[c(1,2),] %>% dplyr::select(sttot) %>% sum
+  simul_NA <- simul[3,] %>% dplyr::select(message)
+  expect_true(simul_nonNA>0)
+  expect_true(simul_NA[1,1]=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+test_that("La fonction SimulNatura() en mode STO fonctionne avec un fichier arbres dont l'extraction dans les cartes retourne des NA pour quelques placettes", {
+
+  fic <- fichier_arbres_sanscov
+  fic <- fic %>% mutate(LATITUDE=ifelse(ID_PE=='0319801702', 50.2, LATITUDE),
+                        LONGITUDE=ifelse(ID_PE=='0319801702', -66.5, LONGITUDE))
+  simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T, mode_simul = 'STO', nb_iter = 30)
+  simul_nonNA <- simul[c(1,2),] %>% dplyr::select(sttot) %>% sum
+  simul_NA <- simul[nrow(simul),] %>% dplyr::select(message)
+  expect_true(simul_nonNA>0)
+  expect_true(simul_NA[1,1]=="Extraction dans les cartes IQS/Sol/Climat a NA")
+
+})
+
+# tester un fichier arbres avec juste des placettes avec coord qui retourne des na dans les cartes
+test_that("La fonction SimulNatura() fonctionne avec un fichier arbres dont l'extraction dans les cartes retourne des NA pour toutes les placettes", {
+
+  fic <- fichier_arbres_sanscov
+  fic <- fic %>% mutate(LATITUDE=50.2, LONGITUDE=-66.5)
+  #expect_error(SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T), "Aucune placette valide après l'extraction dans les cartes")
+  simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T)
+  simul <- simul %>% dplyr::select(message) %>% unique
+  expect_true(simul=="Extraction dans les cartes IQS/Sol/Climat a NA")
+})
+
+test_that("La fonction SimulNatura() en mode STO fonctionne avec un fichier arbres dont l'extraction dans les cartes retourne des NA pour toutes les placettes", {
+
+  fic <- fichier_arbres_sanscov
+  fic <- fic %>% mutate(LATITUDE=50.2, LONGITUDE=-66.5)
+  #expect_error(SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T), "Aucune placette valide après l'extraction dans les cartes")
+  simul <- SimulNatura(file_arbre = fic, file_etude = fichier_arbres_etudes, horizon=1, iqs=T, sol=T, climat=T, mode_simul = 'STO', nb_iter = 30)
+  simul <- simul %>% dplyr::select(message) %>% unique
+  expect_true(simul=="Extraction dans les cartes IQS/Sol/Climat a NA")
+})
 
 #########################################################################################
 #########################################################################################
@@ -380,85 +481,85 @@ test_that("La fonction SimulNatura() fonctionne avec un fichier compilé avec so
 # MAIS QUED JE FAIS CHECK PACKAGE, CES 4 TESTS FONT UNE ERREUR À CAUSE DU MODE PARALLELE
 # DONC JE LES METS EN COMMENTAIRES, MAIS À CHAQUE MODIF DU PACKAGE, IL FAUT LES PASSER MANUELLEMENT
 
-# test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier arbres avec covariables et ht et vol à calculer", {
+ # test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier arbres avec covariables et ht et vol à calculer", {
+ #
+ #   #expect_no_error(SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=T, vol=T, iqs=F, sol=F, climat=F))
+ #
+ #   simul <- SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=T, vol=T, iqs=F, sol=F, climat=F)
+ #
+ #   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
+ #                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
+ #                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
+ #                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
+ #                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
+ #                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
+ #                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
+ #                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
+ #                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
+ #                    "message")
+ #   nom_obtenu <- names(simul)
+ #   expect_equal(nom_obtenu,nom_attendu)
+ #
+ #   # vtot au temps 0 est différent à chaque iter
+ #   vtot <- simul %>% filter(annee==0, id_pe=='0319801702') %>% ungroup() %>%  dplyr::select(vtot)
+ #   expect_true(abs(vtot[1,1]-vtot[2,1])>0)
+ #
+ # })
 #
-#   #expect_no_error(SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=T, vol=T, iqs=F, sol=F, climat=F))
+ # test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier arbres avec covariables et ht et vol pas à calculer", {
+ #   fichier_arbres_aveccov2 <- fichier_arbres_aveccov %>% mutate(vol_dm3=100, hauteur_pred=10)
+ #   #expect_no_error(SimulNatura(file_arbre = fichier_arbres_aveccov2, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=F, vol=F, iqs=F, sol=F, climat=F))
+ #
+ #   simul <- SimulNatura(file_arbre = fichier_arbres_aveccov2, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=F, vol=F, iqs=F, sol=F, climat=F)
+ #
+ #   # vtot au temps 0 est le même à chaque iter
+ #   vtot <- simul %>% filter(annee==0, id_pe=='0319801702') %>% ungroup() %>%  dplyr::select(vtot)
+ #   expect_true(abs(vtot[1,1]-vtot[2,1])==0)
+ #
+ # })
 #
-#   simul <- SimulNatura(file_arbre = fichier_arbres_aveccov, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=T, vol=T, iqs=F, sol=F, climat=F)
+ # test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier compilé avec covariables", {
+ #   #expect_no_error(SimulNatura(file_compile = fichier_compile_aveccov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=F, sol=F, climat=F))
+ #
+ #   simul <- SimulNatura(file_compile = fichier_compile_aveccov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=F, sol=F, climat=F)
+ #
+ #   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
+ #                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
+ #                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
+ #                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
+ #                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
+ #                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
+ #                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
+ #                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
+ #                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
+ #                    "message")
+ #   nom_obtenu <- names(simul)
+ #   expect_equal(nom_obtenu,nom_attendu)
+ #
+ #   # vtot au temps 0 est le même à chaque iter avec un fihcier compiler
+ #   vtot <- simul %>% filter(annee==0, id_pe=='0700200501_N_1970') %>% ungroup() %>%  dplyr::select(vtot)
+ #   expect_true(abs(vtot[1,1]-vtot[2,1])==0)
+ # })
 #
-#   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
-#                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
-#                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
-#                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
-#                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
-#                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
-#                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
-#                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
-#                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
-#                    "message")
-#   nom_obtenu <- names(simul)
-#   expect_equal(nom_obtenu,nom_attendu)
-#
-#   # vtot au temps 0 est différent à chaque iter
-#   vtot <- simul %>% filter(annee==0, id_pe=='0319801702') %>% ungroup() %>%  dplyr::select(vtot)
-#   expect_true(abs(vtot[1,1]-vtot[2,1])>0)
-#
-# })
-#
-# test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier arbres avec covariables et ht et vol pas à calculer", {
-#   fichier_arbres_aveccov2 <- fichier_arbres_aveccov %>% mutate(vol_dm3=100, hauteur_pred=10)
-#   #expect_no_error(SimulNatura(file_arbre = fichier_arbres_aveccov2, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=F, vol=F, iqs=F, sol=F, climat=F))
-#
-#   simul <- SimulNatura(file_arbre = fichier_arbres_aveccov2, file_etude = fichier_arbres_etudes, horizon=5, mode_simul='STO', nb_iter = 30, ht=F, vol=F, iqs=F, sol=F, climat=F)
-#
-#   # vtot au temps 0 est le même à chaque iter
-#   vtot <- simul %>% filter(annee==0, id_pe=='0319801702') %>% ungroup() %>%  dplyr::select(vtot)
-#   expect_true(abs(vtot[1,1]-vtot[2,1])==0)
-#
-# })
-#
-# test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier compilé avec covariables", {
-#   #expect_no_error(SimulNatura(file_compile = fichier_compile_aveccov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=F, sol=F, climat=F))
-#
-#   simul <- SimulNatura(file_compile = fichier_compile_aveccov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=F, sol=F, climat=F)
-#
-#   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
-#                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
-#                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
-#                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
-#                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
-#                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
-#                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
-#                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
-#                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
-#                    "message")
-#   nom_obtenu <- names(simul)
-#   expect_equal(nom_obtenu,nom_attendu)
-#
-#   # vtot au temps 0 est le même à chaque iter avec un fihcier compiler
-#   vtot <- simul %>% filter(annee==0, id_pe=='0700200501_N_1970') %>% ungroup() %>%  dplyr::select(vtot)
-#   expect_true(abs(vtot[1,1]-vtot[2,1])==0)
-# })
-#
-# test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier compilé sans covariables", {
-#   #expect_no_error(SimulNatura(file_compile = fichier_compile_sanscov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=T, sol=T, climat=T))
-#
-#   simul <- SimulNatura(file_compile = fichier_compile_sanscov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=T, sol=T, climat=T)
-#
-#   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
-#                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
-#                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
-#                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
-#                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
-#                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
-#                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
-#                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
-#                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
-#                    "message")
-#   nom_obtenu <- names(simul)
-#   expect_equal(nom_obtenu,nom_attendu)
-#
-# })
+ # test_that("La fonction SimulNatura() fonctionne en mode stochastique avec fichier compilé sans covariables", {
+ #   #expect_no_error(SimulNatura(file_compile = fichier_compile_sanscov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=T, sol=T, climat=T))
+ #
+ #   simul <- SimulNatura(file_compile = fichier_compile_sanscov, horizon=5, mode_simul='STO', nb_iter = 30, iqs=T, sol=T, climat=T)
+ #
+ #   nom_attendu <- c("id_pe",    "sdom_bio", "type_eco", "origine", "iter", "annee",    "temps",
+ #                    "tbe",      "pert",     "hd",      "is",      "stbop",   "stpeu",
+ #                    "stft",    "stri",    "strt",    "stsab",   "stepn",   "stepx",
+ #                    "sttot",   "nbop",    "npeu",    "nft",     "nri",     "nrt",
+ #                    "nsab",    "nepn",    "nepx",    "ntot",    "vbop",    "vpeu",
+ #                    "vft",     "vri",     "vrt",     "vsab",    "vepn",    "vepx",
+ #                    "vtot",    "pct_bop", "pct_peu", "pct_ft",  "pct_ri",  "pct_rt",
+ #                    "pct_sab", "pct_epn", "pct_epx", "dqrt",    "dqft",    "dqri",
+ #                    "dqepn",   "dqepx",   "dqsab",   "dqbop",   "dqpeu",   "dqtot",
+ #                    "message")
+ #   nom_obtenu <- names(simul)
+ #   expect_equal(nom_obtenu,nom_attendu)
+ #
+ # })
 
 
 # # ajouter test quand lecture_arbres, lecture_etude ou lecture_compile retourne une erreur

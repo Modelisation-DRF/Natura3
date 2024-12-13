@@ -9,7 +9,8 @@
 #'
 remove_columns <- function(data, columns_to_remove) {
 
-  # data=fic; columns_to_remove=colonne
+  # data=DataCompile_final0; columns_to_remove=variable_iqs_
+
   names(data) <- tolower(names(data))
 
   columns_present <- columns_to_remove[columns_to_remove %in% colnames(data)]

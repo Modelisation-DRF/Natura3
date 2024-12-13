@@ -152,3 +152,9 @@ saveRDS(data_simul, "tests/testthat/fixtures/data_simul.rds")
 # fichier de resultats de simulation pour tester la fct graphique
 data_simul_sto <- SimulNatura(file_compile=fichier_compile_aveccov, horizon=5, iqs=FALSE, sol=FALSE, climat=FALSE, mode_simul = 'STO', nb_iter = 30)
 saveRDS(data_simul_sto, "tests/testthat/fixtures/data_simul_sto.rds")
+
+
+# fichier avec des coordonnées dont l'extraction dans les cartes retourne des NA
+test_na <- read_delim("U:\\Projets\\IsabelleAuger\\Natura-2020\\PackageR\\Natura3\\tests\\testthat\\fixtures\\fichier_compile_avec_iqsNA.csv", delim=';')
+saveRDS(test_na, "tests/testthat/fixtures/test_na.rds")
+

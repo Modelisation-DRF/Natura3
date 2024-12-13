@@ -176,7 +176,7 @@
 
 # file_arbre=fichier_arbres_aveccov; file_etude=fichier_arbres_etudes; horizon=5; mode_simul='DET'; nb_iter=1; iqs=FALSE; climat=FALSE; sol=FALSE; ht=TRUE; vol=TRUE; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
 # file_arbre=fichier_arbres_sanscov; file_etude=fichier_arbres_etudes; horizon=5; mode_simul='DET'; nb_iter=1; iqs=T; climat=T; sol=T; ht=TRUE; vol=TRUE; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
-
+# file_arbre = fic; file_etude = fichier_arbres_etudes; horizon=1; iqs=T; sol=T; climat=T; mode_simul='DET'; nb_iter=1; iqs=T; climat=T; sol=T; ht=TRUE; vol=TRUE; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
 SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horizon, mode_simul='DET', nb_iter=1, iqs=TRUE, climat=TRUE, sol=TRUE, ht=TRUE, vol=TRUE,
                         dec_perturb=0, dec_tbe1=0, tbe1=0, dec_tbe2=0, tbe2=0, seed_value=NULL)
   {
@@ -230,7 +230,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   if (length(seed_value)>0) {set.seed(seed_value)}
   if (mode_simul != 'STO') {nb_iter=1}
 
-
+  placette_rejet3 <- NULL
 
   ###########################################################################################################
   ################### Importation des fichiers échelle arbre et préparation des données #####################
@@ -356,7 +356,8 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
         # file_compile = fichier_compile_sanscov; horizon=5; mode_simul='STO'; nb_iter = 30; iqs=T; climat=TRUE; sol=T; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
         # file_compile = fichier_compile_aveccov; horizon=5; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
         # file_compile = fic; horizon=9; mode_simul='DET'; nb_iter = 1; iqs=F; climat=F; sol=F; seed_value=NULL; dec_perturb=0; dec_tbe1=0; tbe1=0; dec_tbe2=0; tbe2=0;
-        # file_compile = fic; horizon=5; mode_simul='DET'; iqs=F; sol=F; climat=F;
+        # file_compile = fic; horizon=1; mode_simul='DET'; iqs=T; sol=T; climat=T; seed_value=NULL;
+        # file_compile = fic; horizon=1; mode_simul='STO'; nb_iter=10; iqs=T; sol=T; climat=T; seed_value=NULL;
 
       ##################################################################################
       ################### Lecture du fichier compilé placette ##########################
@@ -403,8 +404,7 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
             group_by(id_pe) %>%
             mutate(iter = row_number()) %>%
             ungroup()
-        }
-        else{
+        } else{
           DataCompile_final0 <- DataCompile_final0 %>% mutate(iter=1)
         }
 
@@ -440,35 +440,41 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
   # pour les extractions dans les carte, on peut passer le fichier avec les itérations, car dans extract_map, il y a une unique de id_pe et un merge à la fin avec le fichier d'origine
 
   # extraire les variables de sol si nécessaire, couche=1 ==> 0-5cm
-  if (isTRUE(sol)) {
-    DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_sol", variable=variable_sol) %>%
-      rename(sand=sable, oc=mat_org, clay=argile)
+  if (isTRUE(isTRUE) | isTRUE(climat) | isTRUE(iqs)) {
+   if (isTRUE(sol)) {
+      DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_sol", variable=variable_sol) %>%
+        rename(sand=sable, oc=mat_org, clay=argile)
+    }
+
+    # extraire les variables de climat si nécessaire
+    if (isTRUE(climat)) {
+      DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
+        rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
+    }
+    # extraire les variables d'iqs si nécessaire
+    if (isTRUE(iqs)) {
+      DataCompile_final0 <- DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_iqs", variable=variable_iqs)
+    }
+
+    # Supprimer les placettes avec sol, climat ou iqs manquants
+    plotExtractMap_NA <- which(rowSums(is.na(DataCompile_final0[, c(variable_climat_[-c(1,2)], variable_sol_, variable_iqs_)])) > 0)
+    if (length(plotExtractMap_NA)>0) {
+      placette_rejet3 <- DataCompile_final0[plotExtractMap_NA,]
+      placette_rejet3$message <- "Extraction dans les cartes IQS/Sol/Climat a NA"
+      placette_rejet3 <- placette_rejet3[,c('id_pe','message')] %>% unique
+      DataCompile_final0 <- DataCompile_final0[-plotExtractMap_NA,]
+      # si toutes les placettes ont été rejetées, arrêter la simulation
+      #if (nrow(DataCompile_final0)==0) stop("Aucune placette valide après l'extraction dans les cartes")
+    }
   }
 
-  # extraire les variables de climat si nécessaire
-  if (isTRUE(climat)) {
-    DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
-      rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
-  }
-  # extraire les variables de climat si nécessaire, avec le package de MF
-  #if (isTRUE(climat)) {
-  #  DataCompile_final0 <- ExtractMap::extract_climat_an(file=DataCompile_final0, variable=variable_climat_an, periode=dt) %>%
-  #    rename(prec_gs = growingseasonprecipitation, temp_gs = growingseasontmean)
-  #}
-  # extraire les variables d'iqs si nécessaire
-  if (isTRUE(iqs)) {
-    DataCompile_final0 <- DataCompile_final0 <- ExtractMap::extract_map_plot(file=DataCompile_final0, liste_raster="cartes_iqs", variable=variable_iqs)
-  }
-
-  # Préparer les variables binaires, pour toutes les itérations, car on calcule vtot, qui peut varier s'il provient d'un fichier arbre en mode stochastique
-  DataCompile_final0 <- Prep_compile(fichier_compile=DataCompile_final0)
+  # si toutes les placettes ont été rejetées, ne pas faire la simulation
+  ##### Au lieu de faire un stop (qui va faire planter la shiny), faire un if else
 
 
+      # Préparer les variables binaires, pour toutes les itérations, car on calcule vtot, qui peut varier s'il provient d'un fichier arbre en mode stochastique
+      DataCompile_final0 <- Prep_compile(fichier_compile=DataCompile_final0)
 
-        # générer les paramètres pour l'évolution de IS et HD, N-ST-V
-        liste_place <- unique(DataCompile_final0$id_pe)
-        param_ishd_evol <- param_ishd_evol_stoch(liste_place=liste_place, nb_iter=nb_iter, mode_simul=mode_simul, horizon=horizon, seed_value = seed_value)
-        param_n_st_v <- param_evol_n_st_v_stoch(liste_place=liste_place, nb_iter=nb_iter, mode_simul=mode_simul, horizon=horizon, liste_ess=liste_gress, seed_value = seed_value)
 
         # Temps 0
         PlacT0 <- DataCompile_final0 %>%
@@ -492,6 +498,13 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
 
         # enlever les variable de data_info du fichier DataCompile_final, sauf id_pe
         DataCompile_final0[colnames(data_info)[-1]]<- list(NULL) # [-1] car il faut garder le premier id_pe
+
+        if (nrow(DataCompile_final0)>0) {
+
+        # générer les paramètres pour l'évolution de IS et HD, N-ST-V
+        liste_place <- unique(DataCompile_final0$id_pe)
+        param_ishd_evol <- param_ishd_evol_stoch(liste_place=liste_place, nb_iter=nb_iter, mode_simul=mode_simul, horizon=horizon, seed_value = seed_value)
+        param_n_st_v <- param_evol_n_st_v_stoch(liste_place=liste_place, nb_iter=nb_iter, mode_simul=mode_simul, horizon=horizon, liste_ess=liste_gress, seed_value = seed_value)
 
         if (mode_simul=='STO') {
         # paralleliser les itérations
@@ -524,6 +537,9 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
                                   long_int=dt, dec_perturb=dec_perturb, dec_tbe1=dec_tbe1, tbe1=tbe1, dec_tbe2=dec_tbe2, tbe2=tbe2)
         }
 
+        } else {
+          outputFinal <- DataCompile_final0
+        }
 
   ################################################################################################
   ################### Préparation du fichier de sortie    ########################################
@@ -560,13 +576,21 @@ SimulNatura <- function(file_arbre, file_etude, file_compile, file_export, horiz
     }
 
       # liste des placettes rejetées
-    if (!is.null(placette_rejet) | !is.null(placette_rejet2)) {
-      placette_rejet_tous <- as.data.frame(bind_rows(placette_rejet, placette_rejet2) %>% arrange(id_pe))
+    if (!is.null(placette_rejet) | !is.null(placette_rejet2) | !is.null(placette_rejet3)) {
+      placette_rejet_tous <- as.data.frame(bind_rows(placette_rejet, placette_rejet2, placette_rejet3) %>% arrange(id_pe))
       # ajouter les placettes rejetées à la fin du fichier des simulations
       outputFinal2 <- bind_rows(outputFinal2, placette_rejet_tous)
+      if (all(is.na(outputFinal2$temps))) {
+        outputFinal2$temps <- 0 # pour que les graphiques fonctionnes si toutes les placettes ont été rejetés
+      } else {
+        outputFinal2 <- outputFinal2 %>% mutate(temps = ifelse(!is.na(message),min(outputFinal2$temps,na.rm = T), temps)) # pour que les graphiques fonctionnes si toutes les placettes ont été rejetés
+      }
     } else {
       outputFinal2$message <- NA
     }
+
+
+
 
     # Exporter la simulation
     if (!missing(file_export)) {

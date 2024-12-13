@@ -1,0 +1,4 @@
+id_pe;an_mes;origine;temps;iqs_pot_epn;iqs_pot_sab;clay;sand;ph;cec;oc;sdom_bio;type_eco;latitude;longitude;altitude;hd;is;stsab;vsab;nsab;stepn;vepn;nepn;stft;strt;stri;stpeu;stbop;stepx;vft;vrt;vri;vpeu;vbop;vepx;nepx;nrt;nri;npeu;nbop;nft;iqs_pot_bop;iqs_pot_pex;iqs_pot_pig;iqs_pot_pib;iqs_pot_tho;iqs_pot_epb
+En60Sb40_RS2_IQS7;2020;BR;30;7;6;6;65;3.8;3.6;10;6E;RS22;50.2;-66.5;400;7;0.6;1.7;5;150;2.5;7.5;250;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;5;5;5;5;5;5
+En60Sb40_RS2_IQS9;2020;BR;30;9;8.5;6;65;3.8;3.6;10;6E;RS22;50.2;-66.5;400;8;0.6;3.3;8;225;5;20;300;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;5;5;5;5;5;5
+En60Sb40_RS2_IQS11;2020;BR;30;11;11;6;65;3.8;3.6;10;6E;RS22;50.2;-66.5;400;9;0.6;5;17;350;7.5;30;450;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;5;5;5;5;5;5

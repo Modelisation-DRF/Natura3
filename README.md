@@ -36,7 +36,7 @@ git clone https://github.com/Modelisation-DRF/Natura3 natura3
 
 ```{r eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 require(remotes)
-install_github("https://github.com/Modelisation-DRF/Natura3", ref="main", auth_token = "demander_un_token")
+remotes::install_github("Modelisation-DRF/Natura3")
 ```
 ## Exemple
 
@@ -63,6 +63,7 @@ Pour une description du data.frame
 
 | Date |  Version  | Features et bugs | Détails |
 |:-----|:---------:|:-----------------|:--------|
+| 2024-12-12 | 1.0.5 |  | gérer les extractions iqs/sol/climat à NA |
 | 2024-08-29 | 1.0.4 |  | modifications mineures pour la shiny |
 | 2024-04-05 | 1.0.3 |  | ajouter la liste des placettes rejetées au fichier des résultats |
 | 2024-04-03 | 1.0.2 |  | élargir les plages de valeurs possibles |
