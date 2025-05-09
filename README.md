@@ -19,9 +19,9 @@ Le package Natura3 permet la simulation de la croissance d'un peuplement foresti
 Non disponibles pour l'instant.
 
 ## Dépendences
-Ce package dépends des packages ExtractMap et TarifQC.
+Ce package dépends des packages ExtractMap et OutilsDRF.
 
-- TarifQC est disponible ici: https://github.com/Modelisation-DRF/TarifQC
+- OutilsDRF est disponible ici: https://github.com/Modelisation-DRF/OutilsDRF
 
 - ExtractMap est disponible ici: https://github.com/Modelisation-DRF/ExtractMap
 
@@ -63,6 +63,7 @@ Pour une description du data.frame
 
 | Date |  Version  | Features et bugs | Détails |
 |:-----|:---------:|:-----------------|:--------|
+| 2025-05-09 | 1.0.6 |  | changer package TarifQC pour OutilsDRF |
 | 2024-12-12 | 1.0.5 |  | gérer les extractions iqs/sol/climat à NA |
 | 2024-08-29 | 1.0.4 |  | modifications mineures pour la shiny |
 | 2024-04-05 | 1.0.3 |  | ajouter la liste des placettes rejetées au fichier des résultats |
